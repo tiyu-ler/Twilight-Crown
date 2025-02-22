@@ -1,7 +1,11 @@
-# This .gitignore file should be placed at the root of your Unity project directory
-#
-# Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
-#
+# macOS cruft
+.DS_Store
+
+# Windows cruft
+Thumbs.db
+[Dd]esktop.ini
+
+# Unity
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -25,6 +29,12 @@
 
 # Visual Studio cache directory
 .vs/
+
+# Rider Settings
+.idea/
+
+# VSCode Settings
+.vscode/
 
 # Gradle cache directory
 .gradle/
@@ -59,7 +69,6 @@ sysinfo.txt
 *.apk
 *.aab
 *.unitypackage
-*.unitypackage.meta
 *.app
 
 # Crashlytics generated file
@@ -71,3 +80,4 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+/[Ll]ibrary/
