@@ -15,13 +15,14 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask GroundLayer;                 
 
     private Rigidbody2D _rb;
-    private bool _isGrounded;
+    private bool _isGrounded = true;
     private bool _isJumping;
     private float _horizontalInput;
     private float _jumpTimeCounter;
     private bool _jumpButtonHeld;
     
-    public Animator _playerAnimator;
+    public Animator UpperBodyAnimator;
+    public Animator LowerBodyAnimator;
     private bool _isFacingRight = true;  
 
     private void Start()
@@ -32,9 +33,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        _playerAnimator.SetBool("IsGrounded", _isGrounded);
+        UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
+        LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
 
-        _playerAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
+        UpperBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
+        LowerBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
 
         _horizontalInput = Input.GetAxisRaw("Horizontal");
 
@@ -58,7 +61,8 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         _rb.velocity = new Vector2(_horizontalInput * MoveSpeed, _rb.velocity.y);
-        _playerAnimator.SetFloat("RunSpeed", Mathf.Abs(_horizontalInput));
+        UpperBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(_horizontalInput));
+        LowerBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(_horizontalInput));
 
         _isGrounded = IsGrounded();
 
@@ -77,7 +81,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_isGrounded) // Reset gravity and stop bounce when landing
         {
-            _playerAnimator.SetBool("IsGrounded", _isGrounded);
+            LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
+            UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
             _rb.gravityScale = 1f;
             _isJumping = false; // Ensure jumping state is reset
             return;

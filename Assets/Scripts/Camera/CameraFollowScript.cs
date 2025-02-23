@@ -46,24 +46,24 @@ public class CameraFollow : MonoBehaviour
         //     _isJumping = false;
         // }
 
-        float verticalAdjustment = VerticalOffset;
+        // float verticalAdjustment = VerticalOffset;
 
         // if (_isJumping)
         // {
             // 🔥 Ждём, пока игрок приблизится к верхнему краю камеры
             // if (playerY > transform.position.y - 0.8f)  
-                verticalAdjustment += JumpLookUpOffset;
+                // verticalAdjustment += JumpLookUpOffset;
                 // _enableFall = true;
         // }
-        if (playerVelocityY < -0.1f && _enableFall || playerY < transform.position.y + 0.5f) 
-        {
-            // Debug.Log("DOWN");
-            // 🔥 Ограничиваем падение камеры (она не уходит слишком низко)
-            verticalAdjustment -= FallLookDownOffset;
-            verticalAdjustment = Mathf.Max(verticalAdjustment, Player.position.y - FallLimit);
-        }
+        // if (playerVelocityY < -0.1f && _enableFall || playerY < transform.position.y + 0.5f) 
+        // {
+        //     // Debug.Log("DOWN");
+        //     // 🔥 Ограничиваем падение камеры (она не уходит слишком низко)
+        //     verticalAdjustment -= FallLookDownOffset;
+        //     verticalAdjustment = Mathf.Max(verticalAdjustment, Player.position.y - FallLimit);
+        // }
 
-        Vector3 targetPosition = new Vector3(Player.position.x + _currentLookAhead, verticalAdjustment, transform.position.z);
+        Vector3 targetPosition = new Vector3(Player.position.x + _currentLookAhead, Player.position.y + VerticalOffset, transform.position.z);
 
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref _velocity, 1f / FollowSpeed);
     }

@@ -8,21 +8,18 @@ public class PlayerAttack : MonoBehaviour
     public LayerMask EnemyLayer; // What the attack can hit
     public Transform AttackPoint; // Position of attack origin
 
-    private float _attackTimer;
+    private float _attackTimer = 0;
     private bool _isAttacking = false;
-    public Animator _playerAnimator;
+    public Animator UpperBodyAnimator;
+    public Animator LowerBodyAnimator;
     private int _attackCount = 0;
-    private void Start()
-    {
-        _playerAnimator = GetComponent<Animator>();
-    }
-
     private void Update()
     {
         _attackTimer -= Time.deltaTime;
 
         if (_attackTimer <= 0 && Input.GetMouseButtonDown(0)) // 0 - left, 1 - right, 2 - middle
         {
+            Debug.Log("W");
             PerformAttack();
         }
     }
@@ -45,7 +42,8 @@ public class PlayerAttack : MonoBehaviour
         else
         {
             _attackCount += 1;
-            _playerAnimator.SetInteger("AttackCounter", _attackCount);
+            // _playerAnimator.SetInteger("AttackCounter", _attackCount);
+            // _playerAnimator.SetBool("Attacking", true);
         }
 
         // _animator.SetTrigger(animationTrigger);
