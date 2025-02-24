@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     public Animator LowerBodyAnimator;
     private bool _isFacingRight = true;  
 
+    private float MaxFallSpeed = 40f;
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -35,7 +36,6 @@ public class PlayerMovement : MonoBehaviour
     {
         UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
         LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
-
         UpperBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
         LowerBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
 
@@ -103,10 +103,11 @@ public class PlayerMovement : MonoBehaviour
         else if (_rb.velocity.y < 0) // Falling
         {
             _rb.gravityScale = FallMultiplier; // Increase fall speed
+            _rb.velocity = new Vector2(_rb.velocity.x, Mathf.Max(_rb.velocity.y, -MaxFallSpeed));
         }
     }
 
-    private bool IsGrounded()
+    public bool IsGrounded()
     {
         RaycastHit2D hit = Physics2D.Raycast(GroundCheck.position, Vector2.down, GroundCheckDistance, GroundLayer);
         Debug.DrawRay(GroundCheck.position, Vector2.down * GroundCheckDistance, Color.green);

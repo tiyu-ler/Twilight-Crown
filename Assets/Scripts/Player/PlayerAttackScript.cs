@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -9,45 +10,94 @@ public class PlayerAttack : MonoBehaviour
     public Transform AttackPoint; // Position of attack origin
 
     private float _attackTimer = 0;
-    private bool _isAttacking = false;
+    private bool _canAttack = true;
+    private bool _doubleAttack = false;
+    private Coroutine _hideSwordCoroutine;
+
     public Animator UpperBodyAnimator;
     public Animator LowerBodyAnimator;
-    private int _attackCount = 0;
+    private PlayerMovement playerMovement;
+    private Rigidbody2D _rb;
+    void Start()
+    {
+        Time.timeScale = 0.25f; 
+        playerMovement = GetComponent<PlayerMovement>();
+        _rb = GetComponent<Rigidbody2D>();
+    }
     private void Update()
     {
         _attackTimer -= Time.deltaTime;
 
-        if (_attackTimer <= 0 && Input.GetMouseButtonDown(0)) // 0 - left, 1 - right, 2 - middle
+        if (_canAttack && Input.GetMouseButtonDown(0))
         {
-            Debug.Log("W");
-            PerformAttack();
+            Debug.Log(playerMovement.IsGrounded());
+            if (Input.GetKey(KeyCode.W) && _canAttack)
+            {
+                PerformAttack(Vector2.up, "U_UpAttack_1", "U_UpAttack_2", false);
+            }
+            else if (!playerMovement.IsGrounded() && Input.GetKey(KeyCode.S) && _canAttack)
+            {
+                    PerformAttack(Vector2.down, "U_Attack_Down1", "U_Attack_Down2", true);
+            }
+            else if (playerMovement.IsGrounded() && Mathf.Abs(_rb.velocity.x) < 0.01f && _canAttack)
+            {
+                PerformAttack(Vector2.down, "U_Attack_1", "U_Attack_2", false);
+            }
+            else
+            {
+                PerformAttack(Vector2.right, "U_AttackAir1", "U_AttackAir2", false);
+            }
         }
     }
 
-    private void PerformAttack()
+    private void PerformAttack(Vector2 attackDirection, string animationName, string alternativeName, bool isDownSlash)
     {
-        _isAttacking = true;
+        string currentAnimation;
+        _canAttack = false;
         _attackTimer = AttackCooldown;
-
-        Vector2 attackDirection = Vector2.right; // Default attack direction
-
-        if (Input.GetKey(KeyCode.W)) // Upward attack
+    
+        // UpperBodyAnimator.Play(animationName);
+        if (!_doubleAttack)
         {
-            attackDirection = Vector2.up;
-        }
-        else if (Input.GetKey(KeyCode.S) && !IsGrounded()) // Downward attack (only in air)
-        {
-            attackDirection = Vector2.down;
+            UpperBodyAnimator.Play(animationName);
+            _doubleAttack = true;
+            currentAnimation = animationName;
         }
         else
         {
-            _attackCount += 1;
-            // _playerAnimator.SetInteger("AttackCounter", _attackCount);
-            // _playerAnimator.SetBool("Attacking", true);
+            UpperBodyAnimator.Play(alternativeName);
+            _doubleAttack = false;
+            currentAnimation = alternativeName;
         }
 
-        // _animator.SetTrigger(animationTrigger);
         DetectHits(attackDirection);
+
+        if (_hideSwordCoroutine != null)
+            StopCoroutine(_hideSwordCoroutine);
+
+        _hideSwordCoroutine = StartCoroutine(HideSword(isDownSlash));
+        
+        StartCoroutine(WaitForAttackAnimation(currentAnimation));
+    }
+
+    private IEnumerator HideSword(bool isDownSlash)
+    {
+        yield return new WaitForSeconds(0.42f);
+        UpperBodyAnimator.SetBool("DiscardAttack", true);
+
+        if (_doubleAttack && !isDownSlash)
+            UpperBodyAnimator.Play("U_HideSword_1");
+        else
+            UpperBodyAnimator.Play("U_HideSword_2"); // for ground Attack
+
+        _doubleAttack = false; // Reset attack order after hiding the sword
+    }
+
+    private IEnumerator WaitForAttackAnimation(string attackAnimation)
+    {
+        yield return new WaitUntil(() => UpperBodyAnimator.GetCurrentAnimatorStateInfo(0).IsName(attackAnimation));
+        yield return new WaitUntil(() => UpperBodyAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
+        _canAttack = true;
     }
 
     private void DetectHits(Vector2 direction)
@@ -63,17 +113,12 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    private bool IsGrounded()
-    {
-        return Physics2D.Raycast(transform.position, Vector2.down, 0.1f, LayerMask.GetMask("Ground"));
-    }
-
     private void OnDrawGizmos()
     {
-        // if (AttackPoint != null)
-        // {
+        if (AttackPoint != null)
+        {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(AttackPoint.position, AttackPoint.position + Vector3.right * AttackRange);
-        // }
+        }
     }
 }
