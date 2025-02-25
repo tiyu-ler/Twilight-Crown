@@ -3,24 +3,27 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
+    [Header("Movement Settings")]
     public float MoveSpeed = 6f;                   
     public float JumpForce = 14f;                 
     public float MaxJumpHoldTime = 0.2f;
     public float LowJumpMultiplier = 4f;
     public float FallMultiplier = 5f;
 
+    [Header("Ground Settings")]
     public Transform GroundCheck;                 
     public float GroundCheckDistance = 0.2f;    
     public LayerMask GroundLayer;                 
 
+    [Header("Animators")]
+    public Animator UpperBodyAnimator;
+    public Animator LowerBodyAnimator;
+
+    private bool _isFacingRight = true;
+    private float MaxFallSpeed = 40f;
     private Rigidbody2D _rb;
     private bool _isGrounded = true, _isJumping, _jumpButtonHeld;
     private float _horizontalInput, _jumpTimeCounter;
-    
-    public Animator UpperBodyAnimator, LowerBodyAnimator;
-    private bool _isFacingRight = true;
-    private float MaxFallSpeed = 40f;
-
 
     private void Start()
     {
@@ -90,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (_rb.velocity.y > 0) // Ascending
+        if (_rb.velocity.y > 0)
         {
             if (_jumpButtonHeld && _jumpTimeCounter > 0)
             {
@@ -114,7 +117,7 @@ public class PlayerMovement : MonoBehaviour
     {
         RaycastHit2D hit = Physics2D.Raycast(GroundCheck.position, Vector2.down, GroundCheckDistance, GroundLayer);
         Debug.DrawRay(GroundCheck.position, Vector2.down * GroundCheckDistance, Color.green);
-        
+
         return hit.collider != null;
     }
 
