@@ -3,14 +3,14 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     public Transform Player;  
-    public float FollowSpeed = 10f;  
-    public float LookAheadDistance = 2f;  
-    public float VerticalOffset = 3f;  
-    public float JumpLookUpOffset = 1f;  
-    public float FallLookDownOffset = 1.5f;  
-    public float LookAheadSmoothing = 2f;  
-    public float JumpThresholdHeight = 1.5f;  
-    public float FallLimit = 2f;
+    public float FollowSpeed;  
+    public float LookAheadDistance;  
+    public float VerticalOffset;  
+    public float JumpLookUpOffset;  
+    public float FallLookDownOffset;  
+    public float LookAheadSmoothing;  
+    public float JumpThresholdHeight;  
+    public float FallLimit;
     private Vector3 _velocity = Vector3.zero;
     private float _currentLookAhead = 0f;
     private float _lastLookAhead = 0f;
@@ -19,10 +19,7 @@ public class CameraFollow : MonoBehaviour
         if (Player == null) return;
 
         float moveDirection = Input.GetAxisRaw("Horizontal");
-        // float playerVelocityY = Player.GetComponent<Rigidbody2D>().velocity.y;
-        // float playerY = Player.position.y;
-
-        // 🔥 Сохранение последнего взгляда вперёд
+        
         if (moveDirection != 0)
         {
             _lastLookAhead = moveDirection * LookAheadDistance;

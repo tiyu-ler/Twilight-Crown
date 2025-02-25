@@ -3,31 +3,27 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [Header("Attack Settings")]
-    public float AttackCooldown = 0.2f; // Time between attacks
-    public float AttackRange = 1.5f; // Range of the attack
-    public LayerMask EnemyLayer; // What the attack can hit
-    public Transform AttackPoint; // Position of attack origin
 
-    private float _attackTimer = 0;
-    private bool _canAttack = true;
-    private bool _doubleAttack = false;
+    private bool _canAttack = true, _doubleAttack = false;
     private Coroutine _hideSwordCoroutine;
-
-    public Animator UpperBodyAnimator;
-    public Animator LowerBodyAnimator;
     private PlayerMovement playerMovement;
     private Rigidbody2D _rb;
+
+    public float AttackCooldown = 0.2f, AttackRange = 1.5f;
+    public LayerMask EnemyLayer;
+    public Transform AttackPoint;
+    public Animator UpperBodyAnimator;
+
+
     void Start()
     {
-        Time.timeScale = 0.25f; 
         playerMovement = GetComponent<PlayerMovement>();
         _rb = GetComponent<Rigidbody2D>();
     }
+
+
     private void Update()
     {
-        _attackTimer -= Time.deltaTime;
-
         if (_canAttack && Input.GetMouseButtonDown(0))
         {
             Debug.Log(playerMovement.IsGrounded());
@@ -39,26 +35,23 @@ public class PlayerAttack : MonoBehaviour
             {
                     PerformAttack(Vector2.down, "U_Attack_Down1", "U_Attack_Down2", true);
             }
-            // else if (playerMovement.IsGrounded() && Mathf.Abs(_rb.velocity.x) < 0.01f && _canAttack) // на земле, если не двигаеться
-            else if (playerMovement.IsGrounded() && _canAttack) // на земле, если не двигаеться
-            // else if (Mathf.Abs(_rb.velocity.x) < 0.01f && _canAttack) // если не двигаеться
+            else if (playerMovement.IsGrounded() && Mathf.Abs(_rb.velocity.x) > 0.1f && _canAttack) // на земле, если двигаеться
             {
                 PerformAttack(Vector2.down, "U_Attack_1", "U_Attack_2", false);
             }
             else
             {
-                PerformAttack(Vector2.right, "U_AttackAir1", "U_AttackAir2", false); //
+                PerformAttack(Vector2.right, "U_AttackAir1", "U_AttackAir2", false); // прыжок, движение в прыжке, idle
             }
         }
     }
+
 
     private void PerformAttack(Vector2 attackDirection, string animationName, string alternativeName, bool isDownSlash)
     {
         string currentAnimation;
         _canAttack = false;
-        _attackTimer = AttackCooldown;
     
-        // UpperBodyAnimator.Play(animationName);
         if (!_doubleAttack)
         {
             UpperBodyAnimator.Play(animationName);
@@ -82,18 +75,20 @@ public class PlayerAttack : MonoBehaviour
         StartCoroutine(WaitForAttackAnimation(currentAnimation));
     }
 
+
     private IEnumerator HideSword(bool isDownSlash)
     {
-        yield return new WaitForSeconds(0.42f);
+        yield return new WaitForSeconds(0.5f);
         UpperBodyAnimator.SetBool("DiscardAttack", true);
 
         if (_doubleAttack && !isDownSlash)
             UpperBodyAnimator.Play("U_HideSword_1");
         else
-            UpperBodyAnimator.Play("U_HideSword_2"); // for ground Attack
+            UpperBodyAnimator.Play("U_HideSword_2"); // нижний
 
-        _doubleAttack = false; // Reset attack order after hiding the sword
+        _doubleAttack = false;
     }
+
 
     private IEnumerator WaitForAttackAnimation(string attackAnimation)
     {
@@ -101,6 +96,7 @@ public class PlayerAttack : MonoBehaviour
         yield return new WaitUntil(() => UpperBodyAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
         _canAttack = true;
     }
+
 
     private void DetectHits(Vector2 direction)
     {
@@ -110,10 +106,10 @@ public class PlayerAttack : MonoBehaviour
             if (hit.collider != null)
             {
                 Debug.Log("Hit: " + hit.collider.name);
-                // Implement enemy damage logic here
             }
         }
     }
+
 
     private void OnDrawGizmos()
     {

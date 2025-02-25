@@ -2,40 +2,37 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement Settings")]
+
     public float MoveSpeed = 6f;                   
-    public float JumpForce = 14f;  // Hollow Knight has lower but tighter jumps                  
-    public float MaxJumpHoldTime = 0.2f;  // Max time for variable jump
-    public float LowJumpMultiplier = 4f;  // Extra gravity when releasing jump early
-    public float FallMultiplier = 5f;  // Extra gravity when falling
-    
-    [Header("Ground Check")]
+    public float JumpForce = 14f;                 
+    public float MaxJumpHoldTime = 0.2f;
+    public float LowJumpMultiplier = 4f;
+    public float FallMultiplier = 5f;
+
     public Transform GroundCheck;                 
-    public float GroundCheckDistance = 0.2f;  // Slightly lower for precise detection     
+    public float GroundCheckDistance = 0.2f;    
     public LayerMask GroundLayer;                 
 
     private Rigidbody2D _rb;
-    private bool _isGrounded = true;
-    private bool _isJumping;
-    private float _horizontalInput;
-    private float _jumpTimeCounter;
-    private bool _jumpButtonHeld;
+    private bool _isGrounded = true, _isJumping, _jumpButtonHeld;
+    private float _horizontalInput, _jumpTimeCounter;
     
-    public Animator UpperBodyAnimator;
-    public Animator LowerBodyAnimator;
-    private bool _isFacingRight = true;  
-
+    public Animator UpperBodyAnimator, LowerBodyAnimator;
+    private bool _isFacingRight = true;
     private float MaxFallSpeed = 40f;
+
+
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
-        // Time.timeScale = 0.1f;
     }
+
 
     private void Update()
     {
         UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
         LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
+
         UpperBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
         LowerBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
 
@@ -53,14 +50,16 @@ public class PlayerMovement : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.Space))
         {
             _jumpButtonHeld = false;
-            _isJumping = false;  // Stop adding force when released
+            _isJumping = false;
         } 
         FlipCharacter();
     }
 
+
     private void FixedUpdate()
     {
         _rb.velocity = new Vector2(_horizontalInput * MoveSpeed, _rb.velocity.y);
+
         UpperBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(_horizontalInput));
         LowerBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(_horizontalInput));
 
@@ -68,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
 
         ApplyJumpPhysics();
     }
+
 
     private void StartJump()
     {
@@ -77,14 +77,16 @@ public class PlayerMovement : MonoBehaviour
         _rb.velocity = new Vector2(_rb.velocity.x, JumpForce);
     }
 
+
     private void ApplyJumpPhysics()
     {
-        if (_isGrounded) // Reset gravity and stop bounce when landing
+        if (_isGrounded)
         {
             LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
             UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
+
             _rb.gravityScale = 1f;
-            _isJumping = false; // Ensure jumping state is reset
+            _isJumping = false;
             return;
         }
 
@@ -92,27 +94,30 @@ public class PlayerMovement : MonoBehaviour
         {
             if (_jumpButtonHeld && _jumpTimeCounter > 0)
             {
-                _jumpTimeCounter -= Time.fixedDeltaTime; // Allow holding for higher jumps
+                _jumpTimeCounter -= Time.fixedDeltaTime;
                 _rb.velocity = new Vector2(_rb.velocity.x, JumpForce);
             }
             else
             {
-                _rb.gravityScale = LowJumpMultiplier; // Stronger gravity if jump is released early
+                _rb.gravityScale = LowJumpMultiplier; 
             }
         }
-        else if (_rb.velocity.y < 0) // Falling
+        else if (_rb.velocity.y < 0)
         {
-            _rb.gravityScale = FallMultiplier; // Increase fall speed
+            _rb.gravityScale = FallMultiplier;
             _rb.velocity = new Vector2(_rb.velocity.x, Mathf.Max(_rb.velocity.y, -MaxFallSpeed));
         }
     }
+
 
     public bool IsGrounded()
     {
         RaycastHit2D hit = Physics2D.Raycast(GroundCheck.position, Vector2.down, GroundCheckDistance, GroundLayer);
         Debug.DrawRay(GroundCheck.position, Vector2.down * GroundCheckDistance, Color.green);
+        
         return hit.collider != null;
     }
+
 
     private void FlipCharacter()
     {
@@ -124,6 +129,7 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale = scale;
         }
     }
+
 
     private void OnDrawGizmos()
     {

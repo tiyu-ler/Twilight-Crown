@@ -1245,7 +1245,7 @@ MonoBehaviour:
   Player: {fileID: 813382081}
   FollowSpeed: 10
   LookAheadDistance: 2
-  VerticalOffset: 0.8
+  VerticalOffset: 3
   JumpLookUpOffset: 1
   FallLookDownOffset: 1.5
   LookAheadSmoothing: 2
