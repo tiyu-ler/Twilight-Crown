@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0afe55beafac6154995bc87a54450c25
+guid: 854ea904d6f67a742af017be200ebd79
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,148 +110,148 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: U_AirCatanaAttack_0
+      name: 2_0
       rect:
         serializedVersion: 2
-        x: 5
+        x: 0
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a15f4893c6fdff74ea2deb8827149bab
-      internalID: 280305562
+      spriteID: a87828000893d574bb1cc8b3fc563e63
+      internalID: 1906378466
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_1
+      name: 2_1
       rect:
         serializedVersion: 2
-        x: 85
+        x: 80
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fcb898f00a9657e4bb87c532ec209eae
-      internalID: 1123288962
+      spriteID: 3efe04e0739c7a346a20ee3e351455ab
+      internalID: -386482035
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_2
+      name: 2_2
       rect:
         serializedVersion: 2
-        x: 165
+        x: 160
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 42c2c00df09a45a40b324f5107019c43
-      internalID: -2007316845
+      spriteID: 3580432ceede8c54a8cdd5843a2acaeb
+      internalID: 1835575904
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_3
+      name: 2_3
       rect:
         serializedVersion: 2
-        x: 405
+        x: 240
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aef53e406f36a434c8a70cd6408943b2
-      internalID: -86671892
+      spriteID: bf21bd2d77b5af345a0876ff98a7c241
+      internalID: -1290767968
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_4
+      name: 2_4
       rect:
         serializedVersion: 2
-        x: 805
+        x: 320
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ddc696fe25a62bd4aa5e4153e31e546e
-      internalID: -2145337409
+      spriteID: a43f5a09a2669dd458f4935115ceee5d
+      internalID: -60894152
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_5
+      name: 2_5
       rect:
         serializedVersion: 2
-        x: 885
+        x: 400
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b08b8ba66a101e84382d89abcdb78e98
-      internalID: -1032802494
+      spriteID: d256d3dca70a64443a5449287d4f3036
+      internalID: -1166603661
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_6
+      name: 2_6
       rect:
         serializedVersion: 2
-        x: 1125
+        x: 480
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e5e72c3efa7f047409dbba233b822630
-      internalID: -1401399630
+      spriteID: ab043aa70c5018a4ab7a90f655d656c3
+      internalID: 1572837285
       vertices: []
       indices: 
       edges: []
@@ -267,13 +267,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      U_AirCatanaAttack_0: 280305562
-      U_AirCatanaAttack_1: 1123288962
-      U_AirCatanaAttack_2: -2007316845
-      U_AirCatanaAttack_3: -86671892
-      U_AirCatanaAttack_4: -2145337409
-      U_AirCatanaAttack_5: -1032802494
-      U_AirCatanaAttack_6: -1401399630
+      2_0: 1906378466
+      2_1: -386482035
+      2_2: 1835575904
+      2_3: -1290767968
+      2_4: -60894152
+      2_5: -1166603661
+      2_6: 1572837285
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

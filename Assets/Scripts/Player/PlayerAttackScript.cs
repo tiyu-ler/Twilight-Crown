@@ -31,21 +31,23 @@ public class PlayerAttack : MonoBehaviour
         if (_canAttack && Input.GetMouseButtonDown(0))
         {
             Debug.Log(playerMovement.IsGrounded());
-            if (Input.GetKey(KeyCode.W) && _canAttack)
+            if (Input.GetKey(KeyCode.W) && _canAttack) //вверх
             {
                 PerformAttack(Vector2.up, "U_UpAttack_1", "U_UpAttack_2", false);
             }
-            else if (!playerMovement.IsGrounded() && Input.GetKey(KeyCode.S) && _canAttack)
+            else if (!playerMovement.IsGrounded() && Input.GetKey(KeyCode.S) && _canAttack) // вниз в воздухе
             {
                     PerformAttack(Vector2.down, "U_Attack_Down1", "U_Attack_Down2", true);
             }
-            else if (playerMovement.IsGrounded() && Mathf.Abs(_rb.velocity.x) < 0.01f && _canAttack)
+            // else if (playerMovement.IsGrounded() && Mathf.Abs(_rb.velocity.x) < 0.01f && _canAttack) // на земле, если не двигаеться
+            else if (playerMovement.IsGrounded() && _canAttack) // на земле, если не двигаеться
+            // else if (Mathf.Abs(_rb.velocity.x) < 0.01f && _canAttack) // если не двигаеться
             {
                 PerformAttack(Vector2.down, "U_Attack_1", "U_Attack_2", false);
             }
             else
             {
-                PerformAttack(Vector2.right, "U_AttackAir1", "U_AttackAir2", false);
+                PerformAttack(Vector2.right, "U_AttackAir1", "U_AttackAir2", false); //
             }
         }
     }

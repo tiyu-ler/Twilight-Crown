@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0afe55beafac6154995bc87a54450c25
+guid: e7cccbe268798ef4f9c48813718d1374
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,148 +110,169 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: U_AirCatanaAttack_0
+      name: 1_0
       rect:
         serializedVersion: 2
-        x: 5
+        x: 0
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a15f4893c6fdff74ea2deb8827149bab
-      internalID: 280305562
+      spriteID: 2b380d8e80aa7dd46962cde05305750c
+      internalID: -1633831127
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_1
+      name: 1_1
       rect:
         serializedVersion: 2
-        x: 85
+        x: 80
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fcb898f00a9657e4bb87c532ec209eae
-      internalID: 1123288962
+      spriteID: 63202f58bc49a514fa919b5faa13bdee
+      internalID: -144142612
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_2
+      name: 1_2
       rect:
         serializedVersion: 2
-        x: 165
+        x: 160
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 42c2c00df09a45a40b324f5107019c43
-      internalID: -2007316845
+      spriteID: 984021f0e7843b842be70720d3a60959
+      internalID: -1717345756
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_3
+      name: 1_3
       rect:
         serializedVersion: 2
-        x: 405
+        x: 240
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aef53e406f36a434c8a70cd6408943b2
-      internalID: -86671892
+      spriteID: 12cfb08cd4da7c149b533c4dd454a856
+      internalID: -491758520
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_4
+      name: 1_4
       rect:
         serializedVersion: 2
-        x: 805
+        x: 320
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ddc696fe25a62bd4aa5e4153e31e546e
-      internalID: -2145337409
+      spriteID: 11df4a6780293434ba1d078e64feda10
+      internalID: 970425716
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_5
+      name: 1_5
       rect:
         serializedVersion: 2
-        x: 885
+        x: 400
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b08b8ba66a101e84382d89abcdb78e98
-      internalID: -1032802494
+      spriteID: ca52858564c1eff46aee162dabadd99e
+      internalID: -956586562
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: U_AirCatanaAttack_6
+      name: 1_6
       rect:
         serializedVersion: 2
-        x: 1125
+        x: 480
         y: 0
-        width: 75
-        height: 64
+        width: 80
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e5e72c3efa7f047409dbba233b822630
-      internalID: -1401399630
+      spriteID: b112498fa46c2fb41b113401f77d7a35
+      internalID: 869413215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 1_7
+      rect:
+        serializedVersion: 2
+        x: 560
+        y: 0
+        width: 80
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b560e75183f210c4dab8e215ad1fbeca
+      internalID: -1115550972
       vertices: []
       indices: 
       edges: []
@@ -267,13 +288,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      U_AirCatanaAttack_0: 280305562
-      U_AirCatanaAttack_1: 1123288962
-      U_AirCatanaAttack_2: -2007316845
-      U_AirCatanaAttack_3: -86671892
-      U_AirCatanaAttack_4: -2145337409
-      U_AirCatanaAttack_5: -1032802494
-      U_AirCatanaAttack_6: -1401399630
+      1_0: -1633831127
+      1_1: -144142612
+      1_2: -1717345756
+      1_3: -491758520
+      1_4: 970425716
+      1_5: -956586562
+      1_6: 869413215
+      1_7: -1115550972
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
