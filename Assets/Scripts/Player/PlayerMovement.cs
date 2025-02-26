@@ -15,11 +15,15 @@ public class PlayerMovement : MonoBehaviour
     public float GroundCheckDistance = 0.2f;    
     public LayerMask GroundLayer;                 
 
-    [Header("Animators")]
+    [Header("Animation Settings")]
     public Animator UpperBodyAnimator;
     public Animator LowerBodyAnimator;
+    public GameObject UpperBody;
 
-    private bool _isFacingRight = true;
+    [Header("Camera Setup")]
+    public bool IsFacingRight = true;
+    public CameraFollowObject _cameraFollowObject;
+
     private float MaxFallSpeed = 40f;
     private Rigidbody2D _rb;
     private bool _isGrounded = true, _isJumping, _jumpButtonHeld;
@@ -55,12 +59,13 @@ public class PlayerMovement : MonoBehaviour
             _jumpButtonHeld = false;
             _isJumping = false;
         } 
-        FlipCharacter();
     }
 
 
     private void FixedUpdate()
     {
+        FlipCharacter();
+
         _rb.velocity = new Vector2(_horizontalInput * MoveSpeed, _rb.velocity.y);
 
         UpperBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(_horizontalInput));
@@ -124,12 +129,23 @@ public class PlayerMovement : MonoBehaviour
 
     private void FlipCharacter()
     {
-        if ((_horizontalInput > 0 && !_isFacingRight) || (_horizontalInput < 0 && _isFacingRight))
+        if (_horizontalInput > 0 && !IsFacingRight)
         {
-            _isFacingRight = !_isFacingRight;
-            Vector3 scale = transform.localScale;
-            scale.x *= -1;
-            transform.localScale = scale;
+            UpperBody.transform.localPosition = new Vector3(0,0,-0.01f);
+            IsFacingRight = !IsFacingRight;
+            Vector3 rotation = new Vector3(transform.rotation.x, 0, transform.rotation.z);
+            transform.rotation = Quaternion.Euler(rotation);
+
+            _cameraFollowObject.CallTurn();
+        } 
+        else if (_horizontalInput < 0 && IsFacingRight)
+        {
+            UpperBody.transform.localPosition = new Vector3(0,0,0.01f);
+            IsFacingRight = !IsFacingRight;
+            Vector3 rotation = new Vector3(transform.rotation.x, 180, transform.rotation.z);
+            transform.rotation = Quaternion.Euler(rotation);
+
+            _cameraFollowObject.CallTurn();
         }
     }
 
