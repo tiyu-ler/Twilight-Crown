@@ -13,7 +13,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Settings")]
     public Transform GroundCheck;                 
     public float GroundCheckDistance = 0.2f;    
-    public LayerMask GroundLayer;                 
+    public LayerMask GroundLayer;             
+    public bool _isGrounded = true;    
 
     [Header("Animation Settings")]
     public Animator UpperBodyAnimator;
@@ -23,15 +24,19 @@ public class PlayerMovement : MonoBehaviour
     [Header("Camera Setup")]
     public bool IsFacingRight = true;
     public CameraFollowObject _cameraFollowObject;
+    public CameraManager cameraManager;
 
-    private float MaxFallSpeed = 40f;
+    private float FallSpeedDampingChange;
+    private float MaxFallSpeed = 30f;
     private Rigidbody2D _rb;
-    private bool _isGrounded = true, _isJumping, _jumpButtonHeld;
+    private bool _isJumping, _jumpButtonHeld;
     private float _horizontalInput, _jumpTimeCounter;
 
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+
+        FallSpeedDampingChange = cameraManager.FallSpeedDampingLimit;
     }
 
 
@@ -44,6 +49,19 @@ public class PlayerMovement : MonoBehaviour
         LowerBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
 
         _horizontalInput = Input.GetAxisRaw("Horizontal");
+
+        if (_rb.velocity.y < FallSpeedDampingChange && !cameraManager.IsLerpingYDamping 
+            && !cameraManager.LerpedFromPlayerFalling)
+        {
+            cameraManager.LerpYDamping(true);
+        }
+
+        if (_rb.velocity.y >= 0f && !cameraManager.IsLerpingYDamping && cameraManager.LerpedFromPlayerFalling)
+        {
+            cameraManager.LerpedFromPlayerFalling = false;
+
+            cameraManager.LerpYDamping(false);
+        }
 
         if (Input.GetKeyDown(KeyCode.Space) && _isGrounded)
         {

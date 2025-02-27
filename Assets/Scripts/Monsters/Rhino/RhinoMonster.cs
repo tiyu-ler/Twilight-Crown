@@ -122,9 +122,22 @@ public class RhinoMonster : MonsterScript
         _animator.SetBool("CanMove", true);
     }
 
-
-    protected override void Attack()
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        Debug.Log("Rhino Monster Attack");
+        if (_isRolling && collision.CompareTag("Player"))
+        {
+            PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                Vector2 attackDirection = (transform.position - collision.transform.position).normalized;
+                playerHealth.TakeDamage(attackDirection);
+            }
+        }
     }
+
+
+    // protected override void Attack()
+    // {
+    //     Debug.Log("Rhino Monster Attack");
+    // }
 }

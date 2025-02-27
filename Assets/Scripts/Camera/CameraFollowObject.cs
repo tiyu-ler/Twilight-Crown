@@ -5,8 +5,8 @@ using UnityEngine;
 public class CameraFollowObject : MonoBehaviour
 {
     [Header("Follow Object Settings")]
-    [SerializeField] private Transform _playerTransform;
-    [SerializeField] private float _flipYRotationTime = 0.5f;
+    [SerializeField] private Transform PlayerTransform;
+    [SerializeField] private float FlipYRotationTime = 0.5f;
      
     private Coroutine _turnCoroutine;
     private GameObject _player;
@@ -14,19 +14,21 @@ public class CameraFollowObject : MonoBehaviour
 
     void Awake()
     {
-        _player = _playerTransform.gameObject;
+        _player = PlayerTransform.gameObject;
         _isFacingRight = _player.GetComponent<PlayerMovement>().IsFacingRight;
     }
 
 
     void Update()
     {
-        transform.position = _playerTransform.position;
+        transform.position = PlayerTransform.position;
     }
 
 
     public void CallTurn()
     {
+        if (_turnCoroutine != null) StopCoroutine(_turnCoroutine);
+
         _turnCoroutine = StartCoroutine(FlipYLerp());
     }
 
@@ -38,17 +40,17 @@ public class CameraFollowObject : MonoBehaviour
         float yRotation = 0f;
 
         float elapsedTime = 0f;
-        while (elapsedTime < _flipYRotationTime)
+        while (elapsedTime < FlipYRotationTime)
         {
             elapsedTime += Time.deltaTime;
 
-            yRotation = Mathf.Lerp(startRotation, endRotation, (elapsedTime/_flipYRotationTime));
+            yRotation = Mathf.Lerp(startRotation, endRotation, (elapsedTime/FlipYRotationTime));
             transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
 
             yield return null;
         }
     }
-    
+
 
     private float DetermineEndRotation()
     {

@@ -1,16 +1,18 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class MonsterScript : MonoBehaviour
 {
 
-    [Header("Stats")]
+    [Header("Stats and Settings")]
     public float MaxHealth;
     public float MoveSpeed;
     public float ChaseSpeed;
     public float StopDistance;
     public int Damage;
-
+    public static List<MonsterScript> ActiveMonsters = new List<MonsterScript>();
+    
 
     [Header("Monster AI")]
     public float SightRange;
@@ -34,12 +36,26 @@ public abstract class MonsterScript : MonoBehaviour
 
     protected virtual void Awake()
     {
+        ActiveMonsters.Add(this);
         _rb = GetComponent<Rigidbody2D>();
         _renderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
         _currentHealth = MaxHealth;
     }
 
+    protected virtual void OnDestroy()
+    {
+        ActiveMonsters.Remove(this);
+    }
+
+    public void StopEnemy()
+    {
+        _isMoving = false;
+        _isChasing = false;
+        _rb.velocity = Vector2.zero;
+        _animator.StopPlayback();
+        _animator.speed = 0;
+    }
 
     protected virtual void Update()
     {
@@ -52,10 +68,14 @@ public abstract class MonsterScript : MonoBehaviour
         else
         {
             Patrol();
-            CheckForPlayer();
+            // CheckForPlayer();
         }
     }
 
+    protected virtual void LateUpdate()
+    {
+        CheckForPlayer();
+    }
 
     protected virtual void Patrol()
     {
@@ -78,7 +98,7 @@ public abstract class MonsterScript : MonoBehaviour
 
     protected virtual void CheckForPlayer() 
     {
-        if (Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, GroundLayer)) return;
+        // if (Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, GroundLayer)) return;
 
         RaycastHit2D hit = Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, PlayerLayer);
         if (hit.collider != null && hit.collider.CompareTag("Player"))
@@ -150,6 +170,6 @@ public abstract class MonsterScript : MonoBehaviour
     }
 
 
-    protected abstract void Attack();
+    // protected abstract void Attack();
 
 }
