@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     public float MaxJumpHoldTime = 0.2f;
     public float LowJumpMultiplier = 4f;
     public float FallMultiplier = 5f;
+    public Rigidbody2D RigidBody;
 
     [Header("Dash Settings")]
     public float DashSpeed = 20f;
@@ -40,13 +41,12 @@ public class PlayerMovement : MonoBehaviour
     private bool _canDash = true;
     private float FallSpeedDampingChange;
     private float MaxFallSpeed = 30f;
-    private Rigidbody2D _rb;
     private bool _isJumping, _jumpButtonHeld;
     private float _jumpTimeCounter;
 
     private void Start()
     {
-        _rb = GetComponent<Rigidbody2D>();
+        RigidBody = GetComponent<Rigidbody2D>();
 
         // _spriteRenderer = GetComponent<SpriteRenderer>();
         FullBodyAnimator.StopPlayback();
@@ -62,18 +62,18 @@ public class PlayerMovement : MonoBehaviour
         UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
         LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
 
-        UpperBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
-        LowerBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
+        UpperBodyAnimator.SetFloat("VerticalVelocity", RigidBody.velocity.y);
+        LowerBodyAnimator.SetFloat("VerticalVelocity", RigidBody.velocity.y);
 
         HorizontalInput = Input.GetAxisRaw("Horizontal");
 
-        if (_rb.velocity.y < FallSpeedDampingChange && !cameraManager.IsLerpingYDamping 
+        if (RigidBody.velocity.y < FallSpeedDampingChange && !cameraManager.IsLerpingYDamping 
             && !cameraManager.LerpedFromPlayerFalling)
         {
             cameraManager.LerpYDamping(true);
         }
 
-        if (_rb.velocity.y >= 0f && !cameraManager.IsLerpingYDamping && cameraManager.LerpedFromPlayerFalling)
+        if (RigidBody.velocity.y >= 0f && !cameraManager.IsLerpingYDamping && cameraManager.LerpedFromPlayerFalling)
         {
             cameraManager.LerpedFromPlayerFalling = false;
 
@@ -107,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
         if (IsDashing || !CanMove) return;
         FlipCharacter(false, -1);
 
-        _rb.velocity = new Vector2(HorizontalInput * MoveSpeed, _rb.velocity.y);
+        RigidBody.velocity = new Vector2(HorizontalInput * MoveSpeed, RigidBody.velocity.y);
 
         UpperBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(HorizontalInput));
         LowerBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(HorizontalInput));
@@ -123,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
         _isJumping = true;
         _jumpButtonHeld = true;
         _jumpTimeCounter = MaxJumpHoldTime;
-        _rb.velocity = new Vector2(_rb.velocity.x, JumpForce);
+        RigidBody.velocity = new Vector2(RigidBody.velocity.x, JumpForce);
     }
 
 
@@ -134,27 +134,27 @@ public class PlayerMovement : MonoBehaviour
             LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
             UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
 
-            _rb.gravityScale = 1f;
+            RigidBody.gravityScale = 1f;
             _isJumping = false;
             return;
         }
 
-        if (_rb.velocity.y > 0)
+        if (RigidBody.velocity.y > 0)
         {
             if (_jumpButtonHeld && _jumpTimeCounter > 0)
             {
                 _jumpTimeCounter -= Time.fixedDeltaTime;
-                _rb.velocity = new Vector2(_rb.velocity.x, JumpForce);
+                RigidBody.velocity = new Vector2(RigidBody.velocity.x, JumpForce);
             }
             else
             {
-                _rb.gravityScale = LowJumpMultiplier; 
+                RigidBody.gravityScale = LowJumpMultiplier; 
             }
         }
-        else if (_rb.velocity.y < 0)
+        else if (RigidBody.velocity.y < 0)
         {
-            _rb.gravityScale = FallMultiplier;
-            _rb.velocity = new Vector2(_rb.velocity.x, Mathf.Max(_rb.velocity.y, -MaxFallSpeed));
+            RigidBody.gravityScale = FallMultiplier;
+            RigidBody.velocity = new Vector2(RigidBody.velocity.x, Mathf.Max(RigidBody.velocity.y, -MaxFallSpeed));
         }
     }
 
@@ -177,8 +177,8 @@ public class PlayerMovement : MonoBehaviour
             Vector3 rotation = new Vector3(transform.rotation.x, 0, transform.rotation.z);
             transform.rotation = Quaternion.Euler(rotation);
 
-            _cameraFollowObject.CallTurn();
-            // if (!ForcedTurn) _cameraFollowObject.CallTurn();
+            // _cameraFollowObject.CallTurn();
+            if (!ForcedTurn) _cameraFollowObject.CallTurn();
         } 
         else if (HorizontalInput < 0 && IsFacingRight || ForcedTurn && direction == 0)
         {
@@ -187,8 +187,8 @@ public class PlayerMovement : MonoBehaviour
             Vector3 rotation = new Vector3(transform.rotation.x, 180, transform.rotation.z);
             transform.rotation = Quaternion.Euler(rotation);
 
-            _cameraFollowObject.CallTurn();
-            // if (!ForcedTurn) _cameraFollowObject.CallTurn();
+            // _cameraFollowObject.CallTurn();
+            if (!ForcedTurn) _cameraFollowObject.CallTurn();
         }
     }
 
@@ -200,10 +200,10 @@ public class PlayerMovement : MonoBehaviour
         IsDashing = true;
         UpperBody.SetActive(false);
         LowerBody.SetActive(false);
-        _rb.gravityScale = 0f;
+        RigidBody.gravityScale = 0f;
 
         float dashDirection = IsFacingRight ? 1 : -1;
-        _rb.velocity = new Vector2(dashDirection * DashSpeed, 0);
+        RigidBody.velocity = new Vector2(dashDirection * DashSpeed, 0);
 
         FullBodyAnimator.Play("Dash");
 
@@ -215,7 +215,7 @@ public class PlayerMovement : MonoBehaviour
         FullBodyAnimator.Play("None");
         UpperBody.SetActive(true);
         LowerBody.SetActive(true);
-        _rb.gravityScale = 1f;
+        RigidBody.gravityScale = 1f;
         IsDashing = false;
         UpperBodyAnimator.SetBool("HasSword", true);
         yield return new WaitForSeconds(DashCooldown);

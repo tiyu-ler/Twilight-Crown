@@ -78,7 +78,7 @@ public abstract class PickUpObject : MonoBehaviour
         
         isCollected = true;
         collider2d.enabled = false;
-
+        playerMovement.RigidBody.velocity = Vector2.zero;
         // playerMovement.enabled = false;
         playerAttack.enabled = false;
 
