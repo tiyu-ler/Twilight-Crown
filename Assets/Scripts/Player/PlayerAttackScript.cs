@@ -26,7 +26,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
-        if (_canAttack && Input.GetMouseButtonDown(0))
+        if (_canAttack && Input.GetMouseButtonDown(0) && !playerMovement.IsDashing)
         {
             if (Input.GetKey(KeyCode.W) && _canAttack) //вверх
             {
@@ -81,7 +81,7 @@ public class PlayerAttack : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         UpperBodyAnimator.SetBool("DiscardAttack", true);
-
+    
         if (_doubleAttack && !isDownSlash)
             UpperBodyAnimator.Play("U_HideSword_1");
         else

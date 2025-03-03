@@ -56,6 +56,15 @@ public abstract class MonsterScript : MonoBehaviour
         _animator.StopPlayback();
         _animator.speed = 0;
     }
+    public void StartEnemy()
+    {
+        _isMoving = true;
+        _isChasing = true;
+        _currentHealth = MaxHealth;
+        _rb.velocity = Vector2.zero;
+        _animator.StartPlayback();
+        _animator.speed = 1;
+    }
 
     protected virtual void Update()
     {

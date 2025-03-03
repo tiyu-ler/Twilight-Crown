@@ -5,24 +5,24 @@ using System.Collections;
 public class ScreenFader : MonoBehaviour
 {
     public Image fadeImage;
-    public float fadeSpeed = 1f;
+    private float fadeSpeed = 1.1f;
 
     public void FadeToWhite()
     {
-        StartCoroutine(Fade(1f));
+        StartCoroutine(Fade(1f, fadeSpeed*2));
     }
 
     public void FadeFromWhite()
     {
-        StartCoroutine(Fade(0f));
+        StartCoroutine(Fade(0f, fadeSpeed));
     }
 
-    private IEnumerator Fade(float targetAlpha)
+    private IEnumerator Fade(float targetAlpha, float speed)
     {
         float alpha = fadeImage.color.a;
         while (!Mathf.Approximately(alpha, targetAlpha))
         {
-            alpha = Mathf.MoveTowards(alpha, targetAlpha, fadeSpeed * Time.deltaTime);
+            alpha = Mathf.MoveTowards(alpha, targetAlpha, speed * Time.deltaTime);
             fadeImage.color = new Color(1f, 1f, 1f, alpha);
             yield return null;
         }

@@ -16,8 +16,6 @@ public class CameraManager : MonoBehaviour
     public bool LerpedFromPlayerFalling { get; set; }
 
     private float _normalYPanAmount;
-    private Coroutine _panCameraCoroutine;
-    private Coroutine _lerpYPanCoroutine;
     private CinemachineVirtualCamera _currentCamera;
     private CinemachineFramingTransposer _framingTransporter;
     private Vector2 _startingTrackedObjectOffset;
@@ -45,7 +43,7 @@ public class CameraManager : MonoBehaviour
 
     public void LerpYDamping(bool isPlayerFalling)
     {
-        _lerpYPanCoroutine = StartCoroutine(LerpYAction(isPlayerFalling));
+        StartCoroutine(LerpYAction(isPlayerFalling));
     }
 
     private IEnumerator LerpYAction(bool isPlayerFalling)
@@ -81,12 +79,12 @@ public class CameraManager : MonoBehaviour
 
     public void PanCameraOnContact(float panDistance, float panTime, PanDirection panDirection, bool panToStartingPos)
     {
-        _panCameraCoroutine = StartCoroutine(PanCamera(panDistance, panTime, panDirection, panToStartingPos));
+        StartCoroutine(PanCamera(panDistance, panTime, panDirection, panToStartingPos));
     }
     private IEnumerator PanCamera(float panDistance, float panTime, PanDirection panDirection, bool panToStartingPos)
     {
         Vector2 endPos = Vector2.zero;
-        Vector2 startingPos = Vector2.zero;
+        Vector2 startingPos;
 
         if (!panToStartingPos)
         {
@@ -130,7 +128,8 @@ public class CameraManager : MonoBehaviour
         }
     }
 
-    public void SwapCamera(CinemachineVirtualCamera cameraFromLeft, CinemachineVirtualCamera cameraFromRight, Vector2 triggerExitDirection)
+    public void SwapCamera(CinemachineVirtualCamera cameraFromLeft, CinemachineVirtualCamera cameraFromRight, 
+        Vector2 triggerExitDirection)
     {
         if (_currentCamera == cameraFromLeft && triggerExitDirection.x > 0f)
         {
@@ -147,5 +146,4 @@ public class CameraManager : MonoBehaviour
             _framingTransporter = _currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
         }
     }
-
 }

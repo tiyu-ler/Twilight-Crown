@@ -8,25 +8,30 @@ public class PlayerHealth : MonoBehaviour
     private int currentHealth;
     private bool isInvincible = false;
     private bool isDead = false;
-
     public float invincibilityTime = 1f;
     public float knockbackForce = 10f;
     public float knockbackDuration = 0.2f;
     public Color damageColor = Color.white;
     // public Image[] heartsUI;
     public Vector3 defaultSpawnLocation;
-    public Animator UpperBodyAnimator;
-    public Animator LowerBodyAnimator;
-    public SpriteRenderer spriteRendererUpperBody;
-    public SpriteRenderer spriteRendererLowerBody;
+    public GameObject UpperBody;
+    public GameObject LowerBody;
+    public Sprite Death;
+    public SpriteRenderer SpriteRendererUpperBody;
+    public SpriteRenderer SpriteRendererLowerBody;
+    private SpriteRenderer PlayerSpriteRenderer;
+    private Animator PlayerAnimator;
     private Rigidbody2D rb;
     private PlayerAttack playerAttack;
     private PlayerMovement playerMovement;
     private Obelisk lastObelisk;
     public ScreenFader screenFader;
-
+    public Collider2D VerticalCollider;
+    public Collider2D HorizontalCollider;
     private void Start()
     {
+        // PlayerSpriteRenderer = GetComponent<SpriteRenderer>();
+        PlayerAnimator = GetComponent<Animator>();
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         playerMovement = GetComponent<PlayerMovement>();
@@ -44,16 +49,25 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(Vector2 attackDirection)
     {
-        if (isInvincible || isDead) return;
+        if (isInvincible || isDead || playerMovement.IsDashing) return;
 
         currentHealth--;
         // UpdateHeartsUI();
         Debug.Log(currentHealth);
         if (currentHealth <= 0)
         {
-            playerAttack.enabled = false;
-            playerMovement.enabled = false;
-            Die();
+            isDead = true;
+            UpperBody.SetActive(false);
+            LowerBody.SetActive(false);
+            // PlayerSpriteRenderer.sprite = Death;
+            PlayerAnimator.Play("Death");
+            Debug.Log("DEATH");
+            // rb.sharedMaterial = HighFriction;
+            Time.timeScale = 0.5f;
+            VerticalCollider.enabled = false;
+            HorizontalCollider.enabled = true;
+            StartCoroutine(Knockback(attackDirection));
+            // Die();
         }
         else
         {
@@ -65,18 +79,18 @@ public class PlayerHealth : MonoBehaviour
     }
 
     private IEnumerator FlashWhite()
-{
-    while (isInvincible)
     {
-        spriteRendererUpperBody.color = damageColor;
-        spriteRendererLowerBody.color = damageColor;
-        yield return new WaitForSeconds(0.1f);
-        
-        spriteRendererUpperBody.color = Color.white;
-        spriteRendererLowerBody.color = Color.white;
-        yield return new WaitForSeconds(0.1f);
+        while (isInvincible)
+        {
+            SpriteRendererUpperBody.color = damageColor;
+            SpriteRendererLowerBody.color = damageColor;
+            yield return new WaitForSeconds(0.1f);
+            
+            SpriteRendererUpperBody.color = Color.white;
+            SpriteRendererLowerBody.color = Color.white;
+            yield return new WaitForSeconds(0.1f);
+        }
     }
-}
 
     private IEnumerator Knockback(Vector2 attackDirection)
     {
@@ -87,13 +101,22 @@ public class PlayerHealth : MonoBehaviour
         Vector2 knockback = new Vector2(-attackDirection.x, 0.25f).normalized * knockbackForce;
         rb.AddForce(knockback, ForceMode2D.Impulse);
 
-        yield return new WaitForSeconds(knockbackDuration);
-        playerMovement.enabled = true;
-        playerAttack.enabled = true;
+        // yield return new WaitForSeconds(knockbackDuration);
+        yield return new WaitForSecondsRealtime(knockbackDuration);
+        if (!isDead)
+        {
+            playerMovement.enabled = true;
+            playerAttack.enabled = true;
+        }
+        else
+        {
+            Die();
+        }
     }
 
     private IEnumerator InvincibilityFrames()
     {
+        
         yield return new WaitForSeconds(invincibilityTime);
         isInvincible = false;
         StopCoroutine(FlashWhite());
@@ -101,25 +124,29 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        if (isDead) return;
+        // if (isDead) return;
         
         foreach (MonsterScript enemy in MonsterScript.ActiveMonsters)
         {
             enemy.StopEnemy();
         }  
 
-        isDead = true;
-        // UpperBodyAnimator.Play("Death");
-        // LowerBodyAnimator.Play("Death");
         StartCoroutine(Respawn());
     }
 
     private IEnumerator Respawn()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsRealtime(0.25f);
         screenFader.FadeToWhite();
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsRealtime(1f);
+        // PlayerSpriteRenderer.sprite = null;
+        PlayerAnimator.Play("None");
+        UpperBody.SetActive(true);
+        LowerBody.SetActive(true);
+        Time.timeScale = 1f;
+        VerticalCollider.enabled = true;
+        HorizontalCollider.enabled = false;
         if (lastObelisk != null)
         {
             Debug.Log("lastObelisk " + lastObelisk.obeliskID);
@@ -129,10 +156,18 @@ public class PlayerHealth : MonoBehaviour
         {
             transform.position = defaultSpawnLocation;
         }
-
+        // rb.sharedMaterial = ZeroFriction;
         currentHealth = maxHealth;
+        playerAttack.enabled = true;
+        playerMovement.enabled = true;
         // UpdateHeartsUI();
         isDead = false;
+        
+        foreach (MonsterScript enemy in MonsterScript.ActiveMonsters)
+        {
+            enemy.StartEnemy();
+        }  
+
         screenFader.FadeFromWhite();
     }
 

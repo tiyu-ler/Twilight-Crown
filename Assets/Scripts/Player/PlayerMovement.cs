@@ -1,14 +1,23 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
 
     [Header("Movement Settings")]
+    public float HorizontalInput;
+    public bool CanMove = true;
     public float MoveSpeed = 6f;                   
     public float JumpForce = 14f;                 
     public float MaxJumpHoldTime = 0.2f;
     public float LowJumpMultiplier = 4f;
     public float FallMultiplier = 5f;
+
+    [Header("Dash Settings")]
+    public float DashSpeed = 20f;
+    public float DashDuration = 0.2f;
+    public float DashCooldown = 0.6f;
+    public bool IsDashing;
 
     [Header("Ground Settings")]
     public Transform GroundCheck;                 
@@ -19,36 +28,44 @@ public class PlayerMovement : MonoBehaviour
     [Header("Animation Settings")]
     public Animator UpperBodyAnimator;
     public Animator LowerBodyAnimator;
+    public Animator FullBodyAnimator;
     public GameObject UpperBody;
+    public GameObject LowerBody;
 
     [Header("Camera Setup")]
     public bool IsFacingRight = true;
     public CameraFollowObject _cameraFollowObject;
     public CameraManager cameraManager;
 
+    private bool _canDash = true;
     private float FallSpeedDampingChange;
     private float MaxFallSpeed = 30f;
     private Rigidbody2D _rb;
     private bool _isJumping, _jumpButtonHeld;
-    private float _horizontalInput, _jumpTimeCounter;
+    private float _jumpTimeCounter;
 
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
 
+        // _spriteRenderer = GetComponent<SpriteRenderer>();
+        FullBodyAnimator.StopPlayback();
+        // _spriteRenderer.sprite =  null;
         FallSpeedDampingChange = cameraManager.FallSpeedDampingLimit;
     }
 
 
     private void Update()
     {
+        if (IsDashing || !CanMove) return;
+
         UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
         LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
 
         UpperBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
         LowerBodyAnimator.SetFloat("VerticalVelocity", _rb.velocity.y);
 
-        _horizontalInput = Input.GetAxisRaw("Horizontal");
+        HorizontalInput = Input.GetAxisRaw("Horizontal");
 
         if (_rb.velocity.y < FallSpeedDampingChange && !cameraManager.IsLerpingYDamping 
             && !cameraManager.LerpedFromPlayerFalling)
@@ -77,17 +94,23 @@ public class PlayerMovement : MonoBehaviour
             _jumpButtonHeld = false;
             _isJumping = false;
         } 
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _canDash)
+        {
+            StartCoroutine(Dash());
+        }
     }
 
 
     private void FixedUpdate()
     {
-        FlipCharacter();
+        if (IsDashing || !CanMove) return;
+        FlipCharacter(false, -1);
 
-        _rb.velocity = new Vector2(_horizontalInput * MoveSpeed, _rb.velocity.y);
+        _rb.velocity = new Vector2(HorizontalInput * MoveSpeed, _rb.velocity.y);
 
-        UpperBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(_horizontalInput));
-        LowerBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(_horizontalInput));
+        UpperBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(HorizontalInput));
+        LowerBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(HorizontalInput));
 
         _isGrounded = IsGrounded();
 
@@ -145,9 +168,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    private void FlipCharacter()
+    public void FlipCharacter(bool ForcedTurn, int direction)
     {
-        if (_horizontalInput > 0 && !IsFacingRight)
+        if (HorizontalInput > 0 && !IsFacingRight || ForcedTurn && direction == 1)
         {
             UpperBody.transform.localPosition = new Vector3(0,0,-0.01f);
             IsFacingRight = !IsFacingRight;
@@ -155,8 +178,9 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(rotation);
 
             _cameraFollowObject.CallTurn();
+            // if (!ForcedTurn) _cameraFollowObject.CallTurn();
         } 
-        else if (_horizontalInput < 0 && IsFacingRight)
+        else if (HorizontalInput < 0 && IsFacingRight || ForcedTurn && direction == 0)
         {
             UpperBody.transform.localPosition = new Vector3(0,0,0.01f);
             IsFacingRight = !IsFacingRight;
@@ -164,9 +188,50 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Euler(rotation);
 
             _cameraFollowObject.CallTurn();
+            // if (!ForcedTurn) _cameraFollowObject.CallTurn();
         }
     }
 
+
+
+    private IEnumerator Dash()
+    {
+        _canDash = false;
+        IsDashing = true;
+        UpperBody.SetActive(false);
+        LowerBody.SetActive(false);
+        _rb.gravityScale = 0f;
+
+        float dashDirection = IsFacingRight ? 1 : -1;
+        _rb.velocity = new Vector2(dashDirection * DashSpeed, 0);
+
+        FullBodyAnimator.Play("Dash");
+
+        yield return new WaitForSeconds(0.07f + DashDuration);
+
+        FullBodyAnimator.Play("DashStop");
+
+        yield return new WaitForSeconds(0.1f);
+        FullBodyAnimator.Play("None");
+        UpperBody.SetActive(true);
+        LowerBody.SetActive(true);
+        _rb.gravityScale = 1f;
+        IsDashing = false;
+        UpperBodyAnimator.SetBool("HasSword", true);
+        yield return new WaitForSeconds(DashCooldown);
+        _canDash = true;
+    }
+
+    private float GetAnimationLength(string animationName)
+    {
+        RuntimeAnimatorController ac = FullBodyAnimator.runtimeAnimatorController;
+        foreach (AnimationClip clip in ac.animationClips)
+        {
+            if (clip.name == animationName)
+                return clip.length;
+        }
+        return 0.1f;
+    }
 
     private void OnDrawGizmos()
     {

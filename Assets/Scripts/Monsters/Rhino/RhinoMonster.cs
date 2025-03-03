@@ -134,10 +134,4 @@ public class RhinoMonster : MonsterScript
             }
         }
     }
-
-
-    // protected override void Attack()
-    // {
-    //     Debug.Log("Rhino Monster Attack");
-    // }
 }
