@@ -11,14 +11,15 @@ public class SwordPickUp : PickUpObject
         collider2d = GetComponent<BoxCollider2D>();
         playerMovement = FindObjectOfType<PlayerMovement>();
         playerAttack = FindObjectOfType<PlayerAttack>();
-        playerData = FindObjectOfType<PlayerData>();
         moveSpeed = playerMovement.MoveSpeed;
         playerAttack.enabled = false;
     }
     protected override void CollectItem()
     {
-        playerData.GrantAbility("HasSword");
-        Debug.Log("Sword collected!");
+        PlayerDataSave.Instance.HasSword = true;
+        PlayerDataSave.Instance.SwordLevel = 1;
+        playerAttack._canAttack = true;
+        // Debug.Log("Sword collected!");
     }
 
     protected override void Collect()
@@ -49,11 +50,30 @@ public class SwordPickUp : PickUpObject
             LowerBody.GetComponent<Animator>().Play("L_Idle");
         }
         Player.transform.position = EndPosition;
-        // playerMovement.enabled = true;
+        // float elapsedTime = 0f;
+        // float LerpTime = 0.5f;
+        // while (elapsedTime < LerpTime)
+        // {
+        //     elapsedTime += Time.deltaTime;
+
+        //     BlackBorderTop.transform.localPosition = new Vector3(0, Mathf.Lerp(440, 640, elapsedTime/LerpTime), 0);
+        //     BlackBorderBottom.transform.localPosition = new Vector3(0, Mathf.Lerp(-440, -640, elapsedTime/LerpTime), 0);
+            
+        //     yield return null;
+        // }
+        // cameraManager.CutsceneCamera(false);
         playerAttack.enabled = true;
         playerMovement.FlipCharacter(true, 1);
-        // playerMovement.FlipCharacter(true, 1);
         playerMovement.CanMove = true;
+        // BlackBorderTop.SetActive(false);
+        // BlackBorderBottom.SetActive(false);
+        // Debug.Log(FindAnyObjectByType<CameraFollowObject>().transform.rotation.y != Player.transform.rotation.y);
+        if (FindAnyObjectByType<CameraFollowObject>().transform.rotation.y != Player.transform.rotation.y)
+        {
+            Debug.Log("CALLTURN");
+            playerMovement.IsFacingRight = !playerMovement.IsFacingRight;
+            FindAnyObjectByType<CameraFollowObject>().CallTurn();
+        }
         Destroy(gameObject);
     }
 }

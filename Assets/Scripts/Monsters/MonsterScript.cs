@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public abstract class MonsterScript : MonoBehaviour
@@ -27,15 +28,17 @@ public abstract class MonsterScript : MonoBehaviour
     protected bool _isDead = false;
     protected bool _isChasing = false;
     protected bool _isMoving = true;
+    protected bool _canTakeDamage = true;
     protected Rigidbody2D _rb;
     protected SpriteRenderer _renderer;
     protected Animator _animator;
-    protected Transform _player;
+    protected GameObject _player;
     protected int _facingDirection = 1; // 1 - right, -1 - left
 
 
     protected virtual void Awake()
     {
+        _player = FindObjectOfType<PlayerMovement>().gameObject;
         ActiveMonsters.Add(this);
         _rb = GetComponent<Rigidbody2D>();
         _renderer = GetComponent<SpriteRenderer>();
@@ -112,7 +115,7 @@ public abstract class MonsterScript : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, PlayerLayer);
         if (hit.collider != null && hit.collider.CompareTag("Player"))
         {
-            _player = hit.collider.transform;
+            _player = hit.collider.gameObject;
             _isChasing = true;
         }
     } // Для других монстров, кроме носорога, добавить override и сделать просмотр в 2 стороны и делать поворот в сторону игрока
@@ -122,12 +125,12 @@ public abstract class MonsterScript : MonoBehaviour
     {
         if (_player == null) return;
 
-        float directionToPlayer = Mathf.Sign(_player.position.x - transform.position.x);
+        float directionToPlayer = Mathf.Sign(_player.transform.position.x - transform.position.x);
         _facingDirection = (int)directionToPlayer;
         _rb.velocity = new Vector2(directionToPlayer * ChaseSpeed, _rb.velocity.y);
         _animator?.SetBool("IsMoving", true);
 
-        if (Vector2.Distance(transform.position, _player.position) > SightRange * 1.2f)
+        if (Vector2.Distance(transform.position, _player.transform.position) > SightRange * 1.2f)
         {
             _isChasing = false;
         }
@@ -141,44 +144,69 @@ public abstract class MonsterScript : MonoBehaviour
     }
 
 
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, string attackDirection)
     {
-        if (_isDead) return;
+        if (_isDead || !_canTakeDamage) return;
 
         _currentHealth -= damage;
-        
-        StartCoroutine(GetHitted());
-
+        _canTakeDamage = false;
+        // Debug.Log(_currentHealth);
         if (_currentHealth <= 0)
         {
             Die();
         }
+        else
+        {
+            StartCoroutine(GetHitted());
+        }
     }
 
 
-    private IEnumerator GetHitted()
+    protected IEnumerator GetHitted()
     {   
         Color originalColor = _renderer.color;
 
-        _renderer.color = Color.white;
+        _renderer.color = Color.grey;
 
         yield return new WaitForSeconds(0.2f);
 
         _renderer.color = originalColor;
+        
+        StartCoroutine(HitKnockback());
+    }
+
+    protected virtual IEnumerator HitKnockback()
+    {
+        float knockbackForce = 4f;
+        float knockbackDuration = 0.05f;
+
+        Vector2 knockbackDirection = (transform.position - _player.transform.position).normalized;
+        knockbackDirection.y = 0.5f;
+
+        _rb.velocity = Vector2.zero;
+        _rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
+
+        _isMoving = false;
+
+        yield return new WaitForSeconds(knockbackDuration);
+
+        // Re-enable movement
+        _canTakeDamage = true;
+        _isMoving = true;
     }
 
 
     protected virtual void Die()
     {
+        _canTakeDamage = false;
+        _renderer.color = Color.grey;
         _isDead = true;
-        _animator?.SetTrigger("Die");
+        _animator.Play("Die");
         _rb.velocity = Vector2.zero;
         _rb.isKinematic = true;
         GetComponent<Collider2D>().enabled = false;
         Destroy(gameObject, 2f);
     }
 
-
-    // protected abstract void Attack();
 
 }

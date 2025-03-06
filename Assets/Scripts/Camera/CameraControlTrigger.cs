@@ -26,7 +26,7 @@ public class CameraControlTrigger : MonoBehaviour
     private IEnumerator WaitForLanding(Vector2 exitDirection)
     {
         yield return new WaitUntil(() => playerMovement._isGrounded);
-        Debug.Log("Swap");
+        // Debug.Log("Swap");
         CameraManager.Instance.SwapCamera(
             customInspectorObjects.cameraOnLeft,
             customInspectorObjects.cameraOnRight,

@@ -53,7 +53,7 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth--;
         // UpdateHeartsUI();
-        Debug.Log(currentHealth);
+        // Debug.Log(currentHealth);
         if (currentHealth <= 0)
         {
             isDead = true;
@@ -61,7 +61,7 @@ public class PlayerHealth : MonoBehaviour
             LowerBody.SetActive(false);
             // PlayerSpriteRenderer.sprite = Death;
             PlayerAnimator.Play("Death");
-            Debug.Log("DEATH");
+            // Debug.Log("DEATH");
             // rb.sharedMaterial = HighFriction;
             Time.timeScale = 0.5f;
             VerticalCollider.enabled = false;
@@ -149,7 +149,7 @@ public class PlayerHealth : MonoBehaviour
         HorizontalCollider.enabled = false;
         if (lastObelisk != null)
         {
-            Debug.Log("lastObelisk " + lastObelisk.obeliskID);
+            // Debug.Log("lastObelisk " + lastObelisk.obeliskID);
             transform.position = lastObelisk.GetSpawnPoint();
         }
         else

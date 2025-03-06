@@ -1,8 +1,11 @@
-[System.Serializable]
-public class PlayerDataSave
+using UnityEngine;
+
+public class PlayerDataSave : MonoBehaviour
 {
-    public int obeliskID;
-    public bool HasSword;
+    public static PlayerDataSave Instance;
+    public int saveID;
+    public int ObeliskID; // used
+    public bool HasSword; 
     public int SwordLevel;
     public bool HasWallClimb;
     public bool HasDash;
@@ -11,18 +14,37 @@ public class PlayerDataSave
     public int Money;
     public bool CollectedSpheresSound;
     public bool CollectedSpheresLight;
+    public float totalPlayTime;
 
-    public PlayerDataSave(int obeliskID, bool HasSword, int SwordLevel, bool HasWallClimb, bool HasDash, bool HasMagic, int MagicLevel, int Money, bool CollectedSpheresSound, bool CollectedSpheresLight)
+    void Update()
     {
-        this.obeliskID = obeliskID;
-        this.HasSword = HasSword;
-        this.SwordLevel = SwordLevel;
-        this.HasWallClimb = HasWallClimb;
-        this.HasDash = HasDash;
-        this.HasMagic = HasMagic;
-        this.MagicLevel = MagicLevel;
-        this.Money = Money;
-        this.CollectedSpheresSound = CollectedSpheresSound;
-        this.CollectedSpheresLight = CollectedSpheresLight;
+        Debug.Log(ObeliskID);
+    } 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void Default()
+    {
+        ObeliskID = 0;
+        HasSword = false;
+        SwordLevel = 0;
+        HasWallClimb = false;
+        HasDash = false;
+        HasMagic = false;
+        MagicLevel = 0;
+        Money = 0;
+        CollectedSpheresSound = false;
+        CollectedSpheresLight = false;
+        totalPlayTime = 0;
     }
 }

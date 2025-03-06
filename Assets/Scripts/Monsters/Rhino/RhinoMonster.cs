@@ -15,7 +15,6 @@ public class RhinoMonster : MonsterScript
     private bool _isRolling = false;
     private bool _isRollingAnimationFinished = false;
     private float _rollTimer = 0f;
-
     protected override void Update()
     {
         if (_isDead) return;
@@ -75,6 +74,26 @@ public class RhinoMonster : MonsterScript
         StartCoroutine(WaitForStartRollAnimation());
     }
 
+    public override void TakeDamage(float damage, string attackDirection)
+    {
+        if (_isDead || !_canTakeDamage) return;
+        switch(attackDirection)
+        {
+            case "bottom": _player.GetComponent<PlayerMovement>().RigidBody.AddForce(Vector2.up * 30f, ForceMode2D.Impulse);
+                break;
+        }
+        _currentHealth -= damage;
+        _canTakeDamage = false;
+        // Debug.Log(_currentHealth);
+        if (_currentHealth <= 0)
+        {
+            Die();
+        }
+        else
+        {
+            StartCoroutine(GetHitted());
+        }
+    }
 
     private IEnumerator WaitForStartRollAnimation()
     {
@@ -110,7 +129,48 @@ public class RhinoMonster : MonsterScript
         StartCoroutine(WaitForUnRollAnimation());
     }
 
+    protected override IEnumerator HitKnockback()
+    {
+        if (_isRolling)
+        {
+            DefaultCollider.isTrigger = false;
+            RollCollider.isTrigger = false;
 
+            float knockbackForce = 4f;
+            float knockbackDuration = 0.05f;
+
+            Vector2 knockbackDirection = (transform.position - _player.transform.position).normalized;
+            knockbackDirection.y = 0.5f;
+
+            _rb.velocity = Vector2.zero;
+            _rb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
+
+            _isMoving = false;
+
+            yield return new WaitForSeconds(knockbackDuration);
+
+            DefaultCollider.isTrigger = true;
+            RollCollider.isTrigger = true;
+
+            // Re-enable movement
+        }
+        _isMoving = true;
+        _canTakeDamage = true;
+    }
+    protected override void Die()
+    {
+        DefaultCollider.isTrigger = false;
+        DefaultCollider.enabled = true;
+        RollCollider.enabled = false;
+        _canTakeDamage = false;
+        _renderer.color = Color.grey;
+        _isDead = true;
+        _animator.Play("Die");
+        _rb.velocity = Vector2.zero;
+        _rb.isKinematic = true;
+        GetComponent<Collider2D>().enabled = false;
+        Destroy(gameObject, 2f);
+    }
     private IEnumerator WaitForUnRollAnimation()
     {
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).IsName("UnRoll"));

@@ -1,60 +1,55 @@
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
 public static class SaveSystem
 {
-    private static string saveFilePath = Application.persistentDataPath + "/game.save";
+    private static readonly string SAVE_FOLDER = Application.persistentDataPath + "/Saves/";
+    private const string SAVE_EXTENSION = ".json";
 
-    public static void SaveGame(
-        int obeliskID,
-        bool HasSword,
-        int SwordLevel,
-        bool HasWallClimb,
-        bool HasDash,
-        bool HasMagic,
-        int MagicLevel,
-        int Money,
-        bool CollectedSpheresSound,
-        bool CollectedSpheresLight)
+    public static void Init()
     {
-        PlayerDataSave data = new PlayerDataSave(
-            obeliskID,
-            HasSword,
-            SwordLevel,
-            HasWallClimb,
-            HasDash,
-            HasMagic,
-            MagicLevel,
-            Money,
-            CollectedSpheresSound,
-            CollectedSpheresLight
-        );
-        FileStream file = new FileStream(saveFilePath, FileMode.Create);
-
-        BinaryFormatter formatter = new BinaryFormatter();
-        formatter.Serialize(file, data);
-
-        file.Close();
+        if (!Directory.Exists(SAVE_FOLDER))
+        {
+            Directory.CreateDirectory(SAVE_FOLDER);
+        }
     }
 
-    public static PlayerDataSave LoadGame()
+    public static void Save(int saveID, PlayerDataSavePackage saveObject)
     {
-        if (File.Exists(saveFilePath))
+        string savePath = GetSaveFilePath(saveID);
+        string json = JsonUtility.ToJson(saveObject, true);
+        File.WriteAllText(savePath, json);
+    }
+
+    public static PlayerDataSavePackage Load(int saveID)
+    {
+        string savePath = GetSaveFilePath(saveID);
+        if (File.Exists(savePath))
         {
-            FileStream file = new FileStream(saveFilePath, FileMode.Open);
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            PlayerDataSave data = (PlayerDataSave)formatter.Deserialize(file);
-
-            file.Close();
-
-            return data;
+            string json = File.ReadAllText(savePath);
+            PlayerDataSavePackage saveObject = JsonUtility.FromJson<PlayerDataSavePackage>(json);
+            return saveObject;
         }
-        else
+        return null;
+    }
+
+    public static void DeleteSave(int saveID)
+    {
+        string savePath = GetSaveFilePath(saveID);
+        if (File.Exists(savePath))
         {
-            Debug.LogError("Save file not found!");
-            return null;
+            File.Delete(savePath);
         }
+    }
+
+
+    public static bool SaveExists(int saveID)
+    {
+        return File.Exists(GetSaveFilePath(saveID));
+    }
+
+    private static string GetSaveFilePath(int saveID)
+    {
+        return SAVE_FOLDER + "SaveSlot_" + saveID + SAVE_EXTENSION;
     }
 }

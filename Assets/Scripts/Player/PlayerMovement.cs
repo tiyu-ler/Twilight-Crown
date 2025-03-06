@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     public CameraFollowObject _cameraFollowObject;
     public CameraManager cameraManager;
 
-    private bool _canDash = true;
+    private bool _canDash = false;
     private float FallSpeedDampingChange;
     private float MaxFallSpeed = 30f;
     private bool _isJumping, _jumpButtonHeld;
@@ -46,11 +46,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        _canDash = PlayerDataSave.Instance.HasDash;
         RigidBody = GetComponent<Rigidbody2D>();
-
-        // _spriteRenderer = GetComponent<SpriteRenderer>();
         FullBodyAnimator.StopPlayback();
-        // _spriteRenderer.sprite =  null;
         FallSpeedDampingChange = cameraManager.FallSpeedDampingLimit;
     }
 
@@ -173,7 +171,10 @@ public class PlayerMovement : MonoBehaviour
         if (HorizontalInput > 0 && !IsFacingRight || ForcedTurn && direction == 1)
         {
             UpperBody.transform.localPosition = new Vector3(0,0,-0.01f);
-            IsFacingRight = !IsFacingRight;
+            if (!ForcedTurn)
+            {
+                IsFacingRight = !IsFacingRight;
+            }
             Vector3 rotation = new Vector3(transform.rotation.x, 0, transform.rotation.z);
             transform.rotation = Quaternion.Euler(rotation);
 
@@ -183,7 +184,10 @@ public class PlayerMovement : MonoBehaviour
         else if (HorizontalInput < 0 && IsFacingRight || ForcedTurn && direction == 0)
         {
             UpperBody.transform.localPosition = new Vector3(0,0,0.01f);
-            IsFacingRight = !IsFacingRight;
+            if (!ForcedTurn)
+            {
+                IsFacingRight = !IsFacingRight;
+            }
             Vector3 rotation = new Vector3(transform.rotation.x, 180, transform.rotation.z);
             transform.rotation = Quaternion.Euler(rotation);
 

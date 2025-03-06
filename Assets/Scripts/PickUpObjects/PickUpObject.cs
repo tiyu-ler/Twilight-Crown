@@ -15,20 +15,23 @@ public abstract class PickUpObject : MonoBehaviour
     protected bool isCollected = false;
     protected PlayerMovement playerMovement;
     protected PlayerAttack playerAttack;
-    protected PlayerData playerData;
+    // public PlayerDataSave playerDataSave;
     private bool _canBePressed = false;
     protected float moveSpeed;
     public GameObject Player;
-    public CameraFollowObject cameraFollowObject;
+    // public GameObject BlackBorderTop;
+    // public GameObject BlackBorderBottom;
+    private CameraFollowObject cameraFollowObject;
+    public CameraManager cameraManager;
     protected virtual void Start()
     {
+        cameraFollowObject = FindAnyObjectByType<CameraFollowObject>();
         _lowerBodyAnimator = LowerBody.GetComponent<Animator>();
         _upperBodyAnimator = UpperBody.GetComponent<Animator>();
         animator = GetComponent<Animator>();
         collider2d = GetComponent<BoxCollider2D>();
         playerMovement = FindObjectOfType<PlayerMovement>();
         playerAttack = FindObjectOfType<PlayerAttack>();
-        playerData = FindObjectOfType<PlayerData>();
         moveSpeed = playerMovement.MoveSpeed;
     }
 
@@ -73,13 +76,26 @@ public abstract class PickUpObject : MonoBehaviour
     }
 
     protected IEnumerator MoveToPickUp()
-    {
-        // cameraFollowObject.NeedToFollow = false;
+    {   
+        // cameraManager.CutsceneCamera(true);
+        // BlackBorderTop.SetActive(true);
+        // BlackBorderBottom.SetActive(true);
+        // float elapsedTime = 0f;
+        // float LerpTime = 0.5f;
+
         
+        // while (elapsedTime < LerpTime)
+        // {
+        //     elapsedTime += Time.deltaTime;
+
+        //     BlackBorderTop.transform.localPosition = new Vector3(0, Mathf.Lerp(640, 440, elapsedTime/LerpTime), 0);
+        //     BlackBorderBottom.transform.localPosition = new Vector3(0, Mathf.Lerp(-640, -440, elapsedTime/LerpTime), 0);
+            
+        //     yield return null;
+        // }
         isCollected = true;
         collider2d.enabled = false;
         playerMovement.RigidBody.velocity = Vector2.zero;
-        // playerMovement.enabled = false;
         playerAttack.enabled = false;
 
         _lowerBodyAnimator.SetFloat("RunSpeed", 1);
@@ -96,7 +112,6 @@ public abstract class PickUpObject : MonoBehaviour
             );
             yield return null;
         }
-        // Player.transform.position = EndPosition;
         Collect();
     }
 
@@ -108,7 +123,6 @@ public abstract class PickUpObject : MonoBehaviour
             LowerBody.SetActive(false);
             UpperBody.SetActive(false);
         }
-        Debug.Log(Mathf.Abs(Player.transform.eulerAngles.y));
 
         StartCoroutine(DestroyAfterAnimation());
         CollectItem();
@@ -127,12 +141,30 @@ public abstract class PickUpObject : MonoBehaviour
             LowerBody.GetComponent<Animator>().Play("L_Idle");
         }
 
-        // playerMovement.enabled = true;
         playerAttack.enabled = true;
+        Debug.Log("Player rotation " + Player.transform.rotation.y);
         playerMovement.FlipCharacter(true, 1);
-        // playerMovement.FlipCharacter(true, 1);
         playerMovement.CanMove = true;
-        // cameraFollowObject.NeedToFollow = true;
+        Debug.Log(cameraFollowObject.transform.rotation.y != Player.transform.rotation.y);
+        // cameraManager.CutsceneCamera(false);
+        // BlackBorderTop.SetActive(false);
+        // BlackBorderBottom.SetActive(false);
+        // float elapsedTime = 0f;
+        // float LerpTime = 0.5f;
+        // while (elapsedTime < LerpTime)
+        // {
+        //     elapsedTime += Time.deltaTime;
+
+        //     BlackBorderTop.transform.localPosition = new Vector3(0, Mathf.Lerp(440, 640, elapsedTime/LerpTime), 0);
+        //     BlackBorderBottom.transform.localPosition = new Vector3(0, Mathf.Lerp(-440, -640, elapsedTime/LerpTime), 0);
+            
+        //     yield return null;
+        // }
+        if (cameraFollowObject.transform.rotation.y != Player.transform.rotation.y)
+        {
+            Debug.Log("CALLTURN");
+            cameraFollowObject.CallTurn();
+        }
         Destroy(gameObject);
     }
 

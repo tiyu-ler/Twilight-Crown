@@ -8,17 +8,35 @@ public class Obelisk : MonoBehaviour
     private Animator obeliskAnimator;
     private PlayerMovement playerMovement;
     private PlayerHealth playerHealth;
-    private PlayerData playerData;
+    private CameraFollowObject cameraFollowObject;
+    // private PlayerData playerData;
     private bool _isActive = false;
     private static Obelisk currentActiveObelisk;
     private Vector3 SpawnPoint;
+    // public PlayerDataSave playerDataSave;
+    private GameManager gameManager;
     private void Start()
     {
-        SpawnPoint = new Vector3(transform.position.x - 1.2f, transform.position.y + 1.2f, 0);
+        SpawnPoint = new Vector3(transform.position.x - 1.2f, transform.position.y - 1.15f, 0);
         obeliskAnimator = GetComponent<Animator>();
         playerMovement = FindObjectOfType<PlayerMovement>();
-        playerData = FindObjectOfType<PlayerData>();
+        cameraFollowObject = FindObjectOfType<CameraFollowObject>();
+        // playerData = FindObjectOfType<PlayerData>();
         playerHealth = FindObjectOfType<PlayerHealth>();
+        gameManager = FindObjectOfType<GameManager>();
+        TeleportPlayerAndCamera(); //spawn player on game load
+    }
+
+    private void TeleportPlayerAndCamera()
+    {
+        if (obeliskID == PlayerDataSave.Instance.ObeliskID)
+        {
+            playerHealth.gameObject.transform.position = SpawnPoint;
+            cameraFollowObject.transform.position = SpawnPoint;
+            _isActive = true;
+            obeliskAnimator.Play("Active");
+            currentActiveObelisk = this;
+        }
     }
 
     void OnTriggerStay2D(Collider2D collider)
@@ -47,19 +65,8 @@ public class Obelisk : MonoBehaviour
         }
 
         playerHealth.SetLastObelisk(this);
-
-        SaveSystem.SaveGame(
-            obeliskID,
-            playerData.HasSword,
-            playerData.SwordLevel,
-            playerData.HasWallClimb,
-            playerData.HasDash,
-            playerData.HasMagic,
-            playerData.MagicLevel,
-            playerData.Money,
-            playerData.HasWallClimb, 
-            playerData.HasDash
-        );
+        PlayerDataSave.Instance.ObeliskID = obeliskID;
+        gameManager.SaveGame(PlayerDataSave.Instance.saveID);
     }
 
     public Vector3 GetSpawnPoint()

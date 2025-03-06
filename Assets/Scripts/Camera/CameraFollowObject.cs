@@ -7,15 +7,12 @@ public class CameraFollowObject : MonoBehaviour
     [Header("Follow Object Settings")]
     [SerializeField] private Transform PlayerTransform;
     [SerializeField] private float FlipYRotationTime = 0.5f;
-    public bool NeedToFollow;
 
     private Coroutine _turnCoroutine;
     private GameObject _player;
     private bool _isFacingRight;
-
     void Awake()
     {
-        NeedToFollow = true;
         _player = PlayerTransform.gameObject;
         _isFacingRight = _player.GetComponent<PlayerMovement>().IsFacingRight;
     }
@@ -23,8 +20,7 @@ public class CameraFollowObject : MonoBehaviour
 
     void Update()
     {
-        if (!NeedToFollow) return;
-        transform.position = PlayerTransform.position;
+            transform.position = PlayerTransform.position;
     }
 
 

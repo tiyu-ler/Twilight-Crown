@@ -3,56 +3,61 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-
     [Header("Attack Settings")]
-    public float AttackCooldown = 0.2f, AttackRange = 1.5f;
-    // public LayerMask EnemyLayer;
-    public Transform AttackPoint;
+    public float AttackCooldown = 0.2f;
+    
+    [Header("Hitboxes")]
+    public GameObject Hitbox_Right;
+    public GameObject Hitbox_Up;
+    public GameObject Hitbox_Down;
+    public GameObject Hitbox_Air;
 
     [Header("Animators")]
     public Animator UpperBodyAnimator;
 
-    private bool _canAttack = true, _doubleAttack = false;
+    public bool _canAttack = false;
+    private bool _doubleAttack = false;
     private Coroutine _hideSwordCoroutine;
     private PlayerMovement playerMovement;
     private Rigidbody2D _rb;
 
     void Start()
     {
+        _canAttack = PlayerDataSave.Instance.HasSword;
         playerMovement = GetComponent<PlayerMovement>();
         _rb = GetComponent<Rigidbody2D>();
-    }
 
+        DisableAllHitboxes(); // Ensure hitboxes are off at start
+    }
 
     private void Update()
     {
         if (_canAttack && Input.GetMouseButtonDown(0) && !playerMovement.IsDashing)
         {
-            if (Input.GetKey(KeyCode.W) && _canAttack) //вверх
+            if (Input.GetKey(KeyCode.W)) // Up attack
             {
-                PerformAttack(Vector2.up, "U_UpAttack_1", "U_UpAttack_2", false);
+                PerformAttack(Hitbox_Up, "U_UpAttack_1", "U_UpAttack_2", false);
             }
-            else if (!playerMovement.IsGrounded() && Input.GetKey(KeyCode.S) && _canAttack) // вниз в воздухе
+            else if (!playerMovement.IsGrounded() && Input.GetKey(KeyCode.S)) // Down attack in air
             {
-                    PerformAttack(Vector2.down, "U_Attack_Down1", "U_Attack_Down2", true);
+                PerformAttack(Hitbox_Down, "U_Attack_Down1", "U_Attack_Down2", true);
             }
-            else if (playerMovement.IsGrounded() && Mathf.Abs(_rb.velocity.x) > 0.1f && _canAttack) // на земле, если двигаеться
+            else if (playerMovement.IsGrounded() && Mathf.Abs(_rb.velocity.x) > 0.1f) // Ground attack while moving
             {
-                PerformAttack(Vector2.down, "U_Attack_1", "U_Attack_2", false);
+                PerformAttack(Hitbox_Right, "U_Attack_1", "U_Attack_2", false);
             }
             else
             {
-                PerformAttack(Vector2.right, "U_AttackAir1", "U_AttackAir2", false); // прыжок, движение в прыжке, idle
+                PerformAttack(Hitbox_Air, "U_AttackAir1", "U_AttackAir2", false); // Air attack or idle attack
             }
         }
     }
 
-
-    private void PerformAttack(Vector2 attackDirection, string animationName, string alternativeName, bool isDownSlash)
+    private void PerformAttack(GameObject hitbox, string animationName, string alternativeName, bool isDownSlash)
     {
         string currentAnimation;
         _canAttack = false;
-    
+
         if (!_doubleAttack)
         {
             UpperBodyAnimator.Play(animationName);
@@ -66,16 +71,17 @@ public class PlayerAttack : MonoBehaviour
             currentAnimation = alternativeName;
         }
 
-        // DetectHits(attackDirection);
+        // Enable hitbox for the attack
+        StartCoroutine(EnableHitboxTemporarily(hitbox));
+
+        // Wait for the animation to finish
+        StartCoroutine(WaitForAttackAnimation(currentAnimation));
 
         if (_hideSwordCoroutine != null)
             StopCoroutine(_hideSwordCoroutine);
 
         _hideSwordCoroutine = StartCoroutine(HideSword(isDownSlash));
-        
-        StartCoroutine(WaitForAttackAnimation(currentAnimation));
     }
-
 
     private IEnumerator HideSword(bool isDownSlash)
     {
@@ -90,6 +96,12 @@ public class PlayerAttack : MonoBehaviour
         _doubleAttack = false;
     }
 
+    private IEnumerator EnableHitboxTemporarily(GameObject hitbox)
+    {
+        hitbox.SetActive(true);
+        yield return new WaitForSeconds(0.15f);
+        hitbox.SetActive(false);
+    }
 
     private IEnumerator WaitForAttackAnimation(string attackAnimation)
     {
@@ -98,26 +110,11 @@ public class PlayerAttack : MonoBehaviour
         _canAttack = true;
     }
 
-
-    // private void DetectHits(Vector2 direction)
-    // {
-    //     RaycastHit2D[] hits = Physics2D.RaycastAll(AttackPoint.position, direction, AttackRange, EnemyLayer);
-    //     foreach (var hit in hits)
-    //     {
-    //         if (hit.collider != null)
-    //         {
-    //             Debug.Log("Hit: " + hit.collider.name);
-    //         }
-    //     }
-    // }
-
-
-    private void OnDrawGizmos()
+    private void DisableAllHitboxes()
     {
-        if (AttackPoint != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(AttackPoint.position, AttackPoint.position + Vector3.right * AttackRange);
-        }
+        Hitbox_Right.SetActive(false);
+        Hitbox_Up.SetActive(false);
+        Hitbox_Down.SetActive(false);
+        Hitbox_Air.SetActive(false);
     }
 }

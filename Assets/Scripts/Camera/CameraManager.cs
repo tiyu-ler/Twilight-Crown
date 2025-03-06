@@ -19,6 +19,9 @@ public class CameraManager : MonoBehaviour
     private CinemachineVirtualCamera _currentCamera;
     private CinemachineFramingTransposer _framingTransporter;
     private Vector2 _startingTrackedObjectOffset;
+    private float SavedTrackedObjectOffsetX;
+    private float SavedTrackedObjectOffsetY;
+    // private CinemachineConfiner confiner;
     void Awake()
     {
         if (Instance == null)
@@ -33,6 +36,8 @@ public class CameraManager : MonoBehaviour
                 _currentCamera = AllVirtualCameras[i];
             
                 _framingTransporter = _currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+
+                // confiner = _currentCamera.GetComponent<CinemachineConfiner>();
             }
         }
 
@@ -46,6 +51,56 @@ public class CameraManager : MonoBehaviour
         StartCoroutine(LerpYAction(isPlayerFalling));
     }
 
+    // public void CutsceneCamera(bool activate)
+    // {
+    //     CinemachineConfiner2D confiner = _currentCamera.GetComponent<CinemachineConfiner2D>();
+    //     if (confiner == null)
+    //     {
+    //         Debug.LogWarning("CutsceneCamera: No CinemachineConfiner found on the current camera.");
+    //     }
+    //     if (activate)
+    //     {
+    //         Debug.Log("CameraSet");
+    //         SavedTrackedObjectOffsetX = _framingTransporter.m_TrackedObjectOffset.x;
+    //         SavedTrackedObjectOffsetY = _framingTransporter.m_TrackedObjectOffset.y;
+
+    //         confiner.m_MaxWindowSize = 1f;
+            
+    //         StartCoroutine(LerpYOffset(true));
+    //         // _framingTransporter.m_TrackedObjectOffset = Vector3.zero;
+    //     }
+    //     else
+    //     {
+    //         StartCoroutine(LerpYOffset(false));
+    //         confiner.m_MaxWindowSize = 0f;
+    //         // _framingTransporter.m_TrackedObjectOffset = new Vector3(SavedTrackedObjectOffsetX, SavedTrackedObjectOffsetY, 0);
+    //     }
+    // }
+    private IEnumerator LerpYOffset(bool lerpToZero)
+    {
+        float elapsedTime = 0f;
+        float offsetLerpTime = 0.5f;
+        Vector3 startOffset, endOffset;
+        if (lerpToZero)
+        {
+            startOffset = _framingTransporter.m_TrackedObjectOffset;
+            endOffset = Vector3.zero;
+            
+        }
+        else
+        {
+            startOffset = Vector3.zero;
+            endOffset = new Vector3(SavedTrackedObjectOffsetX, SavedTrackedObjectOffsetY, 0);
+        }
+        while (elapsedTime < offsetLerpTime)
+        {
+            elapsedTime += Time.deltaTime;
+
+            _framingTransporter.m_TrackedObjectOffset = Vector3.Lerp(startOffset, endOffset, elapsedTime/offsetLerpTime);
+
+            yield return null;
+        }
+    }
     private IEnumerator LerpYAction(bool isPlayerFalling)
     { 
         IsLerpingYDamping = true;
