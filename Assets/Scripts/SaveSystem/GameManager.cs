@@ -7,10 +7,16 @@ public class GameManager : MonoBehaviour
     private float playTime = 0f;
     private PlayerDataSave dataSave;
     public bool Isgame;
+    public GameObject Case, Sword;
     private void Awake()
     {
+        dataSave = FindObjectOfType<PlayerDataSave>();
+        if (dataSave.HasSword)
+        {
+            if (Case) Destroy(Case);
+            if (Sword) Destroy(Sword);
+        }
         SaveSystem.Init();
-        dataSave = FindObjectOfType<PlayerDataSave>(); // Reference to the player
     }
 
     private void Update()

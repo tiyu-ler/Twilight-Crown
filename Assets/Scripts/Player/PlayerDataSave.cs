@@ -16,10 +16,6 @@ public class PlayerDataSave : MonoBehaviour
     public bool CollectedSpheresLight;
     public float totalPlayTime;
 
-    void Update()
-    {
-        Debug.Log(ObeliskID);
-    } 
     private void Awake()
     {
         if (Instance == null)
