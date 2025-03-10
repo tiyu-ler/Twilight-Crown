@@ -156,11 +156,9 @@ public class PlayerHealth : MonoBehaviour
         {
             transform.position = defaultSpawnLocation;
         }
-        // rb.sharedMaterial = ZeroFriction;
         currentHealth = maxHealth;
         playerAttack.enabled = true;
         playerMovement.enabled = true;
-        // UpdateHeartsUI();
         isDead = false;
         
         foreach (MonsterScript enemy in MonsterScript.ActiveMonsters)

@@ -26,13 +26,42 @@ public class CameraControlTrigger : MonoBehaviour
     private IEnumerator WaitForLanding(Vector2 exitDirection)
     {
         yield return new WaitUntil(() => playerMovement._isGrounded);
-        // Debug.Log("Swap");
         CameraManager.Instance.SwapCamera(
             customInspectorObjects.cameraOnLeft,
             customInspectorObjects.cameraOnRight,
             exitDirection
         );
     }
+    private IEnumerator SetSpriteOpacity(GameObject parent, float targetAlpha)
+    {
+        float duration = 0.8f;
+        float time = 0f;
+
+        SpriteRenderer[] spriteRenderers = parent.GetComponentsInChildren<SpriteRenderer>();
+        float[] initialAlphas = new float[spriteRenderers.Length];
+        
+        for (int i = 0; i < spriteRenderers.Length; i++)
+        {
+            initialAlphas[i] = spriteRenderers[i].color.a;
+        }
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+            for (int i = 0; i < spriteRenderers.Length; i++)
+            {
+                if (spriteRenderers[i] == null) continue;
+                Color color = spriteRenderers[i].color;
+                color.a = Mathf.Lerp(initialAlphas[i], targetAlpha, t);
+                spriteRenderers[i].color = color;
+            }
+            yield return null;
+        }
+        Destroy(parent);
+    }
+
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -41,6 +70,13 @@ public class CameraControlTrigger : MonoBehaviour
 
             if (customInspectorObjects.swapCameras && customInspectorObjects.cameraOnLeft != null && customInspectorObjects.cameraOnRight != null)
             {
+                if (customInspectorObjects.IsCameraFromLeftSecret || customInspectorObjects.IsCameraFromRightSecret)
+                {
+                    if (customInspectorObjects.HiddenObject != null)
+                    {
+                        StartCoroutine(SetSpriteOpacity(customInspectorObjects.HiddenObject, 0));
+                    }
+                }
                 if (customInspectorObjects.IsCameraFromLeftTight || customInspectorObjects.IsCameraFromRightTight)
                 {
                     StartCoroutine(WaitForLanding(exitDirection));
@@ -78,8 +114,11 @@ public class CustomInspectorObjects
     [HideInInspector] public float panDistance = 3f;
     [HideInInspector] public float panTime = 0.35f;
     [HideInInspector] public bool IsCameraFromLeftTight = false;
-    [HideInInspector]public bool IsCameraFromRightTight = false;
-}
+    [HideInInspector] public bool IsCameraFromRightTight = false;
+    [HideInInspector] public bool IsCameraFromLeftSecret = false;
+    [HideInInspector] public bool IsCameraFromRightSecret = false;
+    [HideInInspector] public GameObject HiddenObject;
+}   
 
 public enum PanDirection
 {
@@ -111,10 +150,21 @@ public class MyScriptEditor : Editor
             cameraControlTrigger.customInspectorObjects.cameraOnRight = EditorGUILayout.ObjectField("Camera on Right", 
                 cameraControlTrigger.customInspectorObjects.cameraOnRight, typeof(CinemachineVirtualCamera), true) as CinemachineVirtualCamera;
 
-            cameraControlTrigger.customInspectorObjects.IsCameraFromLeftTight = EditorGUILayout.Toggle("Is Left Camera Tight?", 
+            cameraControlTrigger.customInspectorObjects.IsCameraFromLeftTight = EditorGUILayout.Toggle("Camera on Left is Tight", 
                 cameraControlTrigger.customInspectorObjects.IsCameraFromLeftTight);
-            cameraControlTrigger.customInspectorObjects.IsCameraFromRightTight = EditorGUILayout.Toggle("Is Right Camera Tight?", 
+            cameraControlTrigger.customInspectorObjects.IsCameraFromRightTight = EditorGUILayout.Toggle("Camera on Right is Tight", 
                 cameraControlTrigger.customInspectorObjects.IsCameraFromRightTight);
+
+            cameraControlTrigger.customInspectorObjects.IsCameraFromLeftSecret = EditorGUILayout.Toggle("Reveal Secret on Left", 
+                cameraControlTrigger.customInspectorObjects.IsCameraFromLeftSecret);
+            cameraControlTrigger.customInspectorObjects.IsCameraFromRightSecret = EditorGUILayout.Toggle("Reveal Secret on Right", 
+                cameraControlTrigger.customInspectorObjects.IsCameraFromRightSecret);
+        }
+
+        if (cameraControlTrigger.customInspectorObjects.IsCameraFromLeftSecret || cameraControlTrigger.customInspectorObjects.IsCameraFromRightSecret)
+        {
+            cameraControlTrigger.customInspectorObjects.HiddenObject = EditorGUILayout.ObjectField("What to hide on Secret Found", 
+                cameraControlTrigger.customInspectorObjects.HiddenObject, typeof(GameObject), true) as GameObject;
         }
 
         if (cameraControlTrigger.customInspectorObjects.panCameraOnContact)

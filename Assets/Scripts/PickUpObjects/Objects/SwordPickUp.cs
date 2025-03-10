@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SwordPickUp : PickUpObject
 {
+    public GameObject SwordCase;
     protected override void Start()
     {
         _lowerBodyAnimator = LowerBody.GetComponent<Animator>();

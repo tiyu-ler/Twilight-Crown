@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: 919763433998651610}
   - component: {fileID: 1310724633210992812}
   - component: {fileID: 1263439121387623684}
+  - component: {fileID: 9103131012636468563}
   m_Layer: 0
   m_Name: Rhino
-  m_TagString: Untagged
+  m_TagString: Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -207,7 +208,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -218,7 +219,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 6
+  m_Constraints: 4
 --- !u!114 &1263439121387623684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,6 +252,42 @@ MonoBehaviour:
   MaxRollDuration: 3
   DefaultCollider: {fileID: 1228183593652984890}
   RollCollider: {fileID: 919763433998651610}
+  died: {fileID: 157881071, guid: 3bcc4d9d6847af34caa98c9ae067af4e, type: 3}
+--- !u!70 &9103131012636468563
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973361931259701833}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.0795}
+  m_Size: {x: 0.18, y: 0.001}
+  m_Direction: 1
 --- !u!1 &5659748670640363080
 GameObject:
   m_ObjectHideFlags: 0

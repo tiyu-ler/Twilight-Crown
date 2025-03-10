@@ -9,7 +9,6 @@ public abstract class PickUpObject : MonoBehaviour
     protected Animator _upperBodyAnimator;
     public GameObject LowerBody;
     public GameObject UpperBody;
-    public GameObject SwordCase;
     public Vector2 EndPosition;
     protected BoxCollider2D collider2d;
     protected bool isCollected = false;
@@ -21,7 +20,7 @@ public abstract class PickUpObject : MonoBehaviour
     public GameObject Player;
     // public GameObject BlackBorderTop;
     // public GameObject BlackBorderBottom;
-    private CameraFollowObject cameraFollowObject;
+    protected CameraFollowObject cameraFollowObject;
     public CameraManager cameraManager;
     protected virtual void Start()
     {

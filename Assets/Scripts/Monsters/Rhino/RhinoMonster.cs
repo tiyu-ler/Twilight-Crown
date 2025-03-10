@@ -11,13 +11,15 @@ public class RhinoMonster : MonsterScript
     [Header("Colliders Settings")]
     public Collider2D DefaultCollider;
     public Collider2D RollCollider;
-
+    public Sprite died;
     private bool _isRolling = false;
     private bool _isRollingAnimationFinished = false;
     private float _rollTimer = 0f;
     protected override void Update()
     {
         if (_isDead) return;
+
+        if (_rb.velocity.y < 0.1f && _rb.velocity.y > -0.1f && _markedToDie) Die();
 
         if (_isRolling)
         {
@@ -35,6 +37,17 @@ public class RhinoMonster : MonsterScript
         }
     }
 
+    protected override void CheckForPlayer() 
+    {
+        // if (Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, GroundLayer)) return;
+
+        RaycastHit2D hit = Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, PlayerLayer);
+        if (hit.collider != null && hit.collider.CompareTag("Player"))
+        {
+            _player = hit.collider.gameObject;
+            _isChasing = true;
+        }
+    }
 
     protected override void Patrol()
     {
@@ -87,7 +100,8 @@ public class RhinoMonster : MonsterScript
         // Debug.Log(_currentHealth);
         if (_currentHealth <= 0)
         {
-            Die();
+            // Die();
+            _markedToDie = true;
         }
         else
         {
@@ -165,11 +179,12 @@ public class RhinoMonster : MonsterScript
         _canTakeDamage = false;
         _renderer.color = Color.grey;
         _isDead = true;
-        _animator.Play("Die");
+        _animator.enabled = false;
+        GetComponent<SpriteRenderer>().sprite = died;
         _rb.velocity = Vector2.zero;
-        _rb.isKinematic = true;
+        _rb.bodyType = RigidbodyType2D.Static;
         GetComponent<Collider2D>().enabled = false;
-        Destroy(gameObject, 2f);
+        GetComponent<CapsuleCollider2D>().enabled = false;
     }
     private IEnumerator WaitForUnRollAnimation()
     {
@@ -184,7 +199,7 @@ public class RhinoMonster : MonsterScript
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (_isRolling && collision.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
             PlayerHealth playerHealth = collision.GetComponent<PlayerHealth>();
             if (playerHealth != null)

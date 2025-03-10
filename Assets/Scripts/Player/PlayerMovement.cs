@@ -37,16 +37,23 @@ public class PlayerMovement : MonoBehaviour
     public bool IsFacingRight = true;
     public CameraFollowObject _cameraFollowObject;
     public CameraManager cameraManager;
+    [Header("Wall Jump Settings")]
+    public Transform WallCheck;
+    public float WallCheckDistance = 0.2f;
+    public LayerMask WallLayer;
+    private bool _isTouchingWall;
 
     private bool _canDash = false;
     private float FallSpeedDampingChange;
     private float MaxFallSpeed = 30f;
     private bool _isJumping, _jumpButtonHeld;
     private float _jumpTimeCounter;
+    private bool _canWallClimb = false;
 
     private void Start()
     {
         _canDash = PlayerDataSave.Instance.HasDash;
+        _canWallClimb = PlayerDataSave.Instance.HasWallClimb;
         RigidBody = GetComponent<Rigidbody2D>();
         FullBodyAnimator.StopPlayback();
         FallSpeedDampingChange = cameraManager.FallSpeedDampingLimit;
@@ -65,6 +72,8 @@ public class PlayerMovement : MonoBehaviour
 
         HorizontalInput = Input.GetAxisRaw("Horizontal");
 
+        _isTouchingWall = Physics2D.Raycast(WallCheck.position, Vector2.right * (IsFacingRight ? 1 : -1), WallCheckDistance, WallLayer);
+
         if (RigidBody.velocity.y < FallSpeedDampingChange && !cameraManager.IsLerpingYDamping 
             && !cameraManager.LerpedFromPlayerFalling)
         {
@@ -78,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
             cameraManager.LerpYDamping(false);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && _isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             StartJump();
         }
@@ -105,8 +114,10 @@ public class PlayerMovement : MonoBehaviour
         if (IsDashing || !CanMove) return;
         FlipCharacter(false, -1);
 
-        RigidBody.velocity = new Vector2(HorizontalInput * MoveSpeed, RigidBody.velocity.y);
-
+        if (!_isTouchingWall)
+        {
+            RigidBody.velocity = new Vector2(HorizontalInput * MoveSpeed, RigidBody.velocity.y);
+        }
         UpperBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(HorizontalInput));
         LowerBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(HorizontalInput));
 
@@ -118,11 +129,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartJump()
     {
-        _isJumping = true;
-        _jumpButtonHeld = true;
-        _jumpTimeCounter = MaxJumpHoldTime;
-        RigidBody.velocity = new Vector2(RigidBody.velocity.x, JumpForce);
+        if (_isTouchingWall && !_isGrounded && _canWallClimb)
+        // if (!_isGrounded)
+        {
+            float pushDirection = IsFacingRight ? 1 : -1;
+            RigidBody.velocity = new Vector2(140 * (IsFacingRight ? -1 : 1), JumpForce*1.75f);
+            
+            // FlipCharacter(true, IsFacingRight ? 0 : 1);
+        }
+        else if (_isGrounded)
+        {
+            // Regular Jump
+            _isJumping = true;
+            _jumpButtonHeld = true;
+            _jumpTimeCounter = MaxJumpHoldTime;
+            RigidBody.velocity = new Vector2(RigidBody.velocity.x, JumpForce);
+        }
     }
+
 
 
     private void ApplyJumpPhysics()
@@ -137,7 +161,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (RigidBody.velocity.y > 0)
+        if (RigidBody.velocity.y > 0 && !_isTouchingWall)
         {
             if (_jumpButtonHeld && _jumpTimeCounter > 0)
             {
@@ -149,7 +173,7 @@ public class PlayerMovement : MonoBehaviour
                 RigidBody.gravityScale = LowJumpMultiplier; 
             }
         }
-        else if (RigidBody.velocity.y < 0)
+        else if (RigidBody.velocity.y < 0 && !_isTouchingWall)
         {
             RigidBody.gravityScale = FallMultiplier;
             RigidBody.velocity = new Vector2(RigidBody.velocity.x, Mathf.Max(RigidBody.velocity.y, -MaxFallSpeed));

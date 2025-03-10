@@ -34,7 +34,9 @@ public abstract class MonsterScript : MonoBehaviour
     protected Animator _animator;
     protected GameObject _player;
     protected int _facingDirection = 1; // 1 - right, -1 - left
-
+    protected bool _markedToDie = false;
+    // protected static int _lastAttackFrame = -1;
+    protected static bool _hasLaunchedPlayer = false;
 
     protected virtual void Awake()
     {
@@ -73,19 +75,16 @@ public abstract class MonsterScript : MonoBehaviour
     {
         if (_isDead) return;
 
-        if (_isChasing)
-        {
-            ChasePlayer();
-        }
-        else
-        {
-            Patrol();
-            // CheckForPlayer();
-        }
+        if (_rb.velocity.y < 0.1f && _rb.velocity.y > -0.1f && _markedToDie) Die();
+
+        Patrol();
+        CheckForPlayer();
     }
 
     protected virtual void LateUpdate()
     {
+        if (_isDead) return;
+
         CheckForPlayer();
     }
 
@@ -111,12 +110,16 @@ public abstract class MonsterScript : MonoBehaviour
     protected virtual void CheckForPlayer() 
     {
         // if (Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, GroundLayer)) return;
-
         RaycastHit2D hit = Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, PlayerLayer);
+        RaycastHit2D hitReversed = Physics2D.Raycast(WallCheck.position, Vector2.left * _facingDirection, SightRange, PlayerLayer);
         if (hit.collider != null && hit.collider.CompareTag("Player"))
         {
             _player = hit.collider.gameObject;
             _isChasing = true;
+        }
+        if (hitReversed.collider != null && hitReversed.collider.CompareTag("Player"))
+        {
+            Flip();
         }
     } // Для других монстров, кроме носорога, добавить override и сделать просмотр в 2 стороны и делать поворот в сторону игрока
 
@@ -139,6 +142,7 @@ public abstract class MonsterScript : MonoBehaviour
 
     protected void Flip()
     {
+        if (_rb.velocity.y > 0.1f && _rb.velocity.y < -0.1f) return;
         _facingDirection *= -1;
         transform.localScale = new Vector3(_facingDirection*6, 6, 0);
     }
@@ -147,10 +151,16 @@ public abstract class MonsterScript : MonoBehaviour
     public virtual void TakeDamage(float damage, string attackDirection)
     {
         if (_isDead || !_canTakeDamage) return;
+        
+        if (attackDirection == "bottom" && !_hasLaunchedPlayer)
+        {
+            _hasLaunchedPlayer = true;
+            _player.GetComponent<PlayerMovement>().RigidBody.AddForce(Vector2.up * 30f, ForceMode2D.Impulse);
+            StartCoroutine(ResetLaunchFlag());
+        }
 
         _currentHealth -= damage;
         _canTakeDamage = false;
-        // Debug.Log(_currentHealth);
         if (_currentHealth <= 0)
         {
             Die();
@@ -160,8 +170,11 @@ public abstract class MonsterScript : MonoBehaviour
             StartCoroutine(GetHitted());
         }
     }
-
-
+    private IEnumerator ResetLaunchFlag()
+{
+    yield return new WaitForSeconds(0.1f); // Small delay before allowing another launch
+    _hasLaunchedPlayer = false;
+}
     protected IEnumerator GetHitted()
     {   
         Color originalColor = _renderer.color;
@@ -205,8 +218,17 @@ public abstract class MonsterScript : MonoBehaviour
         _rb.velocity = Vector2.zero;
         _rb.isKinematic = true;
         GetComponent<Collider2D>().enabled = false;
-        Destroy(gameObject, 2f);
+        // Destroy(gameObject, 2f);
     }
 
-
+    
+    // protected void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.blue;
+    //     Vector3 pos = new Vector3(CliffCheck.transform.position.x, CliffCheck.transform.position.y, CliffCheck.transform.position.z);
+    //     Gizmos.DrawRay(pos, Vector2.down * 1.25f);
+    //     Gizmos.color = Color.red;
+    //     Vector3 newpos = new Vector3(WallCheck.transform.position.x, WallCheck.transform.position.y, WallCheck.transform.position.z);
+    //     Gizmos.DrawRay(newpos, Vector2.right);
+    // }
 }
