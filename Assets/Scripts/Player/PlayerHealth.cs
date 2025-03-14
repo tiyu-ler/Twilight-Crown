@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviour
     public int maxHealth = 5;
     private int currentHealth;
     private bool isInvincible = false;
-    private bool isDead = false;
+    public bool isDead = false;
     public float invincibilityTime = 1f;
     public float knockbackForce = 10f;
     public float knockbackDuration = 0.2f;

@@ -183,22 +183,42 @@ public class CameraManager : MonoBehaviour
         }
     }
 
-    public void SwapCamera(CinemachineVirtualCamera cameraFromLeft, CinemachineVirtualCamera cameraFromRight, 
+    public void SwapCamera(CinemachineVirtualCamera cameraFromLeft, CinemachineVirtualCamera cameraFromRight,
+        GameObject LockPosLeft, GameObject LockPosRight,
         Vector2 triggerExitDirection)
     {
         if (_currentCamera == cameraFromLeft && triggerExitDirection.x > 0f)
         {
-            cameraFromRight.enabled = true;
-            cameraFromLeft.enabled = false;
-            _currentCamera = cameraFromRight;
-            _framingTransporter = _currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+            if (cameraFromLeft != cameraFromRight)
+            {
+                cameraFromRight.enabled = true;
+                cameraFromLeft.enabled = false;
+                _currentCamera = cameraFromRight;
+                _framingTransporter = _currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+            }
+            if (LockPosRight != null)
+            {
+                ChangeLockedCameraTargetPosition(LockPosRight);
+            }
         }
         else if (_currentCamera == cameraFromRight && triggerExitDirection.x < 0f)
         {
-            cameraFromLeft.enabled = true;
-            cameraFromRight.enabled = false;
-            _currentCamera = cameraFromLeft;
-            _framingTransporter = _currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+            if (cameraFromLeft != cameraFromRight)
+            {
+                cameraFromLeft.enabled = true;
+                cameraFromRight.enabled = false;
+                _currentCamera = cameraFromLeft;
+                _framingTransporter = _currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+            }
+            if (LockPosLeft != null)
+            {
+                ChangeLockedCameraTargetPosition(LockPosLeft);
+            }
         }
+    }
+
+    public void ChangeLockedCameraTargetPosition(GameObject newLockPos)
+    {
+        _currentCamera.Follow = newLockPos.transform;
     }
 }

@@ -37,7 +37,7 @@ public abstract class MonsterScript : MonoBehaviour
     protected bool _markedToDie = false;
     // protected static int _lastAttackFrame = -1;
     protected static bool _hasLaunchedPlayer = false;
-
+    protected Coroutine _airLaunch;
     protected virtual void Awake()
     {
         _player = FindObjectOfType<PlayerMovement>().gameObject;
@@ -154,9 +154,13 @@ public abstract class MonsterScript : MonoBehaviour
         
         if (attackDirection == "bottom" && !_hasLaunchedPlayer)
         {
-            _hasLaunchedPlayer = true;
-            _player.GetComponent<PlayerMovement>().RigidBody.AddForce(Vector2.up * 30f, ForceMode2D.Impulse);
-            StartCoroutine(ResetLaunchFlag());
+            // _hasLaunchedPlayer = true;
+            // _player.GetComponent<PlayerMovement>().RigidBody.AddForce(Vector2.up * 30f, ForceMode2D.Impulse);
+            // StartCoroutine(ResetLaunchFlag());
+            if (_airLaunch == null)
+            {
+                _airLaunch = StartCoroutine(LaunchInTheAir());
+            }
         }
 
         _currentHealth -= damage;
@@ -170,11 +174,18 @@ public abstract class MonsterScript : MonoBehaviour
             StartCoroutine(GetHitted());
         }
     }
+    private IEnumerator LaunchInTheAir()
+    {
+        yield return new WaitForSeconds(0.05f);
+        _hasLaunchedPlayer = true;
+        _player.GetComponent<PlayerMovement>().RigidBody.AddForce(Vector2.up * 30f, ForceMode2D.Impulse);
+        StartCoroutine(ResetLaunchFlag());
+    }
     private IEnumerator ResetLaunchFlag()
-{
-    yield return new WaitForSeconds(0.1f); // Small delay before allowing another launch
-    _hasLaunchedPlayer = false;
-}
+    {
+        yield return new WaitForSeconds(0.1f); // Small delay before allowing another launch
+        _hasLaunchedPlayer = false;
+    }
     protected IEnumerator GetHitted()
     {   
         Color originalColor = _renderer.color;

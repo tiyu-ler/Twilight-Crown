@@ -22,6 +22,7 @@ public abstract class PickUpObject : MonoBehaviour
     // public GameObject BlackBorderBottom;
     protected CameraFollowObject cameraFollowObject;
     public CameraManager cameraManager;
+    protected bool _isDead;
     protected virtual void Start()
     {
         cameraFollowObject = FindAnyObjectByType<CameraFollowObject>();
@@ -32,6 +33,7 @@ public abstract class PickUpObject : MonoBehaviour
         playerMovement = FindObjectOfType<PlayerMovement>();
         playerAttack = FindObjectOfType<PlayerAttack>();
         moveSpeed = playerMovement.MoveSpeed;
+        _isDead = Player.GetComponent<PlayerHealth>().isDead;
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
@@ -52,7 +54,8 @@ public abstract class PickUpObject : MonoBehaviour
 
     void Update()
     {
-        if (_canBePressed)
+        _isDead = Player.GetComponent<PlayerHealth>().isDead;
+        if (_canBePressed && !_isDead)
         {
             if (playerMovement._isGrounded && !isCollected)
             {

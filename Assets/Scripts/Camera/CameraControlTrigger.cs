@@ -29,6 +29,7 @@ public class CameraControlTrigger : MonoBehaviour
         CameraManager.Instance.SwapCamera(
             customInspectorObjects.cameraOnLeft,
             customInspectorObjects.cameraOnRight,
+            null, null,
             exitDirection
         );
     }
@@ -67,7 +68,6 @@ public class CameraControlTrigger : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             Vector2 exitDirection = (collision.transform.position - _collider.bounds.center).normalized;
-
             if (customInspectorObjects.swapCameras && customInspectorObjects.cameraOnLeft != null && customInspectorObjects.cameraOnRight != null)
             {
                 if (customInspectorObjects.IsCameraFromLeftSecret || customInspectorObjects.IsCameraFromRightSecret)
@@ -86,6 +86,8 @@ public class CameraControlTrigger : MonoBehaviour
                     CameraManager.Instance.SwapCamera(
                         customInspectorObjects.cameraOnLeft,
                         customInspectorObjects.cameraOnRight,
+                        customInspectorObjects.LockPosLeft,
+                        customInspectorObjects.LockPosRight,
                         exitDirection
                     );
                 }
@@ -117,6 +119,9 @@ public class CustomInspectorObjects
     [HideInInspector] public bool IsCameraFromRightTight = false;
     [HideInInspector] public bool IsCameraFromLeftSecret = false;
     [HideInInspector] public bool IsCameraFromRightSecret = false;
+    [HideInInspector] public bool ChangeLockPosition = false;
+    [HideInInspector] public GameObject LockPosLeft;
+    [HideInInspector] public GameObject LockPosRight;
     [HideInInspector] public GameObject HiddenObject;
 }   
 
@@ -159,8 +164,11 @@ public class MyScriptEditor : Editor
                 cameraControlTrigger.customInspectorObjects.IsCameraFromLeftSecret);
             cameraControlTrigger.customInspectorObjects.IsCameraFromRightSecret = EditorGUILayout.Toggle("Reveal Secret on Right", 
                 cameraControlTrigger.customInspectorObjects.IsCameraFromRightSecret);
-        }
 
+            cameraControlTrigger.customInspectorObjects.ChangeLockPosition = EditorGUILayout.Toggle("Change Lock Position", 
+                cameraControlTrigger.customInspectorObjects.ChangeLockPosition);
+        }
+        
         if (cameraControlTrigger.customInspectorObjects.IsCameraFromLeftSecret || cameraControlTrigger.customInspectorObjects.IsCameraFromRightSecret)
         {
             cameraControlTrigger.customInspectorObjects.HiddenObject = EditorGUILayout.ObjectField("What to hide on Secret Found", 
@@ -175,6 +183,14 @@ public class MyScriptEditor : Editor
                 cameraControlTrigger.customInspectorObjects.panDistance);
             cameraControlTrigger.customInspectorObjects.panTime = EditorGUILayout.FloatField("Pan Time", 
                 cameraControlTrigger.customInspectorObjects.panTime);
+        }
+
+        if (cameraControlTrigger.customInspectorObjects.ChangeLockPosition)
+        {
+            cameraControlTrigger.customInspectorObjects.LockPosLeft = EditorGUILayout.ObjectField("Left Locked Position", 
+                cameraControlTrigger.customInspectorObjects.LockPosLeft, typeof(GameObject), true) as GameObject;
+            cameraControlTrigger.customInspectorObjects.LockPosRight = EditorGUILayout.ObjectField("Right Locked Position", 
+                cameraControlTrigger.customInspectorObjects.LockPosRight, typeof(GameObject), true) as GameObject;
         }
 
         if (GUI.changed)

@@ -1,8 +1,11 @@
+using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class GoblinMonster : MonsterScript
 {
     public Sprite died;
+    public float DesiredHeight;
     protected override void Patrol()
     {
         if (!_isMoving || _isDead) return;
@@ -46,12 +49,28 @@ public class GoblinMonster : MonsterScript
         _animator.enabled = false;
         GetComponent<SpriteRenderer>().sprite = died;
         _rb.velocity = Vector2.zero;
-        // _rb.isKinematic = true;
         _rb.bodyType = RigidbodyType2D.Static;
-        GetComponent<Collider2D>().enabled = false;
         GetComponent<CapsuleCollider2D>().enabled = false;
+        GetComponent<Collider2D>().enabled = false;
+        StartCoroutine(ReturnToGround());
     }
 
+    private IEnumerator ReturnToGround()
+    {
+        float elapsedTime = 0f;
+        float LerpTime = 0.1f;
+        Vector2 currentHeight = transform.localPosition;
+        Vector2 endHeight = new Vector2(transform.localPosition.x, DesiredHeight);
+        while (elapsedTime < LerpTime)
+        {
+            elapsedTime += Time.deltaTime;
+
+            transform.localPosition = Vector2.Lerp(currentHeight, endHeight, elapsedTime/LerpTime);
+            
+            yield return null;
+        }
+        transform.localPosition = endHeight;
+    }
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
