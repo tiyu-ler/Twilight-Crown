@@ -13,22 +13,20 @@ public class HitboxAttackCheck : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Monster")
+        switch (collision.tag)
         {
-            MonsterScript monster = collision.GetComponent<MonsterScript>();
-            if (monster != null)
-            {
-                // Debug.Log(count);
-                monster.TakeDamage(Damage, attackDirection);
-            }
-        }
-        else
-        {
-            MoneyBag moneyBag = collision.GetComponent<MoneyBag>();
-            if (moneyBag != null)
-            {
-                moneyBag.SpawnCoins();
-            }
+            case "Monster":
+                MonsterScript monster = collision.GetComponent<MonsterScript>();
+                if (monster != null) monster.TakeDamage(Damage, attackDirection);
+                break;
+            case "MoneyBag":
+                MoneyBag moneyBag = collision.GetComponent<MoneyBag>();
+                if (moneyBag != null) moneyBag.SpawnCoins();
+                break;
+            case "CatBoss":
+                BossHealth bossHealth = collision.GetComponent<BossHealth>();
+                if (bossHealth != null) bossHealth.TakeDamage(Damage, attackDirection);
+                break;
         }
     }
 }

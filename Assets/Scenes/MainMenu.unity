@@ -2977,6 +2977,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Isgame: 0
+  Case: {fileID: 0}
+  Sword: {fileID: 0}
 --- !u!4 &656895609
 Transform:
   m_ObjectHideFlags: 0
@@ -5135,7 +5137,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e13deaa4b7e145945acf787e0cafea6b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

@@ -12,8 +12,8 @@ public class PlayerDataSave : MonoBehaviour
     public bool HasMagic;
     public int MagicLevel;
     public int Money;
-    public bool CollectedSpheresSound;
-    public bool CollectedSpheresLight;
+    public bool catBossKilled;
+    // public bool CollectedSpheresLight;
     public float totalPlayTime;
 
     private void Awake()
@@ -39,8 +39,7 @@ public class PlayerDataSave : MonoBehaviour
         HasMagic = false;
         MagicLevel = 0;
         Money = 0;
-        CollectedSpheresSound = false;
-        CollectedSpheresLight = false;
+        catBossKilled = false;
         totalPlayTime = 0;
     }
 }

@@ -75,6 +75,7 @@ public class SwordPickUp : PickUpObject
             playerMovement.IsFacingRight = !playerMovement.IsFacingRight;
             FindAnyObjectByType<CameraFollowObject>().CallTurn();
         }
+        gameManager.SaveGame(PlayerDataSave.Instance.saveID);
         Destroy(gameObject);
     }
 }

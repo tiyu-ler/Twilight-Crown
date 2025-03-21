@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Cinemachine;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -28,8 +29,11 @@ public class PlayerHealth : MonoBehaviour
     public ScreenFader screenFader;
     public Collider2D VerticalCollider;
     public Collider2D HorizontalCollider;
+    private BossController bossController;
+    public CinemachineVirtualCamera DefaultCamera;
     private void Start()
     {
+        bossController = FindAnyObjectByType<BossController>();
         // PlayerSpriteRenderer = GetComponent<SpriteRenderer>();
         PlayerAnimator = GetComponent<Animator>();
         currentHealth = maxHealth;
@@ -52,22 +56,24 @@ public class PlayerHealth : MonoBehaviour
         if (isInvincible || isDead || playerMovement.IsDashing) return;
 
         currentHealth--;
-        // UpdateHeartsUI();
-        // Debug.Log(currentHealth);
+
         if (currentHealth <= 0)
         {
             isDead = true;
+
+            bossController.RestartBossBattle();
+            CameraManager.Instance.ReturnCameraToDefault(DefaultCamera);
             UpperBody.SetActive(false);
             LowerBody.SetActive(false);
-            // PlayerSpriteRenderer.sprite = Death;
+
             PlayerAnimator.Play("Death");
-            // Debug.Log("DEATH");
-            // rb.sharedMaterial = HighFriction;
+
             Time.timeScale = 0.5f;
+
             VerticalCollider.enabled = false;
             HorizontalCollider.enabled = true;
+
             StartCoroutine(Knockback(attackDirection));
-            // Die();
         }
         else
         {

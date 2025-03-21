@@ -23,8 +23,10 @@ public abstract class PickUpObject : MonoBehaviour
     protected CameraFollowObject cameraFollowObject;
     public CameraManager cameraManager;
     protected bool _isDead;
+    public GameManager gameManager;
     protected virtual void Start()
     {
+        // gameManager = FindObjectOfType<GameManager>();
         cameraFollowObject = FindAnyObjectByType<CameraFollowObject>();
         _lowerBodyAnimator = LowerBody.GetComponent<Animator>();
         _upperBodyAnimator = UpperBody.GetComponent<Animator>();

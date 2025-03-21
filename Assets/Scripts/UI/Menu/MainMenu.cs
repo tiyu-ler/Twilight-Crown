@@ -66,6 +66,7 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame(int SaveID)
     {
+        PlayerDataSave.Instance.saveID = SaveID;
         gameManager.LoadGame(SaveID);
         SceneManager.LoadScene("GameScene");
     }
@@ -82,7 +83,6 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        // gameManager.SaveGame(1); // Save Game Test
         MainMenuTransform = MainMenuGroup.transform;
         SettingsMenuTransform = SettingsMenuGroup.transform;
         SavesMenuTransform = SavesMenuGroup.transform;

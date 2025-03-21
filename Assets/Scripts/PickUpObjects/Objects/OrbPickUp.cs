@@ -11,14 +11,14 @@ public class OrbPickUp : PickUpObject
 
     protected override void CollectItem()
     {
-        string sphereTypeName = sphereType.ToString();
-        switch (sphereTypeName)
-        {
-            case "Sound": PlayerDataSave.Instance.CollectedSpheresSound = true;
-            break;
-            case "Light": PlayerDataSave.Instance.CollectedSpheresLight = true;
-            break;
-        }
-        Debug.Log($"{sphereTypeName} orb collected!");
+        // string sphereTypeName = sphereType.ToString();
+        // switch (sphereTypeName)
+        // {
+        //     case "Sound": PlayerDataSave.Instance.CollectedSpheresSound = true;
+        //     break;
+        //     case "Light": PlayerDataSave.Instance.CollectedSpheresLight = true;
+        //     break;
+        // }
+        // Debug.Log($"{sphereTypeName} orb collected!");
     }
 }

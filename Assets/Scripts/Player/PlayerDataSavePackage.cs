@@ -17,8 +17,8 @@ public class PlayerDataSavePackage
     
     public int money;
     
-    public bool collectedSpheresSound;
-    public bool collectedSpheresLight;
+    public bool catBossKilled;
+    // public bool collectedSpheresLight;
     
     public float totalPlayTime; // in seconds
 }

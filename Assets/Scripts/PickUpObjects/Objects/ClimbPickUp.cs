@@ -49,6 +49,7 @@ public class ClimbPickUp : PickUpObject
             cameraFollowObject.CallTurn();
         }
         animator.enabled = false;
+        gameManager.SaveGame(PlayerDataSave.Instance.saveID);
         GetComponent<SpriteRenderer>().sprite = EmptyBag;
     }
 }

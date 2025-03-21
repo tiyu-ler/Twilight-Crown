@@ -48,12 +48,12 @@ public class PlayerMovement : MonoBehaviour
     private float MaxFallSpeed = 30f;
     private bool _isJumping, _jumpButtonHeld;
     private float _jumpTimeCounter;
-    private bool _canWallClimb = false;
+    private bool _canWallClimb = true;
 
     private void Start()
     {
         _canDash = PlayerDataSave.Instance.HasDash;
-        _canWallClimb = PlayerDataSave.Instance.HasWallClimb;
+        // _canWallClimb = PlayerDataSave.Instance.HasWallClimb;
         RigidBody = GetComponent<Rigidbody2D>();
         FullBodyAnimator.StopPlayback();
         FallSpeedDampingChange = cameraManager.FallSpeedDampingLimit;
@@ -73,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
         HorizontalInput = Input.GetAxisRaw("Horizontal");
 
         _isTouchingWall = Physics2D.Raycast(WallCheck.position, Vector2.right * (IsFacingRight ? 1 : -1), WallCheckDistance, WallLayer);
-
+    Debug.Log(_isTouchingWall);
         if (RigidBody.velocity.y < FallSpeedDampingChange && !cameraManager.IsLerpingYDamping 
             && !cameraManager.LerpedFromPlayerFalling)
         {
@@ -161,23 +161,34 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        if (RigidBody.velocity.y > 0 && !_isTouchingWall)
+        // if (RigidBody.velocity.y > 0 || !_isTouchingWall)
+        if (RigidBody.velocity.y > 0)
         {
             if (_jumpButtonHeld && _jumpTimeCounter > 0)
             {
+                Debug.Log(1);
                 _jumpTimeCounter -= Time.fixedDeltaTime;
                 RigidBody.velocity = new Vector2(RigidBody.velocity.x, JumpForce);
             }
             else
             {
+                Debug.Log(2);
                 RigidBody.gravityScale = LowJumpMultiplier; 
             }
         }
-        else if (RigidBody.velocity.y < 0 && !_isTouchingWall)
+        // else if (RigidBody.velocity.y < 0 && !_isTouchingWall)
+        else if (RigidBody.velocity.y < 0)
         {
+            Debug.Log(3);
             RigidBody.gravityScale = FallMultiplier;
             RigidBody.velocity = new Vector2(RigidBody.velocity.x, Mathf.Max(RigidBody.velocity.y, -MaxFallSpeed));
         }
+        Debug.Log(4);
+        // else if (!_canWallClimb)
+        // {
+        //     RigidBody.gravityScale = FallMultiplier;
+        //     // RigidBody.velocity = new Vector2(RigidBody.velocity.x, Mathf.Max(RigidBody.velocity.y, -MaxFallSpeed));
+        // }
     }
 
 

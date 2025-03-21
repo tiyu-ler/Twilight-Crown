@@ -183,6 +183,16 @@ public class CameraManager : MonoBehaviour
         }
     }
 
+    public void ReturnCameraToDefault(CinemachineVirtualCamera defaultCamera)
+    {
+        defaultCamera.enabled = true;
+        _currentCamera.GetComponent<CinemachineVirtualCamera>().enabled = false;
+        _currentCamera = defaultCamera;
+        // CinemachineBrain camBrain = _currentCamera.GetComponent<CinemachineBrain>();
+        // camBrain.m_DefaultBlend.m_Time = 0f; // No blending, instant transition
+        _framingTransporter = _currentCamera.GetCinemachineComponent<CinemachineFramingTransposer>();
+    }
+
     public void SwapCamera(CinemachineVirtualCamera cameraFromLeft, CinemachineVirtualCamera cameraFromRight,
         GameObject LockPosLeft, GameObject LockPosRight,
         Vector2 triggerExitDirection)

@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Monster
+  - CatBoss
+  - MoneyBag
   layers:
   - Default
   - TransparentFX

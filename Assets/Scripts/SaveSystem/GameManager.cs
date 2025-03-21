@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-// [SerializeField] private int currentSaveID = 1; // Default to first save slot
+    // [SerializeField] private int currentSaveID = 0;
     private float playTime = 0f;
     private PlayerDataSave dataSave;
     public bool Isgame;
@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
 
     public void SaveGame(int currentSaveID)
     {
+        dataSave.saveID = currentSaveID;
         PlayerDataSavePackage saveObject = new PlayerDataSavePackage
         {
             saveID = currentSaveID,
@@ -42,8 +43,8 @@ public class GameManager : MonoBehaviour
             hasMagic = dataSave.HasMagic,
             magicLevel = dataSave.MagicLevel,
             money = dataSave.Money,
-            collectedSpheresSound = dataSave.CollectedSpheresSound,
-            collectedSpheresLight = dataSave.CollectedSpheresLight,
+            // collectedSpheresSound = dataSave.CollectedSpheresSound,
+            catBossKilled = dataSave.catBossKilled,
             
             totalPlayTime = playTime
         };
@@ -68,8 +69,8 @@ public class GameManager : MonoBehaviour
             
             dataSave.Money = saveObject.money;
             
-            dataSave.CollectedSpheresSound = saveObject.collectedSpheresSound;
-            dataSave.CollectedSpheresLight = saveObject.collectedSpheresLight;
+            // dataSave.CollectedSpheresSound = saveObject.collectedSpheresSound;
+            dataSave.catBossKilled = saveObject.catBossKilled;
             
             playTime = saveObject.totalPlayTime;
         }
