@@ -4,7 +4,8 @@ public class Obelisk : MonoBehaviour
 {
     public int obeliskID;
     public LayerMask playerLayer;
-
+    public GameObject BlueLight;
+    public GameObject GreenLight;
     private Animator obeliskAnimator;
     private PlayerMovement playerMovement;
     private PlayerHealth playerHealth;
@@ -31,6 +32,8 @@ public class Obelisk : MonoBehaviour
     {
         if (obeliskID == PlayerDataSave.Instance.ObeliskID)
         {
+            BlueLight.SetActive(false);
+            GreenLight.SetActive(true);
             playerHealth.gameObject.transform.position = SpawnPoint;
             cameraFollowObject.transform.position = SpawnPoint;
             _isActive = true;
@@ -60,6 +63,8 @@ public class Obelisk : MonoBehaviour
         currentActiveObelisk = this;
         if (!_isActive)
         {
+            BlueLight.SetActive(false);
+            GreenLight.SetActive(true);
             _isActive = true;
             obeliskAnimator.Play("Active");
         }
@@ -76,6 +81,8 @@ public class Obelisk : MonoBehaviour
 
     private void DeactivateObelisk()
     {
+        BlueLight.SetActive(true);
+        GreenLight.SetActive(false);
         obeliskAnimator.Play("InActive");
     }
 }

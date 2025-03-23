@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
             // collectedSpheresSound = dataSave.CollectedSpheresSound,
             catBossKilled = dataSave.catBossKilled,
             
-            totalPlayTime = playTime
+            totalPlayTime = playTime + dataSave.totalPlayTime
         };
 
         SaveSystem.Save(currentSaveID, saveObject);
