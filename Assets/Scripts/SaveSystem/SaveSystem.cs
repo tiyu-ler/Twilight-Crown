@@ -15,7 +15,6 @@ public static class SaveSystem
     }
     public static void Save(int saveID, PlayerDataSavePackage saveObject)
     {
-        // Debug.Log(Application.persistentDataPath);
         string savePath = GetSaveFilePath(saveID);
         string json = JsonUtility.ToJson(saveObject, true);
         Debug.Log(json);
@@ -42,7 +41,6 @@ public static class SaveSystem
             File.Delete(savePath);
         }
     }
-
 
     public static bool SaveExists(int saveID)
     {

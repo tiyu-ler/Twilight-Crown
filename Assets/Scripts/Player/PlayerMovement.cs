@@ -48,12 +48,12 @@ public class PlayerMovement : MonoBehaviour
     private float MaxFallSpeed = 30f;
     private bool _isJumping, _jumpButtonHeld;
     private float _jumpTimeCounter;
-    private bool _canWallClimb = true;
+    private bool _canWallClimb = false;
 
     private void Start()
     {
         _canDash = PlayerDataSave.Instance.HasDash;
-        // _canWallClimb = PlayerDataSave.Instance.HasWallClimb;
+        _canWallClimb = PlayerDataSave.Instance.HasWallClimb;
         RigidBody = GetComponent<Rigidbody2D>();
         FullBodyAnimator.StopPlayback();
         FallSpeedDampingChange = cameraManager.FallSpeedDampingLimit;
@@ -73,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
         HorizontalInput = Input.GetAxisRaw("Horizontal");
 
         _isTouchingWall = Physics2D.Raycast(WallCheck.position, Vector2.right * (IsFacingRight ? 1 : -1), WallCheckDistance, WallLayer);
-    Debug.Log(_isTouchingWall);
+
         if (RigidBody.velocity.y < FallSpeedDampingChange && !cameraManager.IsLerpingYDamping 
             && !cameraManager.LerpedFromPlayerFalling)
         {
@@ -130,16 +130,12 @@ public class PlayerMovement : MonoBehaviour
     private void StartJump()
     {
         if (_isTouchingWall && !_isGrounded && _canWallClimb)
-        // if (!_isGrounded)
         {
             float pushDirection = IsFacingRight ? 1 : -1;
             RigidBody.velocity = new Vector2(140 * (IsFacingRight ? -1 : 1), JumpForce*1.75f);
-            
-            // FlipCharacter(true, IsFacingRight ? 0 : 1);
         }
         else if (_isGrounded)
         {
-            // Regular Jump
             _isJumping = true;
             _jumpButtonHeld = true;
             _jumpTimeCounter = MaxJumpHoldTime;
@@ -160,35 +156,23 @@ public class PlayerMovement : MonoBehaviour
             _isJumping = false;
             return;
         }
-
-        // if (RigidBody.velocity.y > 0 || !_isTouchingWall)
         if (RigidBody.velocity.y > 0)
         {
             if (_jumpButtonHeld && _jumpTimeCounter > 0)
             {
-                Debug.Log(1);
                 _jumpTimeCounter -= Time.fixedDeltaTime;
                 RigidBody.velocity = new Vector2(RigidBody.velocity.x, JumpForce);
             }
             else
             {
-                Debug.Log(2);
                 RigidBody.gravityScale = LowJumpMultiplier; 
             }
         }
-        // else if (RigidBody.velocity.y < 0 && !_isTouchingWall)
         else if (RigidBody.velocity.y < 0)
         {
-            Debug.Log(3);
             RigidBody.gravityScale = FallMultiplier;
             RigidBody.velocity = new Vector2(RigidBody.velocity.x, Mathf.Max(RigidBody.velocity.y, -MaxFallSpeed));
         }
-        Debug.Log(4);
-        // else if (!_canWallClimb)
-        // {
-        //     RigidBody.gravityScale = FallMultiplier;
-        //     // RigidBody.velocity = new Vector2(RigidBody.velocity.x, Mathf.Max(RigidBody.velocity.y, -MaxFallSpeed));
-        // }
     }
 
 
@@ -213,7 +197,6 @@ public class PlayerMovement : MonoBehaviour
             Vector3 rotation = new Vector3(transform.rotation.x, 0, transform.rotation.z);
             transform.rotation = Quaternion.Euler(rotation);
 
-            // _cameraFollowObject.CallTurn();
             if (!ForcedTurn) _cameraFollowObject.CallTurn();
         } 
         else if (HorizontalInput < 0 && IsFacingRight || ForcedTurn && direction == 0)
@@ -226,7 +209,6 @@ public class PlayerMovement : MonoBehaviour
             Vector3 rotation = new Vector3(transform.rotation.x, 180, transform.rotation.z);
             transform.rotation = Quaternion.Euler(rotation);
 
-            // _cameraFollowObject.CallTurn();
             if (!ForcedTurn) _cameraFollowObject.CallTurn();
         }
     }
@@ -261,16 +243,16 @@ public class PlayerMovement : MonoBehaviour
         _canDash = true;
     }
 
-    private float GetAnimationLength(string animationName)
-    {
-        RuntimeAnimatorController ac = FullBodyAnimator.runtimeAnimatorController;
-        foreach (AnimationClip clip in ac.animationClips)
-        {
-            if (clip.name == animationName)
-                return clip.length;
-        }
-        return 0.1f;
-    }
+    // private float GetAnimationLength(string animationName)
+    // {
+    //     RuntimeAnimatorController ac = FullBodyAnimator.runtimeAnimatorController;
+    //     foreach (AnimationClip clip in ac.animationClips)
+    //     {
+    //         if (clip.name == animationName)
+    //             return clip.length;
+    //     }
+    //     return 0.1f;
+    // }
 
     private void OnDrawGizmos()
     {

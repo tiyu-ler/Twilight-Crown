@@ -51,31 +51,6 @@ public class CameraManager : MonoBehaviour
         StartCoroutine(LerpYAction(isPlayerFalling));
     }
 
-    // public void CutsceneCamera(bool activate)
-    // {
-    //     CinemachineConfiner2D confiner = _currentCamera.GetComponent<CinemachineConfiner2D>();
-    //     if (confiner == null)
-    //     {
-    //         Debug.LogWarning("CutsceneCamera: No CinemachineConfiner found on the current camera.");
-    //     }
-    //     if (activate)
-    //     {
-    //         Debug.Log("CameraSet");
-    //         SavedTrackedObjectOffsetX = _framingTransporter.m_TrackedObjectOffset.x;
-    //         SavedTrackedObjectOffsetY = _framingTransporter.m_TrackedObjectOffset.y;
-
-    //         confiner.m_MaxWindowSize = 1f;
-            
-    //         StartCoroutine(LerpYOffset(true));
-    //         // _framingTransporter.m_TrackedObjectOffset = Vector3.zero;
-    //     }
-    //     else
-    //     {
-    //         StartCoroutine(LerpYOffset(false));
-    //         confiner.m_MaxWindowSize = 0f;
-    //         // _framingTransporter.m_TrackedObjectOffset = new Vector3(SavedTrackedObjectOffsetX, SavedTrackedObjectOffsetY, 0);
-    //     }
-    // }
     private IEnumerator LerpYOffset(bool lerpToZero)
     {
         float elapsedTime = 0f;
@@ -185,8 +160,8 @@ public class CameraManager : MonoBehaviour
 
     public void ReturnCameraToDefault(CinemachineVirtualCamera defaultCamera)
     {
-        defaultCamera.enabled = true;
         _currentCamera.GetComponent<CinemachineVirtualCamera>().enabled = false;
+        defaultCamera.enabled = true;
         _currentCamera = defaultCamera;
         // CinemachineBrain camBrain = _currentCamera.GetComponent<CinemachineBrain>();
         // camBrain.m_DefaultBlend.m_Time = 0f; // No blending, instant transition

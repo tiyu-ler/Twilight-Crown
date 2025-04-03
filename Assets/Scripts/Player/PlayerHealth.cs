@@ -171,7 +171,7 @@ public class PlayerHealth : MonoBehaviour
         {
             enemy.StartEnemy();
         }  
-
+        yield return new WaitForSecondsRealtime(1f);
         screenFader.FadeFromWhite();
     }
 

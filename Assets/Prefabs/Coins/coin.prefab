@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 388685961875515240}
   - component: {fileID: 6941113698935947572}
   - component: {fileID: 9151665706093764629}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: coin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 1497938181010719712}
   - component: {fileID: 5637022459874751281}
   - component: {fileID: 3734839777450258277}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}

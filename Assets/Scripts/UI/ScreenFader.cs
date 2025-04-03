@@ -9,7 +9,7 @@ public class ScreenFader : MonoBehaviour
 
     public void FadeToWhite()
     {
-        StartCoroutine(Fade(1f, fadeSpeed*2));
+        StartCoroutine(Fade(1f, fadeSpeed*2.5f));
     }
 
     public void FadeFromWhite()
