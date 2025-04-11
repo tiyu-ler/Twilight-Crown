@@ -24,6 +24,7 @@ public abstract class PickUpObject : MonoBehaviour
     public CameraManager cameraManager;
     protected bool _isDead;
     public GameManager gameManager;
+    public MarkerTextPopUp markerTextPopUp;
     protected virtual void Start()
     {
         // gameManager = FindObjectOfType<GameManager>();

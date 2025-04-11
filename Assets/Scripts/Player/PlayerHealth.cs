@@ -2,9 +2,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using Cinemachine;
+using System.Collections.Generic;
 
 public class PlayerHealth : MonoBehaviour
 {
+    public List<GameObject> HeartsUi = new List<GameObject>();
     public int maxHealth = 5;
     private int currentHealth;
     private bool isInvincible = false;
@@ -13,7 +15,6 @@ public class PlayerHealth : MonoBehaviour
     public float knockbackForce = 10f;
     public float knockbackDuration = 0.2f;
     public Color damageColor = Color.white;
-    // public Image[] heartsUI;
     public Vector3 defaultSpawnLocation;
     public GameObject UpperBody;
     public GameObject LowerBody;
@@ -34,28 +35,37 @@ public class PlayerHealth : MonoBehaviour
     private void Start()
     {
         bossController = FindAnyObjectByType<BossController>();
-        // PlayerSpriteRenderer = GetComponent<SpriteRenderer>();
         PlayerAnimator = GetComponent<Animator>();
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         playerMovement = GetComponent<PlayerMovement>();
         playerAttack = GetComponent<PlayerAttack>();
 
-        // UpdateHeartsUI();
+        UpdateHeartsUI();
     }
 
-    public void Heal()
+    public void UpdateHeartsUI()
     {
-        if (isInvincible || isDead || currentHealth == maxHealth) return;
-
-        currentHealth++;
+        currentHealth = maxHealth;
+        for (int i = 0; i < maxHealth; i++)
+        {
+            HeartsUi[i].SetActive(true);
+        }
     }
+
+    // public void Heal()
+    // {
+    //     if (isInvincible || isDead || currentHealth == maxHealth) return;
+
+    //     currentHealth++;
+    // }
 
     public void TakeDamage(Vector2 attackDirection)
     {
         if (isInvincible || isDead || playerMovement.IsDashing) return;
 
         currentHealth--;
+        HeartsUi[currentHealth].SetActive(false);
 
         if (currentHealth <= 0)
         {
@@ -162,7 +172,7 @@ public class PlayerHealth : MonoBehaviour
         {
             transform.position = defaultSpawnLocation;
         }
-        currentHealth = maxHealth;
+        UpdateHeartsUI();
         playerAttack.enabled = true;
         playerMovement.enabled = true;
         isDead = false;
@@ -179,12 +189,4 @@ public class PlayerHealth : MonoBehaviour
     {
         lastObelisk = obelisk;
     }
-
-    // private void UpdateHeartsUI()
-    // {
-    //     for (int i = 0; i < heartsUI.Length; i++)
-    //     {
-    //         heartsUI[i].enabled = i < currentHealth;
-    //     }
-    // }
 }

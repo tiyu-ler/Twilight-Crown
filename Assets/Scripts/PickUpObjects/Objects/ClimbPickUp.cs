@@ -38,14 +38,15 @@ public class ClimbPickUp : PickUpObject
         }
 
         playerAttack.enabled = true;
-        Debug.Log("Player rotation " + Player.transform.rotation.y);
+        // Debug.Log("Player rotation " + Player.transform.rotation.y);
         playerMovement.FlipCharacter(true, 1);
         playerMovement.CanMove = true;
-        Debug.Log(cameraFollowObject.transform.rotation.y != Player.transform.rotation.y);
+        playerMovement.CanWallClimb = true;
+        // Debug.Log(cameraFollowObject.transform.rotation.y != Player.transform.rotation.y);
         
         if (cameraFollowObject.transform.rotation.y != Player.transform.rotation.y)
         {
-            Debug.Log("CALLTURN");
+            // Debug.Log("CALLTURN");
             cameraFollowObject.CallTurn();
         }
         animator.enabled = false;

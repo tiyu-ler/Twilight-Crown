@@ -4,19 +4,59 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     // [SerializeField] private int currentSaveID = 0;
+    public bool Isgame;
+
+    [Header("Sword")]
+    public GameObject Case;
+    public GameObject Sword;
+    public GameObject SwordPickUpText;
+    public GameObject SwordLight;
+
+    [Header("Wall Climb")]
+    public GameObject WallhBag;
+    public GameObject WallPickUpText;
+    public GameObject WallLight;
+    
+    [Header("Dash")]
+    public GameObject DashCrystal;
+    public GameObject DashPickUpText;
+    public GameObject DashLight;
+
     private float playTime = 0f;
     private PlayerDataSave dataSave;
-    public bool Isgame;
-    public GameObject Case, Sword;
+
     private void Awake()
     {
+        Isgame = true;
+        
         dataSave = FindObjectOfType<PlayerDataSave>();
+        
+        UpdatePickUpObjects();
+
+        SaveSystem.Init();
+    }
+
+    public void UpdatePickUpObjects()
+    {
         if (dataSave.HasSword)
         {
             if (Case) Destroy(Case);
             if (Sword) Destroy(Sword);
+            if (SwordPickUpText) Destroy(SwordPickUpText);
+            if (SwordLight) Destroy(SwordLight);
         }
-        SaveSystem.Init();
+        if (dataSave.HasDash)
+        {
+            WallhBag.GetComponent<ClimbPickUp>().enabled = false;
+            if (WallPickUpText) Destroy(WallPickUpText);
+            if (Sword) Destroy(WallLight);
+        }
+        if (dataSave.HasWallClimb)
+        {
+            if (DashCrystal) Destroy(DashCrystal);
+            if (DashPickUpText) Destroy(DashPickUpText);
+            if (DashLight) Destroy(DashLight);
+        }
     }
 
     private void Update()

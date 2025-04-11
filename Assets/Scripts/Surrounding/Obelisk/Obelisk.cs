@@ -16,6 +16,7 @@ public class Obelisk : MonoBehaviour
     private Vector3 SpawnPoint;
     // public PlayerDataSave playerDataSave;
     private GameManager gameManager;
+    public MarkerTextPopUp markerTextPopUp;
     private void Start()
     {
         SpawnPoint = new Vector3(transform.position.x - 1.2f, transform.position.y - 1.15f, 0);
@@ -25,6 +26,10 @@ public class Obelisk : MonoBehaviour
         // playerData = FindObjectOfType<PlayerData>();
         playerHealth = FindObjectOfType<PlayerHealth>();
         gameManager = FindObjectOfType<GameManager>();
+        if (PlayerDataSave.Instance.ObeliskID == obeliskID)
+        {
+            currentActiveObelisk = this;
+        }
         TeleportPlayerAndCamera(); //spawn player on game load
     }
 
@@ -56,11 +61,13 @@ public class Obelisk : MonoBehaviour
     {
         if (currentActiveObelisk != null && currentActiveObelisk != this)
         {
+            currentActiveObelisk.markerTextPopUp.ActivateMarkUp();
             currentActiveObelisk.DeactivateObelisk();
             currentActiveObelisk._isActive = false;
         }
 
         currentActiveObelisk = this;
+        markerTextPopUp.DisableMarkUp();
         if (!_isActive)
         {
             BlueLight.SetActive(false);

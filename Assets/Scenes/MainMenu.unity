@@ -712,9 +712,9 @@ MonoBehaviour:
   HasMagic: 0
   MagicLevel: 0
   Money: 275
-  CollectedSpheresSound: 0
-  CollectedSpheresLight: 0
+  catBossKilled: 0
   totalPlayTime: 0
+  gameManager: {fileID: 0}
 --- !u!1 &154764263
 GameObject:
   m_ObjectHideFlags: 0
@@ -2979,6 +2979,16 @@ MonoBehaviour:
   Isgame: 0
   Case: {fileID: 0}
   Sword: {fileID: 0}
+  SwordPickUpText: {fileID: 0}
+  SwordLight: {fileID: 0}
+  WallhBag: {fileID: 0}
+  WallPickUpText: {fileID: 0}
+  WallLight: {fileID: 0}
+  DashCrystal: {fileID: 0}
+  DashPickUpText: {fileID: 0}
+  DashLight: {fileID: 0}
+  MoneyText: {fileID: 0}
+  Coins: {fileID: 0}
 --- !u!4 &656895609
 Transform:
   m_ObjectHideFlags: 0

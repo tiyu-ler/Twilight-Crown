@@ -30,7 +30,6 @@ public class BossBattleStart : MonoBehaviour
                 doorScript.DoorInteractor(false);
             }
             StartCoroutine(EnableCollider());
-            Debug.Log("OpenDoors");
         } 
         else 
         {

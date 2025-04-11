@@ -6,6 +6,7 @@ public class GoblinMonster : MonsterScript
 {
     public Sprite died;
     public float DesiredHeight;
+    public Transform torch;
     protected override void Patrol()
     {
         if (!_isMoving || _isDead) return;
@@ -50,6 +51,8 @@ public class GoblinMonster : MonsterScript
         GetComponent<SpriteRenderer>().sprite = died;
         _rb.velocity = Vector2.zero;
         _rb.bodyType = RigidbodyType2D.Static;
+        torch.localPosition = new Vector3(0.02048619f, -0.1183329f, -0.24f);
+        torch.localRotation = Quaternion.Euler(0,0,270);
         GetComponent<CapsuleCollider2D>().enabled = false;
         GetComponent<Collider2D>().enabled = false;
         StartCoroutine(ReturnToGround());

@@ -4,12 +4,14 @@ using UnityEngine.SceneManagement;
 public class InGamePauseMenu : MonoBehaviour
 {
     public GameObject pauseMenuUI;
+    public GameObject MenuUi;
     public GameObject settingsMenuUI;
     private bool _isPaused = false;
     private GameManager _gameManager;
     void Start()
     {
         pauseMenuUI.SetActive(false);
+        MenuUi.SetActive(false);
         settingsMenuUI.SetActive(false);
         _gameManager = FindObjectOfType<GameManager>();
         Cursor.visible = false;
@@ -56,12 +58,12 @@ public class InGamePauseMenu : MonoBehaviour
 
     public void OpenSettingsMenu()
     {
-        pauseMenuUI.SetActive(false);
+        MenuUi.SetActive(false);
         settingsMenuUI.SetActive(true);
     }
     public void CloseSettingsMenu()
     {
-        pauseMenuUI.SetActive(true);
+        MenuUi.SetActive(true);
         settingsMenuUI.SetActive(false);
     }
 }

@@ -20,7 +20,6 @@ public class SwordPickUp : PickUpObject
         PlayerDataSave.Instance.HasSword = true;
         PlayerDataSave.Instance.SwordLevel = 1;
         playerAttack._canAttack = true;
-        // Debug.Log("Sword collected!");
     }
 
     protected override void Collect()

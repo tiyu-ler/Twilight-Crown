@@ -13,7 +13,6 @@ public class PlayerDataSave : MonoBehaviour
     public int MagicLevel;
     public int Money;
     public bool catBossKilled;
-    // public bool CollectedSpheresLight;
     public float totalPlayTime;
 
     private void Awake()
@@ -28,7 +27,6 @@ public class PlayerDataSave : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
     public void Default()
     {
         ObeliskID = 0;

@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     public float DashDuration = 0.2f;
     public float DashCooldown = 0.6f;
     public bool IsDashing;
+    public bool CanDash = false;
 
     [Header("Ground Settings")]
     public Transform GroundCheck;                 
@@ -41,22 +42,22 @@ public class PlayerMovement : MonoBehaviour
     public Transform WallCheck;
     public float WallCheckDistance = 0.2f;
     public LayerMask WallLayer;
+    public bool CanWallClimb = false;
     private bool _isTouchingWall;
 
-    private bool _canDash = false;
     private float FallSpeedDampingChange;
     private float MaxFallSpeed = 30f;
     private bool _isJumping, _jumpButtonHeld;
     private float _jumpTimeCounter;
-    private bool _canWallClimb = false;
 
     private void Start()
     {
-        _canDash = PlayerDataSave.Instance.HasDash;
-        _canWallClimb = PlayerDataSave.Instance.HasWallClimb;
+        CanDash = PlayerDataSave.Instance.HasDash;
+        CanWallClimb = PlayerDataSave.Instance.HasWallClimb;
         RigidBody = GetComponent<Rigidbody2D>();
         FullBodyAnimator.StopPlayback();
         FallSpeedDampingChange = cameraManager.FallSpeedDampingLimit;
+        UpperBodyAnimator.SetBool("HasSword", PlayerDataSave.Instance.HasSword);
     }
 
 
@@ -102,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
             _isJumping = false;
         } 
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && _canDash)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && CanDash)
         {
             StartCoroutine(Dash());
         }
@@ -129,7 +130,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartJump()
     {
-        if (_isTouchingWall && !_isGrounded && _canWallClimb)
+        if (_isTouchingWall && !_isGrounded && CanWallClimb)
         {
             float pushDirection = IsFacingRight ? 1 : -1;
             RigidBody.velocity = new Vector2(140 * (IsFacingRight ? -1 : 1), JumpForce*1.75f);
@@ -217,7 +218,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator Dash()
     {
-        _canDash = false;
+        CanDash = false;
         IsDashing = true;
         UpperBody.SetActive(false);
         LowerBody.SetActive(false);
@@ -240,7 +241,7 @@ public class PlayerMovement : MonoBehaviour
         IsDashing = false;
         UpperBodyAnimator.SetBool("HasSword", true);
         yield return new WaitForSeconds(DashCooldown);
-        _canDash = true;
+        CanDash = true;
     }
 
     // private float GetAnimationLength(string animationName)
