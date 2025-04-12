@@ -30,6 +30,7 @@ public class SwordPickUp : PickUpObject
             animator.Play(pickupAnimationName);
             LowerBody.SetActive(false);
             UpperBody.SetActive(false);
+            playerMovement.StopSound = true;
         }
         Player.transform.position = EndPosition;
         StartCoroutine(DestroyAfterAnimation());
@@ -65,6 +66,7 @@ public class SwordPickUp : PickUpObject
         playerAttack.enabled = true;
         playerMovement.FlipCharacter(true, 1);
         playerMovement.CanMove = true;
+        playerMovement.StopSound = false;
         // BlackBorderTop.SetActive(false);
         // BlackBorderBottom.SetActive(false);
         // Debug.Log(FindAnyObjectByType<CameraFollowObject>().transform.rotation.y != Player.transform.rotation.y);
@@ -75,6 +77,7 @@ public class SwordPickUp : PickUpObject
             FindAnyObjectByType<CameraFollowObject>().CallTurn();
         }
         gameManager.SaveGame(PlayerDataSave.Instance.saveID);
+        gameManager.UpdateObjectsBySaveInfo();
         Destroy(gameObject);
     }
 }

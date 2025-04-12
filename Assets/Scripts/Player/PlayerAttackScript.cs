@@ -73,7 +73,9 @@ public class PlayerAttack : MonoBehaviour
 
         // Enable hitbox for the attack
         StartCoroutine(EnableHitboxTemporarily(hitbox));
-
+        int i = Random.Range(0, 5);
+        SoundManager.SoundID swingSound = SoundManager.SoundID.SwordSwing1 + i;
+        SoundManager.Instance.PlaySound(swingSound);
         // Wait for the animation to finish
         StartCoroutine(WaitForAttackAnimation(currentAnimation));
 
@@ -87,7 +89,9 @@ public class PlayerAttack : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         UpperBodyAnimator.SetBool("DiscardAttack", true);
-    
+        int i = Random.Range(0, 5);
+        SoundManager.SoundID swingSound = SoundManager.SoundID.SwordSwing1 + i;
+        SoundManager.Instance.PlaySound(swingSound);
         if (_doubleAttack && !isDownSlash)
             UpperBodyAnimator.Play("U_HideSword_1");
         else

@@ -64,7 +64,9 @@ public abstract class PickUpObject : MonoBehaviour
             {
                 if (Input.GetKey(KeyCode.W))
                 {
+                    playerMovement.StopSound = true;
                     playerMovement.CanMove = false;
+                    playerMovement.audioSource.Pause();
                     playerMovement.HorizontalInput = 0;
                     if (Player.transform.position.x - EndPosition.x < 0 && Player.transform.rotation. y != 0)
                     {
@@ -82,27 +84,10 @@ public abstract class PickUpObject : MonoBehaviour
 
     protected IEnumerator MoveToPickUp()
     {   
-        // cameraManager.CutsceneCamera(true);
-        // BlackBorderTop.SetActive(true);
-        // BlackBorderBottom.SetActive(true);
-        // float elapsedTime = 0f;
-        // float LerpTime = 0.5f;
-
-        
-        // while (elapsedTime < LerpTime)
-        // {
-        //     elapsedTime += Time.deltaTime;
-
-        //     BlackBorderTop.transform.localPosition = new Vector3(0, Mathf.Lerp(640, 440, elapsedTime/LerpTime), 0);
-        //     BlackBorderBottom.transform.localPosition = new Vector3(0, Mathf.Lerp(-640, -440, elapsedTime/LerpTime), 0);
-            
-        //     yield return null;
-        // }
         isCollected = true;
         collider2d.enabled = false;
         playerMovement.RigidBody.velocity = Vector2.zero;
         playerAttack.enabled = false;
-
         _lowerBodyAnimator.SetFloat("RunSpeed", 1);
         _upperBodyAnimator.SetFloat("RunSpeed", 1);
         

@@ -15,6 +15,9 @@ public class RhinoMonster : MonsterScript
     private bool _isRolling = false;
     private bool _isRollingAnimationFinished = false;
     private float _rollTimer = 0f;
+    private AudioClip WalkClip, RollClip, CurlClip, HitWallClip, DamageClip;
+    public AudioSource audioSource;
+    public AudioSource DamageAudioSource;
     protected override void Update()
     {
         if (_isDead) return;
@@ -36,7 +39,6 @@ public class RhinoMonster : MonsterScript
             CheckForPlayer();
         }
     }
-
     protected override void CheckForPlayer() 
     {
         // if (Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, GroundLayer)) return;
@@ -48,11 +50,25 @@ public class RhinoMonster : MonsterScript
             _isChasing = true;
         }
     }
-
+    void Start()
+    {
+        WalkClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoWalk);
+        RollClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoRolling);
+        CurlClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoCurl);
+        HitWallClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoHitWall);
+        DamageClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoGetDamage);
+    }
     protected override void Patrol()
     {
         if (!_isMoving || _isRolling) return;
 
+        if (audioSource.clip != WalkClip || !audioSource.isPlaying)
+        {
+            audioSource.Stop();
+            audioSource.clip = WalkClip;
+            audioSource.Play();
+        }
+        
         _rb.velocity = new Vector2(_facingDirection * MoveSpeed, _rb.velocity.y);
         _animator.SetBool("IsMoving", true);
 
@@ -111,9 +127,14 @@ public class RhinoMonster : MonsterScript
 
     private IEnumerator WaitForStartRollAnimation()
     {
+        audioSource.Stop();
+        audioSource.PlayOneShot(CurlClip);
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).IsName("StartRoll"));
+        audioSource.Stop();
+        audioSource.clip = RollClip;
+        audioSource.Play();
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
-
+        
         _isRollingAnimationFinished = true;
         _animator.Play("Roll");
     }
@@ -129,6 +150,7 @@ public class RhinoMonster : MonsterScript
 
         if (_rollTimer <= 0 || wallAhead || cliffAhead)
         {
+            audioSource.PlayOneShot(HitWallClip);
             StopRolling();
         }
     }
@@ -139,7 +161,6 @@ public class RhinoMonster : MonsterScript
         _isRollingAnimationFinished = false;
         _rb.velocity = Vector2.zero;
         _animator.Play("UnRoll");
-
         StartCoroutine(WaitForUnRollAnimation());
     }
 
@@ -171,8 +192,22 @@ public class RhinoMonster : MonsterScript
         _isMoving = true;
         _canTakeDamage = true;
     }
+    protected override IEnumerator GetHitted()
+    {   
+        Color originalColor = _renderer.color;
+
+        _renderer.color = Color.grey;
+        DamageAudioSource.PlayOneShot(DamageClip);
+        yield return new WaitForSeconds(0.2f);
+
+        _renderer.color = originalColor;
+        
+        StartCoroutine(HitKnockback());
+    }
     protected override void Die()
     {
+        audioSource.Stop();
+        audioSource.enabled = false;
         DefaultCollider.isTrigger = false;
         DefaultCollider.enabled = true;
         RollCollider.enabled = false;
@@ -185,6 +220,7 @@ public class RhinoMonster : MonsterScript
         _rb.bodyType = RigidbodyType2D.Static;
         GetComponent<Collider2D>().enabled = false;
         GetComponent<CapsuleCollider2D>().enabled = false;
+        audioSource.PlayOneShot(DamageClip);
     }
     private IEnumerator WaitForUnRollAnimation()
     {

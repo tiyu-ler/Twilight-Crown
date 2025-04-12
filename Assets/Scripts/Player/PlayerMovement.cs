@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -43,15 +44,18 @@ public class PlayerMovement : MonoBehaviour
     public float WallCheckDistance = 0.2f;
     public LayerMask WallLayer;
     public bool CanWallClimb = false;
+    public bool StopSound;
     private bool _isTouchingWall;
-
     private float FallSpeedDampingChange;
     private float MaxFallSpeed = 30f;
     private bool _isJumping, _jumpButtonHeld;
     private float _jumpTimeCounter;
-
+    private bool _wasGroundedLastFrame = true;
+    public AudioSource audioSource;
     private void Start()
     {
+        StopSound = false;
+        audioSource = GetComponent<AudioSource>();
         CanDash = PlayerDataSave.Instance.HasDash;
         CanWallClimb = PlayerDataSave.Instance.HasWallClimb;
         RigidBody = GetComponent<Rigidbody2D>();
@@ -118,6 +122,14 @@ public class PlayerMovement : MonoBehaviour
         if (!_isTouchingWall)
         {
             RigidBody.velocity = new Vector2(HorizontalInput * MoveSpeed, RigidBody.velocity.y);
+            if (Math.Abs(HorizontalInput) > 0.1f && !audioSource.isPlaying && IsGrounded() && !StopSound)
+            {
+                audioSource.Play();
+            }
+            else if (Math.Abs(HorizontalInput) <= 0.1f && audioSource.isPlaying || !IsGrounded() || StopSound)
+            {
+                audioSource.Pause();
+            }
         }
         UpperBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(HorizontalInput));
         LowerBodyAnimator.SetFloat("RunSpeed", Mathf.Abs(HorizontalInput));
@@ -134,6 +146,7 @@ public class PlayerMovement : MonoBehaviour
         {
             float pushDirection = IsFacingRight ? 1 : -1;
             RigidBody.velocity = new Vector2(140 * (IsFacingRight ? -1 : 1), JumpForce*1.75f);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroJump);
         }
         else if (_isGrounded)
         {
@@ -141,6 +154,7 @@ public class PlayerMovement : MonoBehaviour
             _jumpButtonHeld = true;
             _jumpTimeCounter = MaxJumpHoldTime;
             RigidBody.velocity = new Vector2(RigidBody.velocity.x, JumpForce);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroJump);
         }
     }
 
@@ -150,11 +164,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_isGrounded)
         {
+            if (!_wasGroundedLastFrame) SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroLand, soundType: 3);
+
             LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
             UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
 
             RigidBody.gravityScale = 1f;
             _isJumping = false;
+            _wasGroundedLastFrame = true;
             return;
         }
         if (RigidBody.velocity.y > 0)
@@ -174,6 +191,7 @@ public class PlayerMovement : MonoBehaviour
             RigidBody.gravityScale = FallMultiplier;
             RigidBody.velocity = new Vector2(RigidBody.velocity.x, Mathf.Max(RigidBody.velocity.y, -MaxFallSpeed));
         }
+        _wasGroundedLastFrame = false;
     }
 
 

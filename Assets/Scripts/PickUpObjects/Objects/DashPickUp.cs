@@ -7,6 +7,20 @@ public class DashPickUp : PickUpObject
         PlayerDataSave.Instance.HasDash = true;
     }
 
+    protected override void Collect()
+    {
+        if (pickupAnimationName != "")
+        {
+            animator.Play(pickupAnimationName);
+            LowerBody.SetActive(false);
+            UpperBody.SetActive(false);
+            playerMovement.StopSound = true;
+        }
+
+        StartCoroutine(DestroyAfterAnimation());
+        CollectItem();
+    }
+
     protected override IEnumerator DestroyAfterAnimation()
     {
         if (pickupAnimationName != "")
@@ -24,6 +38,7 @@ public class DashPickUp : PickUpObject
         playerMovement.FlipCharacter(true, 1);
         playerMovement.CanMove = true;
         playerMovement.CanDash = true;
+        playerMovement.StopSound = false;
         
         if (cameraFollowObject.transform.rotation.y != Player.transform.rotation.y)
         {
@@ -31,6 +46,7 @@ public class DashPickUp : PickUpObject
         }
         gameManager.SaveGame(PlayerDataSave.Instance.saveID);
         markerTextPopUp.DisableMarkUp();
+        gameManager.UpdateObjectsBySaveInfo();
         Destroy(gameObject);
     }
 }

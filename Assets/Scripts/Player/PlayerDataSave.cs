@@ -13,6 +13,7 @@ public class PlayerDataSave : MonoBehaviour
     public int MagicLevel;
     public int Money;
     public bool catBossKilled;
+    public bool secretZoneOpened;
     public float totalPlayTime;
 
     private void Awake()
@@ -38,6 +39,7 @@ public class PlayerDataSave : MonoBehaviour
         MagicLevel = 0;
         Money = 0;
         catBossKilled = false;
+        secretZoneOpened = false;
         totalPlayTime = 0;
     }
 }

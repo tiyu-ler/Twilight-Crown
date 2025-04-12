@@ -6,13 +6,14 @@ using UnityEditor;
 public class CameraControlTrigger : MonoBehaviour
 {
     public CustomInspectorObjects customInspectorObjects;
-
+    private GameManager _gameManager;
     private Collider2D _collider;
     private PlayerMovement playerMovement;
     private void Start()
     {
         playerMovement = FindObjectOfType<PlayerMovement>(); 
         _collider = GetComponent<Collider2D>();
+        _gameManager = FindAnyObjectByType<GameManager>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -59,6 +60,8 @@ public class CameraControlTrigger : MonoBehaviour
             }
             yield return null;
         }
+        // PlayerDataSave.Instance.secretZoneOpened = true;
+        // _gameManager.SaveGame(PlayerDataSave.Instance.saveID);
         Destroy(parent);
     }
 
@@ -74,7 +77,13 @@ public class CameraControlTrigger : MonoBehaviour
                 {
                     if (customInspectorObjects.HiddenObject != null)
                     {
-                        StartCoroutine(SetSpriteOpacity(customInspectorObjects.HiddenObject, 0));
+                        if (!PlayerDataSave.Instance.secretZoneOpened)
+                        {
+                            SoundManager.Instance.PlaySound(SoundManager.SoundID.SecretZoneAppearence, worldPos: new Vector2(125.28f,-12), soundType: 2);
+                            PlayerDataSave.Instance.secretZoneOpened = true;
+                            _gameManager.SaveGame(PlayerDataSave.Instance.saveID);
+                            StartCoroutine(SetSpriteOpacity(customInspectorObjects.HiddenObject, 0));
+                        }
                     }
                 }
                 if (customInspectorObjects.IsCameraFromLeftTight || customInspectorObjects.IsCameraFromRightTight)

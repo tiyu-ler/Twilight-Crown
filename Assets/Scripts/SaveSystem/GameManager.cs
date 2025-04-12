@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // [SerializeField] private int currentSaveID = 0;
     public bool Isgame;
+    public GameObject SecretZone;
 
     [Header("Sword")]
     public GameObject Case;
@@ -31,13 +31,17 @@ public class GameManager : MonoBehaviour
         
         dataSave = FindObjectOfType<PlayerDataSave>();
         
-        UpdatePickUpObjects();
+        UpdateObjectsBySaveInfo();
 
         SaveSystem.Init();
     }
 
-    public void UpdatePickUpObjects()
+    public void UpdateObjectsBySaveInfo()
     {
+        if (dataSave.secretZoneOpened)
+        {
+            if (SecretZone) Destroy(SecretZone);
+        }
         if (dataSave.HasSword)
         {
             if (Case) Destroy(Case);
@@ -46,7 +50,8 @@ public class GameManager : MonoBehaviour
             if (SwordLight) Destroy(SwordLight);
         }
         if (dataSave.HasDash)
-        {
+        {  
+            WallhBag.GetComponent<ClimbPickUp>().SetEmptyAnimation();
             WallhBag.GetComponent<ClimbPickUp>().enabled = false;
             if (WallPickUpText) Destroy(WallPickUpText);
             if (Sword) Destroy(WallLight);
@@ -83,7 +88,7 @@ public class GameManager : MonoBehaviour
             hasMagic = dataSave.HasMagic,
             magicLevel = dataSave.MagicLevel,
             money = dataSave.Money,
-            // collectedSpheresSound = dataSave.CollectedSpheresSound,
+            secretZoneOpened = dataSave.secretZoneOpened,
             catBossKilled = dataSave.catBossKilled,
             
             totalPlayTime = playTime + dataSave.totalPlayTime
@@ -109,7 +114,7 @@ public class GameManager : MonoBehaviour
             
             dataSave.Money = saveObject.money;
             
-            // dataSave.CollectedSpheresSound = saveObject.collectedSpheresSound;
+            dataSave.secretZoneOpened = saveObject.secretZoneOpened;
             dataSave.catBossKilled = saveObject.catBossKilled;
             
             playTime = saveObject.totalPlayTime;

@@ -7,6 +7,9 @@ public class GoblinMonster : MonsterScript
     public Sprite died;
     public float DesiredHeight;
     public Transform torch;
+    private AudioClip WalkClip, DamageClip;
+    public AudioSource audioSource;
+    public AudioSource DamageAudioSource;
     protected override void Patrol()
     {
         if (!_isMoving || _isDead) return;
@@ -25,7 +28,32 @@ public class GoblinMonster : MonsterScript
             Flip();
         }
     }
+    void Start()
+    {
+        WalkClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.GoblinWalk);
+        DamageClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.GoblinGetDamage);
+        // AudioSource[] sources = GetComponents<AudioSource>();
+        // if (sources.Length >= 2)
+        // {
+        //     audioSource = sources[0];
+        //     DamageAudioSource = sources[1];
+        // }
+        audioSource.clip = WalkClip;
+        DamageAudioSource.clip = DamageClip;
+        audioSource.Play();
+    }
+    protected override IEnumerator GetHitted()
+    {   
+        Color originalColor = _renderer.color;
 
+        _renderer.color = Color.grey;
+        DamageAudioSource.PlayOneShot(DamageClip);
+        yield return new WaitForSeconds(0.2f);
+
+        _renderer.color = originalColor;
+        
+        StartCoroutine(HitKnockback());
+    }
     protected override void ChasePlayer()
     {
         if (_player == null || _isDead) return;
@@ -44,6 +72,7 @@ public class GoblinMonster : MonsterScript
 
     protected override void Die()
     {
+        DamageAudioSource.PlayOneShot(DamageClip);
         _canTakeDamage = false;
         _renderer.color = Color.grey;
         _isDead = true;

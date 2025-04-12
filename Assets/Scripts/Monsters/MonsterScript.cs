@@ -186,7 +186,7 @@ public abstract class MonsterScript : MonoBehaviour
         yield return new WaitForSeconds(0.1f); // Small delay before allowing another launch
         _hasLaunchedPlayer = false;
     }
-    protected IEnumerator GetHitted()
+    protected virtual IEnumerator GetHitted()
     {   
         Color originalColor = _renderer.color;
 

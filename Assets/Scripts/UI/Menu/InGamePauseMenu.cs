@@ -33,6 +33,8 @@ public class InGamePauseMenu : MonoBehaviour
     {
         Time.timeScale = 0;
         pauseMenuUI.SetActive(true);
+        MenuUi.SetActive(true);
+        settingsMenuUI.SetActive(false);
         _isPaused = true;
 
         Cursor.visible = true;

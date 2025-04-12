@@ -18,6 +18,7 @@ public class ClimbPickUp : PickUpObject
             animator.Play(pickupAnimationName);
             LowerBody.SetActive(false);
             UpperBody.SetActive(false);
+            playerMovement.StopSound = true;
         }
         Player.transform.position = AnimationEndLocation;
         StartCoroutine(DestroyAfterAnimation());
@@ -42,15 +43,21 @@ public class ClimbPickUp : PickUpObject
         playerMovement.FlipCharacter(true, 1);
         playerMovement.CanMove = true;
         playerMovement.CanWallClimb = true;
+        playerMovement.StopSound = false;
         // Debug.Log(cameraFollowObject.transform.rotation.y != Player.transform.rotation.y);
         
         if (cameraFollowObject.transform.rotation.y != Player.transform.rotation.y)
         {
-            // Debug.Log("CALLTURN");
             cameraFollowObject.CallTurn();
         }
         animator.enabled = false;
         gameManager.SaveGame(PlayerDataSave.Instance.saveID);
+        GetComponent<SpriteRenderer>().sprite = EmptyBag;
+        gameManager.UpdateObjectsBySaveInfo();
+    }
+
+    public void SetEmptyAnimation()
+    {
         GetComponent<SpriteRenderer>().sprite = EmptyBag;
     }
 }
