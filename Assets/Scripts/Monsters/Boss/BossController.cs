@@ -32,12 +32,14 @@ public class BossController : MonoBehaviour
     {
         bossHealth = FindAnyObjectByType<BossHealth>();
     }
-    public void RestartBossBattle()
+    public IEnumerator RestartBossBattle()
     {
+        TentaclesCollider.SetActive(false);
         bossHealth.RestartHp();
         bulletSpawn.StopAllCoroutines();
         StopAllCoroutines();
-        bossBattleStart.OpenDoors(true);
+        yield return new WaitForSeconds(0.5f);
+        bossBattleStart.OpenDoors(true, false);
         BossAnimator.Play("None");
     }
     public void EndBossBattle()
@@ -57,6 +59,7 @@ public class BossController : MonoBehaviour
     private IEnumerator DisappearBeforeAttack()
     {
         BossAnimator.Play("Hide");
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.CatbossHide, worldPos: transform.position, volumeUpdate: 0.22f);
         yield return new WaitForSeconds(GetAnimationLength("Hide"));
 
         StartCoroutine(ChooseRandomAttack());
@@ -88,6 +91,7 @@ public class BossController : MonoBehaviour
         BossTransform.localRotation = randomPos == 0 ? _idleRotationLeft : _idleRotationRight;
         DefaultCollider.gameObject.transform.localRotation = randomPos == 0 ? _idleRotationLeft : _idleRotationRight;
         BossAnimator.Play("Appear");
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.CatbossAppear, worldPos: transform.position, volumeUpdate: 0.22f);
         yield return new WaitForSeconds(GetAnimationLength("Appear"));
 
         StartCoroutine(IdleState());
@@ -116,10 +120,12 @@ public class BossController : MonoBehaviour
 
         BossAnimator.Play("Tentacles");
 
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.TentaclesAttack, worldPos: transform.position, volumeUpdate: 0.6f);
         yield return new WaitForSeconds(GetAnimationLength("Tentacles")*0.5f);
         TentaclesCollider.SetActive(true);
         yield return new WaitForSeconds(GetAnimationLength("Tentacles")*0.4f);
         TentaclesCollider.SetActive(false);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.TentaclesHide, worldPos: transform.position, volumeUpdate: 0.75f);
         yield return new WaitForSeconds(GetAnimationLength("Tentacles")*0.1f);
 
         StartCoroutine(NextAction());

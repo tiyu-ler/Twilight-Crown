@@ -18,6 +18,9 @@ public class RhinoMonster : MonsterScript
     private AudioClip WalkClip, RollClip, CurlClip, HitWallClip, DamageClip;
     public AudioSource audioSource;
     public AudioSource DamageAudioSource;
+    private float AmbientVolume, SfxVolume;
+    private const float RhinoCurlVolume = 0.03f, RhinoHitWallVolume = 0.02f, RhinoRollingVolume = 0.02f, RhinoWalkVolume = 0.02f;
+    private const float RhinoGetDamageVolume = 0.3f;
     protected override void Update()
     {
         if (_isDead) return;
@@ -58,6 +61,12 @@ public class RhinoMonster : MonsterScript
         HitWallClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoHitWall);
         DamageClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoGetDamage);
     }
+    public void UpdateVolume(float ambient, float sfx)
+    {
+        AmbientVolume = ambient;
+        SfxVolume = sfx;
+        DamageAudioSource.volume = SfxVolume * RhinoGetDamageVolume;
+    }
     protected override void Patrol()
     {
         if (!_isMoving || _isRolling) return;
@@ -66,6 +75,7 @@ public class RhinoMonster : MonsterScript
         {
             audioSource.Stop();
             audioSource.clip = WalkClip;
+            audioSource.volume = AmbientVolume * RhinoWalkVolume;
             audioSource.Play();
         }
         
@@ -128,10 +138,12 @@ public class RhinoMonster : MonsterScript
     private IEnumerator WaitForStartRollAnimation()
     {
         audioSource.Stop();
+        audioSource.volume = AmbientVolume * RhinoCurlVolume;
         audioSource.PlayOneShot(CurlClip);
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).IsName("StartRoll"));
         audioSource.Stop();
         audioSource.clip = RollClip;
+        audioSource.volume = AmbientVolume * RhinoRollingVolume;
         audioSource.Play();
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f);
         
@@ -150,6 +162,7 @@ public class RhinoMonster : MonsterScript
 
         if (_rollTimer <= 0 || wallAhead || cliffAhead)
         {
+            audioSource.volume = AmbientVolume * RhinoHitWallVolume;
             audioSource.PlayOneShot(HitWallClip);
             StopRolling();
         }

@@ -13,7 +13,7 @@ public class BossBattleStart : MonoBehaviour
         {
             foreach (DoorScript doorScript in DoorList)
             {
-                doorScript.DoorInteractor(true);
+                doorScript.DoorInteractor(true, true);
             }
             Debug.Log("Battle Start");
             CatBoss.SetActive(true);
@@ -22,18 +22,18 @@ public class BossBattleStart : MonoBehaviour
         }
     }
 
-    public void OpenDoors(bool Restart)
+    public void OpenDoors(bool Restart, bool PlaySound)
     {
         if (Restart){
             foreach (DoorScript doorScript in DoorList)
             {
-                doorScript.DoorInteractor(false);
+                doorScript.DoorInteractor(false, PlaySound);
             }
             StartCoroutine(EnableCollider());
         } 
         else 
         {
-            DoorList[0].DoorInteractor(false);
+            DoorList[0].DoorInteractor(false, PlaySound);
         }
     }
     private IEnumerator EnableCollider()

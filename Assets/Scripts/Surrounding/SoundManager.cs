@@ -10,16 +10,18 @@ public class SoundManager : MonoBehaviour
     public enum SoundID
     {
         //Music
-        // MainMenuMusic, DefaultRoomMusic, BossMusic, DarkRoomMusic,
+        MainMenuMusic, DefaultRoomMusic, BossMusic, DarkRoomMusic,
         //Ambient
         RhinoWalk, RhinoCurl, RhinoHitWall, RhinoRolling, GoblinWalk, BlacksmithTalk1, BlacksmithTalk2,
         BlacksmithTalk3, BlacksmithTalk4, BlacksmithTalk5, BlacksmithTalk6, BlacksmithTalk7, SecretZoneAppearence,
         //SFX 17
-        SwordSwing1, SwordSwing2, SwordSwing3, SwordSwing4, SwordSwing5, HeroDamage, CatbossAppear, 
-        CatbossHide, HeroJump, HeroLand, DashPickUp, SwordPickUp, WallJumpPickUp1, WallJumpPickUp2, SwordUpgrade, 
-        Invoke, RhinoGetDamage, GoblinGetDamage, MoneyBagBreak, CoinHitGround1, CoinHitGround2, CoinCollect, Dash, 
-        GateOpen, GateClose, BossTopAttack, TentaclesAttack, UiButtonSelection, UiButtonConfirm
+        SwordSwing1, SwordSwing2, SwordSwing3, SwordSwing4, SwordSwing5, HeroDamage, CatbossAppear, CatbossHide, BulletFly,
+        HeroJump, HeroLand, DashPickUp, SwordPickUp, WallJumpPickUp1, WallJumpPickUp2, SwordUpgrade, Invoke, RhinoGetDamage, 
+        GoblinGetDamage, MoneyBagBreak, CoinHitGround1, CoinHitGround2, CoinCollect1, CoinCollect2, CoinCollect3, 
+        CoinCollect4, Dash, GateOpen, GateClose, BossTopAttack, TentaclesAttack, UiButtonSelection, UiButtonConfirm,
+        TentaclesHide, AWALK
     }
+    
     [System.Serializable]
     public struct SoundData
     {
@@ -37,8 +39,10 @@ public class SoundManager : MonoBehaviour
     public float AmbientVolume;
     public float SfxVolume;
     private const int _initialSFXPoolSize = 10;
-    public List<AudioSource> RhinoSound = new List<AudioSource>();
-    public List<AudioSource> GoblinSound = new List<AudioSource>();
+    // public List<AudioSource> RhinoSound = new List<AudioSource>();
+    // public List<AudioSource> GoblinSound = new List<AudioSource>();
+    public List<GoblinMonster> Goblins = new List<GoblinMonster>();
+    public List<RhinoMonster> Rhinos = new List<RhinoMonster>();
     void Awake()
     {
         if (Instance == null)
@@ -54,8 +58,8 @@ public class SoundManager : MonoBehaviour
         SetVolume();
         InitializeSoundLibraries();
     }
-    // SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroJump, soundType: 3);
-    public void PlaySound(SoundID id, Vector2? worldPos = null, float? soundRadius = null, bool loop = false, int soundType = 3)
+
+    public void PlaySound(SoundID id, Vector2? worldPos = null, float? volumeUpdate = 1, bool loop = false, int soundType = 3)
     {
         AudioClip clip = GetClipFromLibrary(id);
         if (clip == null) return; 
@@ -70,17 +74,16 @@ public class SoundManager : MonoBehaviour
 
         audioSource.transform.position = worldPos ?? transform.position;
         audioSource.clip = clip;
-        audioSource.volume = MasterVolume * GetVolumeForType(soundType);
+        audioSource.spatialBlend = 1;
+        audioSource.spread = 180;
+        audioSource.volume = MasterVolume * GetVolumeForType(soundType) * (float)volumeUpdate;
+        Debug.Log("Volume Update: " + volumeUpdate);
+        Debug.Log("Master + Sound Type:" + MasterVolume * GetVolumeForType(soundType));
+        Debug.Log("All of them: " + MasterVolume * GetVolumeForType(soundType) * (float)volumeUpdate);
         audioSource.loop = loop;
-        audioSource.maxDistance = soundRadius.GetValueOrDefault(500f);
-        if (soundRadius.HasValue)
-        {
-            audioSource.maxDistance = (float)soundRadius;
-        }
 
         audioSource.Play();
 
-        // Destroy the source after the clip finishes
         if (!loop)
         {
             Destroy(audioSource, clip.length);
@@ -103,30 +106,38 @@ public class SoundManager : MonoBehaviour
         AmbientVolume = PlayerPrefs.GetFloat("AmbientVolume", 0.5f);
         SfxVolume = PlayerPrefs.GetFloat("SfxVolume", 0.5f);
 
-        PlayerWalk.volume = MasterVolume * SfxVolume;
+        PlayerWalk.volume = MasterVolume * SfxVolume * 0.4f;
 
-        for (int i = 0; i < RhinoSound.Count; i++)
+        foreach (GoblinMonster goblin in Goblins)
         {
-            if (i % 2 == 0)
-            {
-                RhinoSound[i].volume = MasterVolume * AmbientVolume; //ambient
-            }
-            else
-            {
-                RhinoSound[i].volume = MasterVolume * SfxVolume; //sfx
-            }
+            goblin.UpdateVolume();
         }
-        for (int i = 0; i < GoblinSound.Count; i++)
+        foreach (RhinoMonster rhino in Rhinos)
         {
-            if (i % 2 == 0)
-            {
-                GoblinSound[i].volume = MasterVolume * AmbientVolume; //ambient
-            }
-            else
-            {
-                GoblinSound[i].volume = MasterVolume * SfxVolume; //sfx
-            }
+            rhino.UpdateVolume(MasterVolume*AmbientVolume, MasterVolume*SfxVolume);
         }
+        // for (int i = 0; i < RhinoSound.Count; i++)
+        // {
+        //     if (i % 2 == 0)
+        //     {
+        //         RhinoSound[i].volume = MasterVolume * AmbientVolume; //ambient
+        //     }
+        //     else
+        //     {
+        //         RhinoSound[i].volume = MasterVolume * SfxVolume; //sfx
+        //     }
+        // }
+        // for (int i = 0; i < GoblinSound.Count; i++)
+        // {
+        //     if (i % 2 == 0)
+        //     {
+        //         GoblinSound[i].volume = MasterVolume * AmbientVolume; //ambient
+        //     }
+        //     else
+        //     {
+        //         GoblinSound[i].volume = MasterVolume * SfxVolume; //sfx
+        //     }
+        // }
     }
     public void PauseAndContinueSound(bool pause, int soundType)
     {

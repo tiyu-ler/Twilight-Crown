@@ -88,7 +88,7 @@ public class BossHealth : MonoBehaviour
         BossController.Instance.BossAnimator.Play("Hide");
         yield return new WaitForSeconds(BossController.Instance.GetAnimationLength("Hide"));
         BossController.Instance.BossAnimator.Play("None");
-        bossBattleStart.OpenDoors(false);
+        bossBattleStart.OpenDoors(false, true);
         PlayerDataSave.Instance.catBossKilled = true;
         gameManager.SaveGame(PlayerDataSave.Instance.saveID);
         DestroyObjects();

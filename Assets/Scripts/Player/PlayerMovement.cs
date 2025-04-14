@@ -146,7 +146,7 @@ public class PlayerMovement : MonoBehaviour
         {
             float pushDirection = IsFacingRight ? 1 : -1;
             RigidBody.velocity = new Vector2(140 * (IsFacingRight ? -1 : 1), JumpForce*1.75f);
-            SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroJump);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroJump, volumeUpdate: 0.01f);
         }
         else if (_isGrounded)
         {
@@ -154,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
             _jumpButtonHeld = true;
             _jumpTimeCounter = MaxJumpHoldTime;
             RigidBody.velocity = new Vector2(RigidBody.velocity.x, JumpForce);
-            SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroJump);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroJump, volumeUpdate: 0.35f);
         }
     }
 
@@ -164,7 +164,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (_isGrounded)
         {
-            if (!_wasGroundedLastFrame) SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroLand, soundType: 3);
+            if (!_wasGroundedLastFrame) SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroLand, volumeUpdate: 0.55f);
 
             LowerBodyAnimator.SetBool("IsGrounded", _isGrounded);
             UpperBodyAnimator.SetBool("IsGrounded", _isGrounded);
@@ -246,7 +246,7 @@ public class PlayerMovement : MonoBehaviour
         RigidBody.velocity = new Vector2(dashDirection * DashSpeed, 0);
 
         FullBodyAnimator.Play("Dash");
-
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.Dash, worldPos: transform.position, volumeUpdate: 0.4f);
         yield return new WaitForSeconds(0.07f + DashDuration);
 
         FullBodyAnimator.Play("DashStop");

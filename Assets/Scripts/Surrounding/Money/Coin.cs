@@ -7,6 +7,8 @@ public class Coin : MonoBehaviour
     public Collider2D second;
     public CoinUIManager coinUIManager;
 
+    private bool hasFallen = false;
+    private LayerMask groundLayer;
     private Transform player;
     private bool shouldMagnet = false;
     private float magnetSpeed = 15f;
@@ -15,6 +17,7 @@ public class Coin : MonoBehaviour
 
     private void Start()
     {
+        groundLayer = 1 << LayerMask.NameToLayer("Ground");
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = GetComponent<Rigidbody2D>();
         coinUIManager = FindAnyObjectByType<CoinUIManager>();
@@ -39,12 +42,31 @@ public class Coin : MonoBehaviour
             // Accelerate as it flies
             magnetSpeed += acceleration * Time.deltaTime;
         }
-    }
 
+         if (!hasFallen)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.1f, groundLayer);
+            if (hit.collider != null)
+            {
+                FallOnGround();
+                hasFallen = true;
+            }
+        }
+    }
+    private void FallOnGround()
+    {
+        int i = Random.Range(0, 1);
+        SoundManager.SoundID CoinHitGround = SoundManager.SoundID.CoinHitGround1 + i;
+        SoundManager.Instance.PlaySound(CoinHitGround, worldPos: transform.position, volumeUpdate: 0.08f);
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
+            int i = Random.Range(0, 4);
+            SoundManager.SoundID CoinCollect = SoundManager.SoundID.CoinCollect1 + i;
+            SoundManager.Instance.PlaySound(CoinCollect, worldPos: transform.position, volumeUpdate: 0.25f);
+
             first.enabled = false;
             PlayerDataSave.Instance.Money++;
             coinUIManager.UpdateCoinsUI(PlayerDataSave.Instance.Money);

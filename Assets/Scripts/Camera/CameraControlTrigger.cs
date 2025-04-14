@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Cinemachine;
 using UnityEditor;
+using UnityEngine.Rendering;
 
 public class CameraControlTrigger : MonoBehaviour
 {
@@ -79,7 +80,7 @@ public class CameraControlTrigger : MonoBehaviour
                     {
                         if (!PlayerDataSave.Instance.secretZoneOpened)
                         {
-                            SoundManager.Instance.PlaySound(SoundManager.SoundID.SecretZoneAppearence, worldPos: new Vector2(125.28f,-12), soundType: 2);
+                            SoundManager.Instance.PlaySound(SoundManager.SoundID.SecretZoneAppearence, worldPos: new Vector2(125.28f,-12), soundType: 2, volumeUpdate: 0.4f);
                             PlayerDataSave.Instance.secretZoneOpened = true;
                             _gameManager.SaveGame(PlayerDataSave.Instance.saveID);
                             StartCoroutine(SetSpriteOpacity(customInspectorObjects.HiddenObject, 0));

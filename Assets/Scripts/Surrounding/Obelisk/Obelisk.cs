@@ -65,7 +65,7 @@ public class Obelisk : MonoBehaviour
             currentActiveObelisk.DeactivateObelisk();
             currentActiveObelisk._isActive = false;
         }
-
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.Invoke, worldPos: transform.position, volumeUpdate: 0.55f);
         currentActiveObelisk = this;
         markerTextPopUp.DisableMarkUp();
         if (!_isActive)

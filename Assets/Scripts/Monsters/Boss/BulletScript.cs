@@ -16,6 +16,8 @@ public class BulletScript : MonoBehaviour
 
     private IEnumerator BulletFall()
     {
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.BulletFly, worldPos: transform.position, volumeUpdate: 0.08f);
+        float totalLifetime = 0f;
         float elapsedTime  = 0f;
         Vector2 startPos = transform.localPosition;
         Vector2 endPos = new Vector3(startPos.x, -1.22f);
@@ -24,7 +26,7 @@ public class BulletScript : MonoBehaviour
         while (elapsedTime < FallTime)
         {
             elapsedTime += Time.deltaTime;
-
+            totalLifetime += Time.deltaTime;
             transform.localPosition = Vector2.Lerp(startPos, endPos, elapsedTime/FallTime);
             yield return null;
         }
@@ -32,7 +34,10 @@ public class BulletScript : MonoBehaviour
         transform.localPosition = endPos;
         _collider.enabled = false;
         BulletAnimator.Play("BulletSplash");
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.BossTopAttack, worldPos: transform.position, volumeUpdate: 0.6f);
+        totalLifetime += GetAnimationLength("BulletSplash");
         yield return new WaitForSeconds(GetAnimationLength("BulletSplash"));
+        Debug.Log($"Bullet lived for {totalLifetime:F2} seconds before being destroyed.");
         Destroy(gameObject);
     }
 

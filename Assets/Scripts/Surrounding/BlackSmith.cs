@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 
 public class BlacksmithInteraction : MonoBehaviour
 {
@@ -20,44 +21,46 @@ public class BlacksmithInteraction : MonoBehaviour
     private string fullText;
     private PlayerAttack playerAttack;
     private PlayerMovement playerMovement;
+    private CoinUIManager coinUIManager;
     private string[] dialogNoMoneyAtAll = new string[]
     { 
-        "Sorry, you do not have enough."
+        "Sorry, you do not have enough." // BlacksmithTalk1
     };
     private string[] dialogNoMoney = new string[] 
     {
-        "Ok, few coins aint much, i will help you"
+        "Ok, few coins aint much, i will help you" // BlacksmithTalk2
     };
     private string[] dialogEnd = new string[]
     {   
-        "Be carefull, good luck",
-        "See you soon.",
+        "Be carefull, good luck", //BlacksmithTalk3
+        "See you soon.", //BlacksmithTalk4
     };
     private string[] dialogFirstEncounter = new string[]
     {
-        "Ah, a new blade in need of forging.",
-        "I can temper this metal and bring out its true potential.",
-        "It won't be cheap, but you'll feel the difference.",
+        "Ah, a new blade in need of forging.", //BlacksmithTalk5
+        "I can temper this metal and bring out its true potential.", //BlacksmithTalk6
+        "It won't be cheap, but you'll feel the difference.", //BlacksmithTalk7
     };
 
     private string[] dialogAfterFirstUpgrade = new string[]
     {
-        "That swing's got some real bite now, eh?",
-        "There's still more I can do, if you can pay the price.",
-        "Let me know when you're ready.",
+        "That swing's got some real bite now, eh?", //BlacksmithTalk6
+        "There's still more I can do, if you can pay the price.", // BlacksmithTalk7
+        "Let me know when you're ready.", //BlacksmithTalk2
     };
 
     private string[] dialogAfterFinalUpgrade = new string[]
     {
-        "This blade... it's as good as it gets.",
-        "I’ve poured all my skill into it.",
-        "Go now—and use it well.",
+        "This blade... it's as good as it gets.", //BlacksmithTalk1
+        "I’ve poured all my skill into it.", //BlacksmithTalk4
+        "Go now—and use it well.", //BlacksmithTalk3
     };
 
     private int[] upgradeCosts = new int[] { 50, 90 };
 
     private void Start()
     {
+        coinUIManager = FindAnyObjectByType<CoinUIManager>();
         dialogUI.SetActive(false);
         upgradeUI.SetActive(false);
         gameManager = FindAnyObjectByType<GameManager>();
@@ -73,15 +76,18 @@ public class BlacksmithInteraction : MonoBehaviour
 
             if (level == 0)
             {
-                StartCoroutine(StartDialog(dialogFirstEncounter));
+                StartCoroutine(StartDialog(dialogFirstEncounter, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk5, 
+                    SoundManager.SoundID.BlacksmithTalk6, SoundManager.SoundID.BlacksmithTalk7 }));
             }
             else if (level == 1)
             {
-                StartCoroutine(StartDialog(dialogAfterFirstUpgrade));
+                StartCoroutine(StartDialog(dialogAfterFirstUpgrade, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk6, 
+                    SoundManager.SoundID.BlacksmithTalk7, SoundManager.SoundID.BlacksmithTalk2 }));
             }
             else
             {
-                StartCoroutine(StartDialog(dialogAfterFinalUpgrade, endAfterDialog: true));
+                StartCoroutine(StartDialog(dialogAfterFinalUpgrade, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk1, 
+                SoundManager.SoundID.BlacksmithTalk4, SoundManager.SoundID.BlacksmithTalk3 }, endAfterDialog: true));
             }
         }
         else if (dialogActive && Input.anyKeyDown && isTyping)
@@ -92,7 +98,7 @@ public class BlacksmithInteraction : MonoBehaviour
         }
     }
 
-    private IEnumerator StartDialog(string[] lines, bool endAfterDialog = false, bool recursionCall = false)
+    private IEnumerator StartDialog(string[] lines, SoundManager.SoundID[] blacksmithTalks, bool endAfterDialog = false, bool recursionCall = false)
     {
         playerAttack.enabled = false;
         playerMovement.CanMove = false;
@@ -105,11 +111,12 @@ public class BlacksmithInteraction : MonoBehaviour
         dialogUI.SetActive(true);
         dialogText.text = "";
 
-        foreach (string line in lines)
+        for (int i = 0; i < lines.Length; i++)
         {
-            fullText = line;
+            SoundManager.Instance.PlaySound(blacksmithTalks[i], worldPos: transform.position, soundType: 2, volumeUpdate: 0.9f);
+            fullText = lines[i];
             isTyping = true;
-            dialogCoroutine = StartCoroutine(TypeText(line));
+            dialogCoroutine = StartCoroutine(TypeText(lines[i]));
             yield return new WaitUntil(() => !isTyping);
             yield return new WaitForSeconds(0.85f);
         }
@@ -126,7 +133,8 @@ public class BlacksmithInteraction : MonoBehaviour
         }
         else
         {
-            StartCoroutine(StartDialog(dialogEnd, endAfterDialog: true));
+            StartCoroutine(StartDialog(dialogEnd, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk3, 
+                    SoundManager.SoundID.BlacksmithTalk4 }, endAfterDialog: true));
         }
     }
 
@@ -144,13 +152,12 @@ public class BlacksmithInteraction : MonoBehaviour
     private void ShowUpgradeOptions()
     {
         DisablePlayer();
-        _currentLevel = PlayerDataSave.Instance.SwordLevel-1;
+        _currentLevel = PlayerDataSave.Instance.SwordLevel;
         costText.text = $"Upgrade sword for {upgradeCosts[_currentLevel]}  ?";
         dialogUI.SetActive(false);
         upgradeUI.SetActive(true);
     }
 
-    // 🎯 Assign this to the Yes Button in Inspector
     public void OnYesClicked()
     {
         int cost = upgradeCosts[_currentLevel];
@@ -160,12 +167,14 @@ public class BlacksmithInteraction : MonoBehaviour
         {
             if (PlayerDataSave.Instance.Money < cost)
             {
-                StartCoroutine(StartDialog(dialogNoMoney, recursionCall: true));
+                StartCoroutine(StartDialog(dialogNoMoney, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk2}, recursionCall: true));
                 cost = PlayerDataSave.Instance.Money;
             }
             _currentLevel += 1;
             PlayerDataSave.Instance.Money -= cost;
             PlayerDataSave.Instance.SwordLevel++;
+            
+            coinUIManager.UpdateCoinsUI(PlayerDataSave.Instance.Money);
 
             HitboxAttackCheck[] hitboxes = FindObjectsOfType<HitboxAttackCheck>();
             foreach (var hitbox in hitboxes)
@@ -177,14 +186,14 @@ public class BlacksmithInteraction : MonoBehaviour
         }
         else
         {
-            StartCoroutine(StartDialog(dialogNoMoneyAtAll, recursionCall: true));
+            StartCoroutine(StartDialog(dialogNoMoneyAtAll, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk1}, recursionCall: true));
         }
     }
 
     // 🎯 Assign this to the No Button in Inspector
     public void OnNoClicked()
     {
-        StartCoroutine(StartDialog(dialogEnd, endAfterDialog: true));
+        StartCoroutine(StartDialog(dialogEnd, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk3, SoundManager.SoundID.BlacksmithTalk4}, endAfterDialog: true));
     }
 
     private void EndDialog()

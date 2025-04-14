@@ -11,8 +11,19 @@ public class DoorScript : MonoBehaviour
         _startPosition = transform.localPosition;
     }
 
-    public void DoorInteractor(bool LerpDown)
+    public void DoorInteractor(bool LerpDown, bool PlaySound)
     {
+        if (PlaySound) 
+        {
+            if (LerpDown)
+            {
+                SoundManager.Instance.PlaySound(SoundManager.SoundID.GateClose, worldPos: transform.position, volumeUpdate: 0.5f);
+            }
+            else
+            {
+                SoundManager.Instance.PlaySound(SoundManager.SoundID.GateOpen, worldPos: transform.position, volumeUpdate: 0.5f);
+            }
+        }
         StartCoroutine(LerpDoor(LerpDown));
     }
     private IEnumerator LerpDoor(bool LerpDown)

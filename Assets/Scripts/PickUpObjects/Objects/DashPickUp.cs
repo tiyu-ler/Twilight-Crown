@@ -12,6 +12,7 @@ public class DashPickUp : PickUpObject
         if (pickupAnimationName != "")
         {
             animator.Play(pickupAnimationName);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.DashPickUp, worldPos: transform.position, volumeUpdate: 0.45f);
             LowerBody.SetActive(false);
             UpperBody.SetActive(false);
             playerMovement.StopSound = true;
@@ -32,7 +33,7 @@ public class DashPickUp : PickUpObject
 
             UpperBody.GetComponent<Animator>().Play("U_Idle");
             LowerBody.GetComponent<Animator>().Play("L_Idle");
-        }
+        }  
 
         playerAttack.enabled = true;
         playerMovement.FlipCharacter(true, 1);

@@ -66,12 +66,11 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth--;
         HeartsUi[currentHealth].SetActive(false);
-
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroDamage, worldPos: transform.position, volumeUpdate: 0.55f);
         if (currentHealth <= 0)
         {
             isDead = true;
-
-            bossController.RestartBossBattle();
+            StartCoroutine(bossController.RestartBossBattle());
             CameraManager.Instance.ReturnCameraToDefault(DefaultCamera);
             UpperBody.SetActive(false);
             LowerBody.SetActive(false);

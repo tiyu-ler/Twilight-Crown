@@ -9,25 +9,10 @@ public class MoneyBag : MonoBehaviour
 
     private int currentHits = 0;
 
-    // private void OnTriggerEnter2D(Collider2D collision)
-    // {
-    //     HitboxAttackCheck attack = collision.GetComponent<HitboxAttackCheck>();
-    //     if (attack != null)
-    //     {
-    //         SpawnCoins();
-    //         currentHits++;
-
-    //         if (currentHits >= hitsRequired)
-    //         {
-    //             Destroy(gameObject);
-    //         }
-    //     }
-    // }
-
     public void SpawnCoins()
     {
         int coinsToSpawn = Random.Range(minCoinsPerHit, maxCoinsPerHit + 1);
-
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.MoneyBagBreak, worldPos: transform.position, volumeUpdate: 0.15f);
         for (int i = 0; i < coinsToSpawn; i++)
         {
             GameObject coin = Instantiate(coinPrefab, transform.position, Quaternion.identity);

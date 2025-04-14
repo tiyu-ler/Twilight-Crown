@@ -10,6 +10,8 @@ public class GoblinMonster : MonsterScript
     private AudioClip WalkClip, DamageClip;
     public AudioSource audioSource;
     public AudioSource DamageAudioSource;
+    private float AmbientVolume, SfxVolume;
+    private const float GoblinGetDamageVolume = 0.38f, GoblinWalkVolume = 0.5f;
     protected override void Patrol()
     {
         if (!_isMoving || _isDead) return;
@@ -27,6 +29,11 @@ public class GoblinMonster : MonsterScript
         } else if (Random.value < RandomTurnChance) {
             Flip();
         }
+    }
+    public void UpdateVolume()
+    {
+        audioSource.volume = AmbientVolume * GoblinWalkVolume;
+        DamageAudioSource.volume = SfxVolume * GoblinGetDamageVolume;
     }
     void Start()
     {

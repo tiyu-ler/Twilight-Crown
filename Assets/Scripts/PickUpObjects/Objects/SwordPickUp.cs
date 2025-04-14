@@ -28,6 +28,7 @@ public class SwordPickUp : PickUpObject
         {
             Destroy(SwordCase);
             animator.Play(pickupAnimationName);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.SwordPickUp, worldPos: transform.position, volumeUpdate: 0.45f);
             LowerBody.SetActive(false);
             UpperBody.SetActive(false);
             playerMovement.StopSound = true;
