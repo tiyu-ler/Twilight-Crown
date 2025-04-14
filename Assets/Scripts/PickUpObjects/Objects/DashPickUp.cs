@@ -12,7 +12,7 @@ public class DashPickUp : PickUpObject
         if (pickupAnimationName != "")
         {
             animator.Play(pickupAnimationName);
-            SoundManager.Instance.PlaySound(SoundManager.SoundID.DashPickUp, worldPos: transform.position, volumeUpdate: 0.45f);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.DashPickUp, worldPos: transform.position, volumeUpdate: 0.4f);
             LowerBody.SetActive(false);
             UpperBody.SetActive(false);
             playerMovement.StopSound = true;

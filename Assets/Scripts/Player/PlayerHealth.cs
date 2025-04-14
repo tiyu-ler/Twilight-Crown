@@ -66,7 +66,7 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth--;
         HeartsUi[currentHealth].SetActive(false);
-        SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroDamage, worldPos: transform.position, volumeUpdate: 0.55f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.HeroDamage, worldPos: transform.position, volumeUpdate: 0.2f);
         if (currentHealth <= 0)
         {
             isDead = true;

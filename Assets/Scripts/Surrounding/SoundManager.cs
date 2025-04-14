@@ -59,7 +59,7 @@ public class SoundManager : MonoBehaviour
         InitializeSoundLibraries();
     }
 
-    public void PlaySound(SoundID id, Vector2? worldPos = null, float? volumeUpdate = 1, bool loop = false, int soundType = 3)
+    public void PlaySound(SoundID id, Vector2? worldPos = null, float? volumeUpdate = 1, bool loop = false, int soundType = 3, float pitch = 1)
     {
         AudioClip clip = GetClipFromLibrary(id);
         if (clip == null) return; 
@@ -72,14 +72,16 @@ public class SoundManager : MonoBehaviour
             case 3: SoundEffects.Add(audioSource); break;
         }
 
+        audioSource.rolloffMode = AudioRolloffMode.Custom;
+        audioSource.minDistance = 0f;
+        audioSource.minDistance = pitch;
+        audioSource.maxDistance = 500f;
+        audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, AnimationCurve.Linear(0f, 1f, 1f, 1f));
         audioSource.transform.position = worldPos ?? transform.position;
         audioSource.clip = clip;
         audioSource.spatialBlend = 1;
         audioSource.spread = 180;
         audioSource.volume = MasterVolume * GetVolumeForType(soundType) * (float)volumeUpdate;
-        Debug.Log("Volume Update: " + volumeUpdate);
-        Debug.Log("Master + Sound Type:" + MasterVolume * GetVolumeForType(soundType));
-        Debug.Log("All of them: " + MasterVolume * GetVolumeForType(soundType) * (float)volumeUpdate);
         audioSource.loop = loop;
 
         audioSource.Play();
@@ -106,7 +108,7 @@ public class SoundManager : MonoBehaviour
         AmbientVolume = PlayerPrefs.GetFloat("AmbientVolume", 0.5f);
         SfxVolume = PlayerPrefs.GetFloat("SfxVolume", 0.5f);
 
-        PlayerWalk.volume = MasterVolume * SfxVolume * 0.4f;
+        PlayerWalk.volume = MasterVolume * SfxVolume;
 
         foreach (GoblinMonster goblin in Goblins)
         {

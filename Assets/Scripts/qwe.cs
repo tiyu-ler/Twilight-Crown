@@ -58,24 +58,30 @@ public class SoundTester : MonoBehaviour
     };
     private readonly float[] volumeadd = new float[]
     {
-        0.25f, 0.3f, 0.35f, 0.05f,
-        0.35f, 0.25f,
-        0.55f, 0.55f, 0.55f, 
-        0.55f, 0.55f, 
-        0.35f, 0.15f, 0.15f,
-        0.05f, 0.25f, 0.35f,
-        0.3f, 0.3f,
-        0.4f, 0.4f,
-        0.3f, 0.35f,
-        0.2f, 0.25f,
-        0.1f,  0.05f, 0.05f,
-        0.15f, 0.15f, 0.15f, 
-        0.15f, 0.25f,
-        0.3f, 0.3f,
-        0.4f, 0.4f, 0.1f, 0.1f,
-        0.6f, 0.6f, 0.6f, 
-        0.6f, 0.6f, 0.6f, 
-        0.6f, 0.5f
+        // 0.25f, 0.3f, 0.35f, 0.05f,
+        // 0.35f, 0.25f,
+        // 0.55f, 0.55f, 0.55f, 
+        // 0.55f, 0.55f, 
+        // 0.35f, 0.15f, 0.15f,
+        // 0.05f, 0.25f, 0.35f,
+        // 0.3f, 0.3f,
+        // 0.4f, 0.4f,
+        // 0.3f, 0.35f,
+        // 0.2f, 0.25f,
+        // 0.1f,  0.05f, 0.05f,
+        // 0.15f, 0.15f, 0.15f, 
+        // 0.15f, 0.25f,
+        // 0.3f, 0.3f,
+        // 0.4f, 0.4f, 0.1f, 0.1f,
+        // 0.6f, 0.6f, 0.6f, 
+        // 0.6f, 0.6f, 0.6f, 
+        // 0.6f, 0.5f
+        0.38f, 0.45f, 0.5f, 0.08f, 0.5f, 0.4f, 0.8f, 0.8f, 0.8f, 0.8f, 0.8f,  
+0.55f, 0.22f, 0.22f, 0.08f, 0.38f, 0.55f, 0.45f, 0.45f, 0.6f, 0.6f,  
+0.45f, 0.55f, 0.3f, 0.38f, 0.15f, 0.08f, 0.08f, 0.25f, 0.25f, 0.25f,  
+0.25f, 0.4f, 0.48f, 0.48f, 0.6f, 0.6f, 0.15f, 0.15f, 0.9f, 0.9f, 0.9f,  
+0.9f, 0.9f, 0.9f, 0.9f, 0.75f
+
     }; //все 1.5
     void Update()
     {
@@ -99,13 +105,14 @@ IEnumerator PlaySoundsSequentially()
 
         if (clip != null)
         {
-            float db = CalculateClipLoudness(clip);
-            float volumeMultiplier = Mathf.Pow(10f, (targetDb - db) / 20f);
-            volumeMultiplier = Mathf.Clamp01(volumeMultiplier); // keep it between 0 and 1
+            // float db = CalculateClipLoudness(clip);
+            // float volumeMultiplier = Mathf.Pow(10f, (targetDb - db) / 20f);
+            // volumeMultiplier = Mathf.Clamp01(volumeMultiplier); // keep it between 0 and 1
 
-            Debug.Log($"{id} - dB: {db:F2}, Volume Multiplier: {volumeMultiplier:F2}");
+            // Debug.Log($"{id} - dB: {db:F2}, Volume Multiplier: {volumeMultiplier:F2}");
 
-            SoundManager.Instance.PlaySound(id, volumeUpdate: volumeadd[i] * 1.5f, worldPos: transform.position);
+            SoundManager.Instance.PlaySound(id, volumeUpdate: volumeadd[i], worldPos: transform.position);
+            Debug.Log(id + " " + volumeadd[i]);
             yield return new WaitForSeconds(clip.length + 0.1f);
             // SoundManager.Instance.PlaySound(SoundManager.SoundID.AWALK, volumeUpdate: volumeMultiplier, worldPos: transform.position);
             // yield return new WaitForSeconds(clip.length + 0.1f);

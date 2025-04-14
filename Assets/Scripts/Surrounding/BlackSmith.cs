@@ -153,6 +153,7 @@ public class BlacksmithInteraction : MonoBehaviour
     {
         DisablePlayer();
         _currentLevel = PlayerDataSave.Instance.SwordLevel;
+        Debug.Log(_currentLevel);
         costText.text = $"Upgrade sword for {upgradeCosts[_currentLevel]}  ?";
         dialogUI.SetActive(false);
         upgradeUI.SetActive(true);
@@ -183,6 +184,9 @@ public class BlacksmithInteraction : MonoBehaviour
             }
 
             gameManager.SaveGame(PlayerDataSave.Instance.saveID);
+
+            StartCoroutine(StartDialog(dialogEnd, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk3, 
+                    SoundManager.SoundID.BlacksmithTalk4 }, endAfterDialog: true));
         }
         else
         {

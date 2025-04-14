@@ -59,7 +59,7 @@ public class BossController : MonoBehaviour
     private IEnumerator DisappearBeforeAttack()
     {
         BossAnimator.Play("Hide");
-        SoundManager.Instance.PlaySound(SoundManager.SoundID.CatbossHide, worldPos: transform.position, volumeUpdate: 0.22f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.CatbossHide, worldPos: transform.position, volumeUpdate: 0.1f);
         yield return new WaitForSeconds(GetAnimationLength("Hide"));
 
         StartCoroutine(ChooseRandomAttack());
@@ -91,7 +91,7 @@ public class BossController : MonoBehaviour
         BossTransform.localRotation = randomPos == 0 ? _idleRotationLeft : _idleRotationRight;
         DefaultCollider.gameObject.transform.localRotation = randomPos == 0 ? _idleRotationLeft : _idleRotationRight;
         BossAnimator.Play("Appear");
-        SoundManager.Instance.PlaySound(SoundManager.SoundID.CatbossAppear, worldPos: transform.position, volumeUpdate: 0.22f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.CatbossAppear, worldPos: transform.position, volumeUpdate: 0.1f);
         yield return new WaitForSeconds(GetAnimationLength("Appear"));
 
         StartCoroutine(IdleState());
@@ -120,12 +120,12 @@ public class BossController : MonoBehaviour
 
         BossAnimator.Play("Tentacles");
 
-        SoundManager.Instance.PlaySound(SoundManager.SoundID.TentaclesAttack, worldPos: transform.position, volumeUpdate: 0.6f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.TentaclesAttack, worldPos: transform.position, volumeUpdate: 1f);
         yield return new WaitForSeconds(GetAnimationLength("Tentacles")*0.5f);
         TentaclesCollider.SetActive(true);
         yield return new WaitForSeconds(GetAnimationLength("Tentacles")*0.4f);
         TentaclesCollider.SetActive(false);
-        SoundManager.Instance.PlaySound(SoundManager.SoundID.TentaclesHide, worldPos: transform.position, volumeUpdate: 0.75f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.TentaclesHide, worldPos: transform.position, volumeUpdate: 0.45f);
         yield return new WaitForSeconds(GetAnimationLength("Tentacles")*0.1f);
 
         StartCoroutine(NextAction());

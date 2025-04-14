@@ -75,7 +75,7 @@ public class PlayerAttack : MonoBehaviour
         StartCoroutine(EnableHitboxTemporarily(hitbox));
         int i = Random.Range(0, 5);
         SoundManager.SoundID swingSound = SoundManager.SoundID.SwordSwing1 + i;
-        SoundManager.Instance.PlaySound(swingSound, volumeUpdate: 0.75f);
+        SoundManager.Instance.PlaySound(swingSound, worldPos: transform.position ,volumeUpdate: 0.55f);
         // Wait for the animation to finish
         StartCoroutine(WaitForAttackAnimation(currentAnimation));
 
@@ -96,7 +96,7 @@ public class PlayerAttack : MonoBehaviour
         {
             int i = Random.Range(0, 5);
             SoundManager.SoundID swingSound = SoundManager.SoundID.SwordSwing1 + i;
-            SoundManager.Instance.PlaySound(swingSound, volumeUpdate: 0.75f);
+            SoundManager.Instance.PlaySound(swingSound, volumeUpdate: 0.45f);
             UpperBodyAnimator.Play("U_HideSword_1");
         }
         else

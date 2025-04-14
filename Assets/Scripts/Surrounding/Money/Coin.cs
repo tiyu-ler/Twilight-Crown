@@ -57,7 +57,7 @@ public class Coin : MonoBehaviour
     {
         int i = Random.Range(0, 1);
         SoundManager.SoundID CoinHitGround = SoundManager.SoundID.CoinHitGround1 + i;
-        SoundManager.Instance.PlaySound(CoinHitGround, worldPos: transform.position, volumeUpdate: 0.08f);
+        SoundManager.Instance.PlaySound(CoinHitGround, worldPos: transform.position, volumeUpdate: 0.12f);
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -65,7 +65,7 @@ public class Coin : MonoBehaviour
         {
             int i = Random.Range(0, 4);
             SoundManager.SoundID CoinCollect = SoundManager.SoundID.CoinCollect1 + i;
-            SoundManager.Instance.PlaySound(CoinCollect, worldPos: transform.position, volumeUpdate: 0.25f);
+            SoundManager.Instance.PlaySound(CoinCollect, worldPos: transform.position, volumeUpdate: 0.02f);
 
             first.enabled = false;
             PlayerDataSave.Instance.Money++;

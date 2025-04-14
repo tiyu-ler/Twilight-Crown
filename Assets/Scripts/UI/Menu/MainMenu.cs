@@ -28,6 +28,7 @@ public class MainMenu : MonoBehaviour
                 LocationInfo[i+3].text = GetLocationname(profileData[0]);
                 MoneyInfo[i].text = profileData[1].ToString("F0");
                 MoneyInfo[i+3].text = profileData[1].ToString("F0");
+                Debug.Log(profileData[2]);
                 TimeInfo[i].text = ReturnTime(profileData[2]);
                 TimeInfo[i+3].text = ReturnTime(profileData[2]);
                 SaveExists[i] = true;
@@ -58,14 +59,17 @@ public class MainMenu : MonoBehaviour
     }
     public string ReturnTime(float playTime)
     {
-        int hours = Mathf.FloorToInt(playTime / 3600);
-        int minutes = Mathf.FloorToInt(playTime % 3600 / 60);
+        // int hours = Mathf.FloorToInt(playTime / 3600);
+        int minutes = Mathf.FloorToInt(playTime % 60 / 60);
+        int seconds = Mathf.FloorToInt(playTime - 60 * minutes);
 
-        return string.Format("{0}h {1}m", hours, minutes);
+        // return string.Format("{0}h {1}m", hours, minutes);
+        return string.Format("{0}m {1}s", minutes, seconds);
     }
 
     public void StartGame(int SaveID)
     {
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.04f);
         PlayerDataSave.Instance.saveID = SaveID;
         gameManager.LoadGame(SaveID);
         SceneManager.LoadScene("GameScene");
@@ -75,6 +79,7 @@ public class MainMenu : MonoBehaviour
     {
         if (SaveExists[SaveID])
         {
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.04f, pitch: -1);
             SaveSystem.DeleteSave(SaveID);
             SaveExists[SaveID] = false;
             ProfilesDataSet();
@@ -93,32 +98,37 @@ public class MainMenu : MonoBehaviour
     }
     public void MainMenuActive()
     {
+        // SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.05f);
         StopAllCoroutines();
         StartCoroutine(SwitchCanvas(MainMenuGroup, MainMenuTransform, SettingsMenuGroup, SettingsMenuTransform, SavesMenuGroup, SavesMenuTransform));
     }
 
     public void SettingsMenuActive()
     {
+        // SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.05f);
         StopAllCoroutines();
         StartCoroutine(SwitchCanvas(SettingsMenuGroup, SettingsMenuTransform, MainMenuGroup, MainMenuTransform, SavesMenuGroup, SavesMenuTransform));
     }
 
     public void SaveMenuActive()
     {
+        // SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.05f);
         StopAllCoroutines();
         StartCoroutine(SwitchCanvas(SavesMenuGroup, SavesMenuTransform, MainMenuGroup, MainMenuTransform, SettingsMenuGroup, SettingsMenuTransform));
     }
 
     public void ExitGame()
     {
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.05f);
         Application.Quit();
     }
     
     private IEnumerator SwitchCanvas(CanvasGroup toEnable, Transform toEnableTransform, CanvasGroup toDisable1, Transform toDisable1Transform, CanvasGroup toDisable2, Transform toDisable2Transform)
     {
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.04f);
+
         yield return StartCoroutine(FadeAndScaleCanvas(toDisable1, toDisable1Transform, 0, false));
         yield return StartCoroutine(FadeAndScaleCanvas(toDisable2, toDisable2Transform, 0, false));
-
         yield return StartCoroutine(FadeAndScaleCanvas(toEnable, toEnableTransform, 1, true));
     }
 

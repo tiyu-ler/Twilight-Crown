@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class RhinoMonster : MonsterScript
 {
+    public GameObject coinPrefab;
     [Header("Rolling Settings")]
     public float RollSpeed = 10f;
     public float MinRollDuration = 1f;
@@ -17,10 +18,11 @@ public class RhinoMonster : MonsterScript
     private float _rollTimer = 0f;
     private AudioClip WalkClip, RollClip, CurlClip, HitWallClip, DamageClip;
     public AudioSource audioSource;
+    public AudioSource additionalAdioSource;
     public AudioSource DamageAudioSource;
     private float AmbientVolume, SfxVolume;
-    private const float RhinoCurlVolume = 0.03f, RhinoHitWallVolume = 0.02f, RhinoRollingVolume = 0.02f, RhinoWalkVolume = 0.02f;
-    private const float RhinoGetDamageVolume = 0.3f;
+    private const float RhinoCurlVolume = 0.1f, RhinoHitWallVolume = 0.9f, RhinoRollingVolume = 0.03f, RhinoWalkVolume = 0.04f;
+    private const float RhinoGetDamageVolume = 0.075f;
     protected override void Update()
     {
         if (_isDead) return;
@@ -66,6 +68,21 @@ public class RhinoMonster : MonsterScript
         AmbientVolume = ambient;
         SfxVolume = sfx;
         DamageAudioSource.volume = SfxVolume * RhinoGetDamageVolume;
+    }
+    private void SpawnCoins()
+    {
+        int coinsToSpawn = Random.Range(2, 5);
+        for (int i = 0; i < coinsToSpawn; i++)
+        {
+            GameObject coin = Instantiate(coinPrefab, transform.position, Quaternion.identity);
+            Rigidbody2D rb = coin.GetComponent<Rigidbody2D>();
+
+            if (rb != null)
+            {
+                Vector2 force = new Vector2(Random.Range(-12f, 12f), Random.Range(9f, 12f));
+                rb.AddForce(force, ForceMode2D.Impulse);
+            }
+        }
     }
     protected override void Patrol()
     {
@@ -138,8 +155,9 @@ public class RhinoMonster : MonsterScript
     private IEnumerator WaitForStartRollAnimation()
     {
         audioSource.Stop();
-        audioSource.volume = AmbientVolume * RhinoCurlVolume;
-        audioSource.PlayOneShot(CurlClip);
+        additionalAdioSource.pitch = 1;
+        additionalAdioSource.volume = AmbientVolume * RhinoCurlVolume;
+        additionalAdioSource.PlayOneShot(CurlClip);
         yield return new WaitUntil(() => _animator.GetCurrentAnimatorStateInfo(0).IsName("StartRoll"));
         audioSource.Stop();
         audioSource.clip = RollClip;
@@ -162,7 +180,8 @@ public class RhinoMonster : MonsterScript
 
         if (_rollTimer <= 0 || wallAhead || cliffAhead)
         {
-            audioSource.volume = AmbientVolume * RhinoHitWallVolume;
+             additionalAdioSource.pitch = 0.5f;
+            additionalAdioSource.volume = AmbientVolume * RhinoHitWallVolume;
             audioSource.PlayOneShot(HitWallClip);
             StopRolling();
         }
@@ -219,8 +238,12 @@ public class RhinoMonster : MonsterScript
     }
     protected override void Die()
     {
+        SpawnCoins();
         audioSource.Stop();
+        additionalAdioSource.Stop();
         audioSource.enabled = false;
+        additionalAdioSource.enabled = false;
+        DamageAudioSource.PlayOneShot(DamageClip);
         DefaultCollider.isTrigger = false;
         DefaultCollider.enabled = true;
         RollCollider.enabled = false;

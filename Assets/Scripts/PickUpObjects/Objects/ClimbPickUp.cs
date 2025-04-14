@@ -10,7 +10,6 @@ public class ClimbPickUp : PickUpObject
         PlayerDataSave.Instance.HasWallClimb = true;
         Debug.Log("WallClimb collected!");
     }
-
     protected override void Collect()
     {
         if (pickupAnimationName != "")

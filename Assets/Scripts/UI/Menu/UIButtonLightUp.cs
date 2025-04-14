@@ -6,10 +6,12 @@ using TMPro;
 
 public class UIButtonLightUp : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public GameObject lightUp = null; // Assign the LightUp GameObject in Inspector
+    public GameObject lightUp = null;
+
+    public bool affectedByMouseClick = false;
     public bool AffectsButtonDirectly;
-    public TextMeshProUGUI lightImage = null;   // Assign the Image component of LightUp
-    public float lerpDuration = 0.3f; // Speed of animation
+    public TextMeshProUGUI lightImage = null;
+    public float lerpDuration = 0.3f;
     public CanvasGroup canvasGroup = null;
     private Vector3 smallScale = new Vector3(0.85f, 0.85f, 1f);
     private Vector3 largeScale = Vector3.one;
@@ -18,6 +20,14 @@ public class UIButtonLightUp : MonoBehaviour, IPointerEnterHandler, IPointerExit
     private Color endColor = new Color(59f / 255f, 74f / 255f, 161f / 255f, 1);   // #3B4AA1
     private Coroutine animationCoroutine;
 
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0) && affectedByMouseClick) 
+        {
+            if (animationCoroutine != null) StopCoroutine(animationCoroutine);
+            animationCoroutine = StartCoroutine(AnimateLightUp(smallScale, startColor, true));
+        }
+    }
     void Start()
     {
         if (!AffectsButtonDirectly)
@@ -39,6 +49,7 @@ public class UIButtonLightUp : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if (!AffectsButtonDirectly)
         {
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonSelection, volumeUpdate: 0.002f, pitch: 2f);
             if (animationCoroutine != null) StopCoroutine(animationCoroutine);
             lightUp.SetActive(true);
             animationCoroutine = StartCoroutine(AnimateLightUp(largeScale, endColor));
@@ -54,8 +65,9 @@ public class UIButtonLightUp : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if (!AffectsButtonDirectly)
         {
-        if (animationCoroutine != null) StopCoroutine(animationCoroutine);
-        animationCoroutine = StartCoroutine(AnimateLightUp(smallScale, startColor, true));
+            // SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonSelection, volumeUpdate: 0.002f, pitch: -0.1f);
+            if (animationCoroutine != null) StopCoroutine(animationCoroutine);
+            animationCoroutine = StartCoroutine(AnimateLightUp(smallScale, startColor, true));
         }
         else
         {
@@ -68,8 +80,8 @@ public class UIButtonLightUp : MonoBehaviour, IPointerEnterHandler, IPointerExit
     {
         if (!AffectsButtonDirectly)
         {
-        if (animationCoroutine != null) StopCoroutine(animationCoroutine);
-        animationCoroutine = StartCoroutine(AnimateLightUp(smallScale, startColor, true));
+            if (animationCoroutine != null) StopCoroutine(animationCoroutine);
+            animationCoroutine = StartCoroutine(AnimateLightUp(smallScale, startColor, true));
         }
         else
         {

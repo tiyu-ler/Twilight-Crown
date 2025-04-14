@@ -4,34 +4,24 @@ using UnityEngine;
 
 public class FloorHideScript : MonoBehaviour
 {
-    public enum EntrySide { Right, Bottom }
-    public EntrySide allowedEntrySide = EntrySide.Right;
+    public bool SideWays;
     public SpriteRenderer[] _childSprites;
     void Start()
     {
-        SetOpacity(0f);
+        SetOpacity(255f);
     }
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerExit2D(Collider2D other)
     {
-        Debug.Log("111");
-        Debug.Log(other.tag);
         if (!other.CompareTag("Player")) return;
-        Debug.Log("333");
+
         Vector3 entryDirection = other.transform.position - transform.position;
 
-        if (allowedEntrySide == EntrySide.Right)
+        if (SideWays)
         {
-            if (entryDirection.x < 0) SetOpacity(0f);
+            if (entryDirection.x > 0) SetOpacity(0f);
             else SetOpacity(255f);
         }
-        else if (allowedEntrySide == EntrySide.Bottom && entryDirection.z < 0)
-            SetOpacity(255f);
-    }
-
-    public void RevealHiddenObjects()
-    {
-        StopAllCoroutines();
-        StartCoroutine(FadeInChildren(0.8f));
+        else StartCoroutine(FadeInChildren(1f));
     }
 
     private void SetOpacity(float alpha)
@@ -63,7 +53,6 @@ public class FloorHideScript : MonoBehaviour
             yield return null;
         }
 
-        // Ensure full opacity at the end
         foreach (SpriteRenderer sr in _childSprites)
         {
             Color c = sr.color;

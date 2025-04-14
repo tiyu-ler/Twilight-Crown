@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GoblinMonster : MonsterScript
 {
+    public GameObject coinPrefab;
     public Sprite died;
     public float DesiredHeight;
     public Transform torch;
@@ -11,7 +12,7 @@ public class GoblinMonster : MonsterScript
     public AudioSource audioSource;
     public AudioSource DamageAudioSource;
     private float AmbientVolume, SfxVolume;
-    private const float GoblinGetDamageVolume = 0.38f, GoblinWalkVolume = 0.5f;
+    private const float GoblinGetDamageVolume = 0.38f, GoblinWalkVolume = 1f;
     protected override void Patrol()
     {
         if (!_isMoving || _isDead) return;
@@ -45,6 +46,7 @@ public class GoblinMonster : MonsterScript
         //     audioSource = sources[0];
         //     DamageAudioSource = sources[1];
         // }
+        audioSource.volume = 1;
         audioSource.clip = WalkClip;
         DamageAudioSource.clip = DamageClip;
         audioSource.Play();
@@ -60,6 +62,21 @@ public class GoblinMonster : MonsterScript
         _renderer.color = originalColor;
         
         StartCoroutine(HitKnockback());
+    }
+    private void SpawnCoins()
+    {
+        int coinsToSpawn = Random.Range(2, 5);
+        for (int i = 0; i < coinsToSpawn; i++)
+        {
+            GameObject coin = Instantiate(coinPrefab, transform.position, Quaternion.identity);
+            Rigidbody2D rb = coin.GetComponent<Rigidbody2D>();
+
+            if (rb != null)
+            {
+                Vector2 force = new Vector2(Random.Range(-12f, 12f), Random.Range(9f, 12f));
+                rb.AddForce(force, ForceMode2D.Impulse);
+            }
+        }
     }
     protected override void ChasePlayer()
     {
@@ -79,6 +96,7 @@ public class GoblinMonster : MonsterScript
 
     protected override void Die()
     {
+        SpawnCoins();
         DamageAudioSource.PlayOneShot(DamageClip);
         _canTakeDamage = false;
         _renderer.color = Color.grey;
