@@ -86,6 +86,7 @@ public class BossHealth : MonoBehaviour
     {
         Debug.Log("Cat Boss Died after "+ BossController.Instance.GetAnimationLength("Hide"));
         BossController.Instance.BossAnimator.Play("Hide");
+        MusicManager.Instance.PlayLoop(MusicManager.Instance.DefaultRoomMusic, MusicManager.MusicType.DefaultRoom);
         yield return new WaitForSeconds(BossController.Instance.GetAnimationLength("Hide"));
         BossController.Instance.BossAnimator.Play("None");
         bossBattleStart.OpenDoors(false, true);

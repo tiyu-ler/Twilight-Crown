@@ -57,8 +57,7 @@ public class PlayerMovement : MonoBehaviour
         StopSound = false;
         audioSource = GetComponent<AudioSource>();
         CanDash = PlayerDataSave.Instance.HasDash;
-        // CanWallClimb = PlayerDataSave.Instance.HasWallClimb;
-        CanWallClimb = true;
+        CanWallClimb = PlayerDataSave.Instance.HasWallClimb;
         RigidBody = GetComponent<Rigidbody2D>();
         FullBodyAnimator.StopPlayback();
         FallSpeedDampingChange = cameraManager.FallSpeedDampingLimit;

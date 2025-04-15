@@ -33,6 +33,7 @@ public class SoundManager : MonoBehaviour
     private List<AudioSource> SoundEffects = new List<AudioSource>();
     public List<SoundData> Sounds = new List<SoundData>();
     private Dictionary<SoundID, AudioClip> soundLibraryDict = new Dictionary<SoundID, AudioClip>();
+    public AudioSource MainMenu = null;
     public AudioSource PlayerWalk;
     public float MasterVolume;
     public float MusicVolume;
@@ -55,10 +56,21 @@ public class SoundManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        SetVolume();
+        // SetVolume();
         InitializeSoundLibraries();
     }
-
+    void Start()
+    {
+        if (MainMenu != null)
+        {
+            MainMenu.clip = GetClipFromLibrary(SoundID.MainMenuMusic);
+            MainMenu.rolloffMode = AudioRolloffMode.Custom;
+            MainMenu.minDistance = 0f;
+            MainMenu.maxDistance = 500f;
+            MainMenu.SetCustomCurve(AudioSourceCurveType.CustomRolloff, AnimationCurve.Linear(0f, 1f, 1f, 1f));
+        }
+        SetVolume();
+    }
     public void PlaySound(SoundID id, Vector2? worldPos = null, float? volumeUpdate = 1, bool loop = false, int soundType = 3, float pitch = 1)
     {
         AudioClip clip = GetClipFromLibrary(id);
@@ -109,6 +121,15 @@ public class SoundManager : MonoBehaviour
         SfxVolume = PlayerPrefs.GetFloat("SfxVolume", 0.75f);
 
         PlayerWalk.volume = MasterVolume * SfxVolume;
+        
+        if (MainMenu != null)
+        {
+            MainMenu.volume = MasterVolume * MusicVolume * 0.075f;
+        }
+        else
+        {
+            MusicManager.Instance.UpdateVolume(MasterVolume*MusicVolume);
+        }
 
         foreach (GoblinMonster goblin in Goblins)
         {

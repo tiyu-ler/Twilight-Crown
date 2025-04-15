@@ -11,6 +11,7 @@ public class BossBattleStart : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
+            MusicManager.Instance.PlayLoop(MusicManager.Instance.BossMusic, MusicManager.MusicType.Boss);
             foreach (DoorScript doorScript in DoorList)
             {
                 doorScript.DoorInteractor(true, true);
@@ -25,6 +26,7 @@ public class BossBattleStart : MonoBehaviour
     public void OpenDoors(bool Restart, bool PlaySound)
     {
         if (Restart){
+            MusicManager.Instance.PlayLoop(MusicManager.Instance.DefaultRoomMusic, MusicManager.MusicType.DefaultRoom);
             foreach (DoorScript doorScript in DoorList)
             {
                 doorScript.DoorInteractor(false, PlaySound);

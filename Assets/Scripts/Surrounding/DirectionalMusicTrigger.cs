@@ -30,9 +30,10 @@ public class DirectionalMusicTrigger : MonoBehaviour
             if (Mathf.Abs(direction.x) < Mathf.Abs(direction.y))
             {
                 if (direction.y > 0)
-                    MusicManager.Instance.PlayLoopIfDifferent(DefaultRoomMusic); // up
+                    MusicManager.Instance.PlayLoop(DefaultRoomMusic, MusicManager.MusicType.DefaultRoom); // up
+
                 else
-                    MusicManager.Instance.PlayLoopIfDifferent(DarkRoomMusic); // down
+                    MusicManager.Instance.PlayLoop(DarkRoomMusic, MusicManager.MusicType.DarkRoom); // down
             }
         }
     }
