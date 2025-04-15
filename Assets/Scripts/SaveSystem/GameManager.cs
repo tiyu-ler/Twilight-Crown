@@ -72,6 +72,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void OnApplicationQuit()
+    {
+        SaveGame(PlayerDataSave.Instance.saveID);
+    }
+    
     public void SaveGame(int currentSaveID)
     {
         dataSave.saveID = currentSaveID;

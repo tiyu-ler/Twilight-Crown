@@ -6,8 +6,11 @@ public class FloorHideScript : MonoBehaviour
 {
     public bool SideWays;
     public SpriteRenderer[] _childSprites;
+    private bool _sphereFlyActivated = false;
+    private EndGameSphere endGameSphere;
     void Start()
     {
+        endGameSphere = FindAnyObjectByType<EndGameSphere>();
         SetOpacity(255f);
     }
     private void OnTriggerExit2D(Collider2D other)
@@ -18,7 +21,15 @@ public class FloorHideScript : MonoBehaviour
 
         if (SideWays)
         {
-            if (entryDirection.x > 0) SetOpacity(0f);
+            if (entryDirection.x > 0) 
+            {
+                SetOpacity(0f);
+                if (!_sphereFlyActivated) 
+                {
+                    _sphereFlyActivated = true;
+                    endGameSphere.StartCoroutine(endGameSphere.SphereFly());
+                }
+            }
             else SetOpacity(255f);
         }
         else StartCoroutine(FadeInChildren(1f));

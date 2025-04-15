@@ -19,7 +19,7 @@ public class SoundManager : MonoBehaviour
         HeroJump, HeroLand, DashPickUp, SwordPickUp, WallJumpPickUp1, WallJumpPickUp2, SwordUpgrade, Invoke, RhinoGetDamage, 
         GoblinGetDamage, MoneyBagBreak, CoinHitGround1, CoinHitGround2, CoinCollect1, CoinCollect2, CoinCollect3, 
         CoinCollect4, Dash, GateOpen, GateClose, BossTopAttack, TentaclesAttack, UiButtonSelection, UiButtonConfirm,
-        TentaclesHide, AWALK
+        TentaclesHide, AWALK, SphereDestructSoundGlass, SphereDestructSoundSouls, Meow
     }
     
     [System.Serializable]
