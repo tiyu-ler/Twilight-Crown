@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
-using UnityEngine.Rendering;
 
 public class BlacksmithInteraction : MonoBehaviour
 {
@@ -72,6 +70,12 @@ public class BlacksmithInteraction : MonoBehaviour
     {
         if (inTrigger && !dialogActive && Input.GetKeyDown(KeyCode.W))
         {
+            playerMovement.StopSound = true;
+            playerMovement.CanMove = false;
+            playerMovement.audioSource.Pause();
+            playerMovement.HorizontalInput = 0;
+            playerMovement.RigidBody.velocity = Vector2.zero;
+            playerAttack.enabled = false;
             int level = PlayerDataSave.Instance.SwordLevel;
 
             if (level == 0)
@@ -90,12 +94,12 @@ public class BlacksmithInteraction : MonoBehaviour
                 SoundManager.SoundID.BlacksmithTalk4, SoundManager.SoundID.BlacksmithTalk3 }, endAfterDialog: true));
             }
         }
-        else if (dialogActive && Input.anyKeyDown && isTyping)
-        {
-            if (dialogCoroutine != null) StopCoroutine(dialogCoroutine);
-            dialogText.text = fullText;
-            isTyping = false;
-        }
+        // else if (dialogActive && Input.anyKeyDown && isTyping)
+        // {
+        //     if (dialogCoroutine != null) StopCoroutine(dialogCoroutine);
+        //     dialogText.text = fullText;
+        //     isTyping = false;
+        // }
     }
 
     private IEnumerator StartDialog(string[] lines, SoundManager.SoundID[] blacksmithTalks, bool endAfterDialog = false, bool recursionCall = false)
@@ -113,7 +117,7 @@ public class BlacksmithInteraction : MonoBehaviour
 
         for (int i = 0; i < lines.Length; i++)
         {
-            SoundManager.Instance.PlaySound(blacksmithTalks[i], worldPos: transform.position, soundType: 2, volumeUpdate: 0.9f);
+            SoundManager.Instance.PlaySound(blacksmithTalks[i], worldPos: transform.position, soundType: 2, volumeUpdate: 0.7f);
             fullText = lines[i];
             isTyping = true;
             dialogCoroutine = StartCoroutine(TypeText(lines[i]));
@@ -202,6 +206,8 @@ public class BlacksmithInteraction : MonoBehaviour
 
     private void EndDialog()
     {
+        playerMovement.StopSound = false;
+        playerMovement.audioSource.Play();
         playerMovement.CanMove = true;
         playerAttack.enabled = true;
         dialogActive = false;

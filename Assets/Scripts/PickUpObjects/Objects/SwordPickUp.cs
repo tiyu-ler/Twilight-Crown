@@ -18,7 +18,7 @@ public class SwordPickUp : PickUpObject
     protected override void CollectItem()
     {
         PlayerDataSave.Instance.HasSword = true;
-        PlayerDataSave.Instance.SwordLevel = 1;
+        PlayerDataSave.Instance.SwordLevel = 0;
         playerAttack._canAttack = true;
     }
 
@@ -28,7 +28,7 @@ public class SwordPickUp : PickUpObject
         {
             Destroy(SwordCase);
             animator.Play(pickupAnimationName);
-            SoundManager.Instance.PlaySound(SoundManager.SoundID.SwordPickUp, worldPos: transform.position, volumeUpdate: 0.4f);
+            // SoundManager.Instance.PlaySound(SoundManager.SoundID.SwordPickUp, worldPos: transform.position, volumeUpdate: 0.4f);
             LowerBody.SetActive(false);
             UpperBody.SetActive(false);
             playerMovement.StopSound = true;
@@ -42,7 +42,9 @@ public class SwordPickUp : PickUpObject
     {
         if (pickupAnimationName != "")
         {
-            yield return new WaitForSeconds(GetAnimationLength());
+            yield return new WaitForSeconds(GetAnimationLength()*0.2f);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.SwordPickUp, worldPos: transform.position, volumeUpdate: 0.4f);
+            yield return new WaitForSeconds(GetAnimationLength()*0.8f);
             LowerBody.SetActive(true);
             UpperBody.SetActive(true);
 

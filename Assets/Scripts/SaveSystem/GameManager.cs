@@ -49,14 +49,14 @@ public class GameManager : MonoBehaviour
             if (SwordPickUpText) Destroy(SwordPickUpText);
             if (SwordLight) Destroy(SwordLight);
         }
-        if (dataSave.HasDash)
+        if (dataSave.HasWallClimb)
         {  
             WallhBag.GetComponent<ClimbPickUp>().SetEmptyAnimation();
             WallhBag.GetComponent<ClimbPickUp>().enabled = false;
             if (WallPickUpText) Destroy(WallPickUpText);
             if (Sword) Destroy(WallLight);
         }
-        if (dataSave.HasWallClimb)
+        if (dataSave.HasDash)
         {
             if (DashCrystal) Destroy(DashCrystal);
             if (DashPickUpText) Destroy(DashPickUpText);

@@ -9,14 +9,14 @@ public class ScreenFader : MonoBehaviour
 
     public void FadeToWhite()
     {
-        fadeImage.gameObject.SetActive(true); //CHANGED
+        fadeImage.gameObject.SetActive(true);
         StartCoroutine(Fade(1f, fadeSpeed*2.5f));
     }
 
-    public void FadeFromWhite()
+    public IEnumerator FadeFromWhite()
     {
 
-        StartCoroutine(Fade(0f, fadeSpeed)); //CHANGED
+        yield return StartCoroutine(Fade(0f, fadeSpeed*2.5f));
         fadeImage.gameObject.SetActive(false);
     }
 

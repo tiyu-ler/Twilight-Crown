@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using UnityEngine.Rendering;
 public class MainMenu : MonoBehaviour
 {
     public CanvasGroup MainMenuGroup, SettingsMenuGroup, SavesMenuGroup;

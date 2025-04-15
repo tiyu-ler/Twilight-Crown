@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using Cinemachine;
-using Unity.VisualScripting;
 public class CameraManager : MonoBehaviour
 {
     [Header("Camera Setup")]

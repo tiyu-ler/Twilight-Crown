@@ -31,7 +31,6 @@ public class DirectionalMusicTrigger : MonoBehaviour
             {
                 if (direction.y > 0)
                     MusicManager.Instance.PlayLoop(DefaultRoomMusic, MusicManager.MusicType.DefaultRoom); // up
-
                 else
                     MusicManager.Instance.PlayLoop(DarkRoomMusic, MusicManager.MusicType.DarkRoom); // down
             }

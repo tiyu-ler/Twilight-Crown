@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public abstract class MonsterScript : MonoBehaviour
@@ -25,7 +24,7 @@ public abstract class MonsterScript : MonoBehaviour
 
 
     protected float _currentHealth;
-    protected bool _isDead = false;
+    public bool IsDead = false;
     protected bool _isChasing = false;
     protected bool _isMoving = true;
     protected bool _canTakeDamage = true;
@@ -73,7 +72,7 @@ public abstract class MonsterScript : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (_isDead) return;
+        if (IsDead) return;
 
         if (_rb.velocity.y < 0.1f && _rb.velocity.y > -0.1f && _markedToDie) Die();
 
@@ -83,7 +82,7 @@ public abstract class MonsterScript : MonoBehaviour
 
     protected virtual void LateUpdate()
     {
-        if (_isDead) return;
+        if (IsDead) return;
 
         CheckForPlayer();
     }
@@ -150,7 +149,7 @@ public abstract class MonsterScript : MonoBehaviour
 
     public virtual void TakeDamage(float damage, string attackDirection)
     {
-        if (_isDead || !_canTakeDamage) return;
+        if (IsDead || !_canTakeDamage) return;
         
         if (attackDirection == "bottom" && !_hasLaunchedPlayer)
         {
@@ -224,7 +223,7 @@ public abstract class MonsterScript : MonoBehaviour
     {
         _canTakeDamage = false;
         _renderer.color = Color.grey;
-        _isDead = true;
+        IsDead = true;
         _animator.Play("Die");
         _rb.velocity = Vector2.zero;
         _rb.isKinematic = true;

@@ -21,11 +21,13 @@ public class RhinoMonster : MonsterScript
     public AudioSource additionalAdioSource;
     public AudioSource DamageAudioSource;
     private float AmbientVolume, SfxVolume;
+    private Vector3 _startPosition;
+    private Color _startColor;
     private const float RhinoCurlVolume = 0.1f, RhinoHitWallVolume = 0.9f, RhinoRollingVolume = 0.03f, RhinoWalkVolume = 0.04f;
     private const float RhinoGetDamageVolume = 0.075f;
     protected override void Update()
     {
-        if (_isDead) return;
+        if (IsDead) return;
 
         if (_rb.velocity.y < 0.1f && _rb.velocity.y > -0.1f && _markedToDie) Die();
 
@@ -44,6 +46,30 @@ public class RhinoMonster : MonsterScript
             CheckForPlayer();
         }
     }
+    public void RessurectMonster()
+    {
+        _markedToDie = false;
+        IsDead = false;
+        _isRolling = false;
+        _isChasing = false;
+        transform.localPosition = _startPosition;
+        audioSource.enabled = true;
+        additionalAdioSource.enabled = true;
+        audioSource.Play();
+        additionalAdioSource.Play();
+        DefaultCollider.isTrigger = false;
+        DefaultCollider.enabled = true;
+        RollCollider.enabled = false;
+        _canTakeDamage = true;
+        _renderer.color = _startColor; 
+        _animator.enabled = true;
+        _rb.bodyType = RigidbodyType2D.Dynamic;
+        GetComponent<Collider2D>().enabled = true;
+        GetComponent<CapsuleCollider2D>().enabled = true;
+        _currentHealth = MaxHealth;
+        _animator.SetBool("IsMoving", true);
+    }
+
     protected override void CheckForPlayer() 
     {
         // if (Physics2D.Raycast(WallCheck.position, Vector2.right * _facingDirection, SightRange, GroundLayer)) return;
@@ -62,6 +88,8 @@ public class RhinoMonster : MonsterScript
         CurlClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoCurl);
         HitWallClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoHitWall);
         DamageClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoGetDamage);
+        _startPosition = transform.localPosition;
+        _startColor = _renderer.color;
     }
     public void UpdateVolume(float ambient, float sfx)
     {
@@ -132,7 +160,7 @@ public class RhinoMonster : MonsterScript
 
     public override void TakeDamage(float damage, string attackDirection)
     {
-        if (_isDead || !_canTakeDamage) return;
+        if (IsDead || !_canTakeDamage) return;
         switch(attackDirection)
         {
             case "bottom": _player.GetComponent<PlayerMovement>().RigidBody.AddForce(Vector2.up * 30f, ForceMode2D.Impulse);
@@ -249,7 +277,7 @@ public class RhinoMonster : MonsterScript
         RollCollider.enabled = false;
         _canTakeDamage = false;
         _renderer.color = Color.grey;
-        _isDead = true;
+        IsDead = true;
         _animator.enabled = false;
         GetComponent<SpriteRenderer>().sprite = died;
         _rb.velocity = Vector2.zero;

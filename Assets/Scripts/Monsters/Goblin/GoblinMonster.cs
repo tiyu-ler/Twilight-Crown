@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GoblinMonster : MonsterScript
@@ -13,9 +12,12 @@ public class GoblinMonster : MonsterScript
     public AudioSource DamageAudioSource;
     private float AmbientVolume, SfxVolume;
     private const float GoblinGetDamageVolume = 0.38f, GoblinWalkVolume = 1f;
+    private Vector3 _startPosition;
+    private Vector3 _torchStartPosition;
+    private Color _startColor;
     protected override void Patrol()
     {
-        if (!_isMoving || _isDead) return;
+        if (!_isMoving || IsDead) return;
 
         _rb.velocity = new Vector2(_facingDirection * MoveSpeed, _rb.velocity.y);
         _animator?.SetBool("IsMoving", true);
@@ -49,6 +51,9 @@ public class GoblinMonster : MonsterScript
         audioSource.volume = 1;
         audioSource.clip = WalkClip;
         DamageAudioSource.clip = DamageClip;
+        _torchStartPosition = torch.transform.localPosition;
+        _startPosition = transform.localPosition;
+        _startColor = _renderer.color;
         audioSource.Play();
     }
     protected override IEnumerator GetHitted()
@@ -80,7 +85,7 @@ public class GoblinMonster : MonsterScript
     }
     protected override void ChasePlayer()
     {
-        if (_player == null || _isDead) return;
+        if (_player == null || IsDead) return;
 
         float directionToPlayer = Mathf.Sign(_player.transform.position.x - transform.position.x);
         _facingDirection = (int)directionToPlayer;
@@ -100,7 +105,7 @@ public class GoblinMonster : MonsterScript
         DamageAudioSource.PlayOneShot(DamageClip);
         _canTakeDamage = false;
         _renderer.color = Color.grey;
-        _isDead = true;
+        IsDead = true;
         _animator.enabled = false;
         GetComponent<SpriteRenderer>().sprite = died;
         _rb.velocity = Vector2.zero;
@@ -111,6 +116,20 @@ public class GoblinMonster : MonsterScript
         GetComponent<Collider2D>().enabled = false;
         StartCoroutine(ReturnToGround());
     }
+    public void RessurectMonster()
+    {
+        _markedToDie = false;
+        IsDead = false;
+        _canTakeDamage = true;
+        _animator.enabled = true;
+        GetComponent<CapsuleCollider2D>().enabled = true;
+        GetComponent<Collider2D>().enabled = true;
+        _renderer.color = _startColor;
+        _rb.bodyType = RigidbodyType2D.Dynamic;
+        transform.localPosition = _startPosition;
+        torch.localPosition = _torchStartPosition;
+        torch.localRotation = Quaternion.Euler(0,0,0);
+    } 
 
     private IEnumerator ReturnToGround()
     {
@@ -127,6 +146,9 @@ public class GoblinMonster : MonsterScript
             yield return null;
         }
         transform.localPosition = endHeight;
+
+        yield return new WaitForSeconds(1);
+        RessurectMonster();
     }
     private void OnTriggerStay2D(Collider2D collision)
     {

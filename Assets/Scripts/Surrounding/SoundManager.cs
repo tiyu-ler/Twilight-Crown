@@ -1,7 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
@@ -71,7 +68,7 @@ public class SoundManager : MonoBehaviour
         }
         SetVolume();
     }
-    public void PlaySound(SoundID id, Vector2? worldPos = null, float? volumeUpdate = 1, bool loop = false, int soundType = 3, float pitch = 1)
+    public void PlaySound(SoundID id, Vector2? worldPos = null, float? volumeUpdate = 1, bool loop = false, int soundType = 3, float pitch = 1, int spatialBlend = 1)
     {
         AudioClip clip = GetClipFromLibrary(id);
         if (clip == null) return; 
@@ -91,7 +88,7 @@ public class SoundManager : MonoBehaviour
         audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, AnimationCurve.Linear(0f, 1f, 1f, 1f));
         audioSource.transform.position = worldPos ?? transform.position;
         audioSource.clip = clip;
-        audioSource.spatialBlend = 1;
+        audioSource.spatialBlend = spatialBlend;
         audioSource.spread = 180;
         audioSource.volume = MasterVolume * GetVolumeForType(soundType) * (float)volumeUpdate;
         audioSource.loop = loop;
@@ -139,28 +136,6 @@ public class SoundManager : MonoBehaviour
         {
             rhino.UpdateVolume(MasterVolume*AmbientVolume, MasterVolume*SfxVolume);
         }
-        // for (int i = 0; i < RhinoSound.Count; i++)
-        // {
-        //     if (i % 2 == 0)
-        //     {
-        //         RhinoSound[i].volume = MasterVolume * AmbientVolume; //ambient
-        //     }
-        //     else
-        //     {
-        //         RhinoSound[i].volume = MasterVolume * SfxVolume; //sfx
-        //     }
-        // }
-        // for (int i = 0; i < GoblinSound.Count; i++)
-        // {
-        //     if (i % 2 == 0)
-        //     {
-        //         GoblinSound[i].volume = MasterVolume * AmbientVolume; //ambient
-        //     }
-        //     else
-        //     {
-        //         GoblinSound[i].volume = MasterVolume * SfxVolume; //sfx
-        //     }
-        // }
     }
     public void PauseAndContinueSound(bool pause, int soundType)
     {

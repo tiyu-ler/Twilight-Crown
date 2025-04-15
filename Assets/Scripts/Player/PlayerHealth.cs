@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using Cinemachine;
 using System.Collections.Generic;
@@ -181,7 +180,7 @@ public class PlayerHealth : MonoBehaviour
             enemy.StartEnemy();
         }  
         yield return new WaitForSecondsRealtime(1f);
-        screenFader.FadeFromWhite();
+        StartCoroutine(screenFader.FadeFromWhite());
     }
 
     public void SetLastObelisk(Obelisk obelisk)

@@ -15,7 +15,7 @@ public class ClimbPickUp : PickUpObject
         if (pickupAnimationName != "")
         {
             animator.Play(pickupAnimationName);
-            SoundManager.Instance.PlaySound(SoundManager.SoundID.WallJumpPickUp1, worldPos: transform.position, volumeUpdate: 0.6f);
+            SoundManager.Instance.PlaySound(SoundManager.SoundID.WallJumpPickUp1, worldPos: transform.position, volumeUpdate: 0.45f);
             StartCoroutine(PlayAfterDelay());
             LowerBody.SetActive(false);
             UpperBody.SetActive(false);
@@ -29,7 +29,7 @@ public class ClimbPickUp : PickUpObject
     private IEnumerator PlayAfterDelay()
     {
         yield return new WaitForSeconds(0.6f);
-        SoundManager.Instance.PlaySound(SoundManager.SoundID.WallJumpPickUp1, worldPos: transform.position, volumeUpdate: 0.6f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.WallJumpPickUp1, worldPos: transform.position, volumeUpdate: 0.45f);
     }
     protected override IEnumerator DestroyAfterAnimation()
     {

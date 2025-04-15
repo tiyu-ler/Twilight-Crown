@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using UnityEngine.Rendering.Universal;
 public class EndGameSphere : MonoBehaviour
@@ -267,7 +266,7 @@ public class EndGameSphere : MonoBehaviour
             yield return null;
         }
 
-        canvasGroup.alpha = endAlpha; // Ensure it ends exactly at target
+        canvasGroup.alpha = endAlpha;
     }
 
 
