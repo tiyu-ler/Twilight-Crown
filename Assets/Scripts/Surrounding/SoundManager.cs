@@ -103,10 +103,10 @@ public class SoundManager : MonoBehaviour
     }
     public void SetVolume()
     {
-        MasterVolume = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
-        MusicVolume = PlayerPrefs.GetFloat("MusicVolume", 0.5f);
-        AmbientVolume = PlayerPrefs.GetFloat("AmbientVolume", 0.5f);
-        SfxVolume = PlayerPrefs.GetFloat("SfxVolume", 0.5f);
+        MasterVolume = PlayerPrefs.GetFloat("MasterVolume", 0.75f);
+        MusicVolume = PlayerPrefs.GetFloat("MusicVolume", 0.75f);
+        AmbientVolume = PlayerPrefs.GetFloat("AmbientVolume", 0.75f);
+        SfxVolume = PlayerPrefs.GetFloat("SfxVolume", 0.75f);
 
         PlayerWalk.volume = MasterVolume * SfxVolume;
 

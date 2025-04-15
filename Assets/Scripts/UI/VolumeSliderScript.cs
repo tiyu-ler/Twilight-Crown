@@ -11,12 +11,13 @@ public class VolumeSliderScript : MonoBehaviour
     public TextMeshProUGUI SliderValueAdditional;
     public Slider VolumeSlider;
     private SoundManager soundManager;
+    private float DefaultValue = 0.75f;
     void Start()
     {
         soundManager = FindAnyObjectByType<SoundManager>();
         if (!PlayerPrefs.HasKey(VolumeSaveName))
         {
-            PlayerPrefs.SetFloat(VolumeSaveName, 0.5f);
+            PlayerPrefs.SetFloat(VolumeSaveName, 0.75f);
             LoadVolume();
         }
         else
@@ -30,6 +31,13 @@ public class VolumeSliderScript : MonoBehaviour
         VolumeSlider.value = PlayerPrefs.GetFloat(VolumeSaveName);
     }
 
+    public void SetDefaults()
+    {
+        PlayerPrefs.SetFloat(VolumeSaveName, 0.75f);
+        VolumeSlider.value = DefaultValue;
+        SliderValue.text = "75";
+        SliderValueAdditional.text = "75";
+    }
     public void SaveVolume()
     {
         int roundedValue = Mathf.RoundToInt(VolumeSlider.value * 100);

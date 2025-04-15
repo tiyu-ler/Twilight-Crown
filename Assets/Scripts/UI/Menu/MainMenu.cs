@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
 public class MainMenu : MonoBehaviour
 {
     public CanvasGroup MainMenuGroup, SettingsMenuGroup, SavesMenuGroup;
@@ -15,7 +16,9 @@ public class MainMenu : MonoBehaviour
 
     public List<GameObject> StartNewGameButton = new List<GameObject>();
     public GameManager gameManager;
+    public VolumeSliderScript[] volumeSliderScripts;
     private List<bool> SaveExists = new List<bool> { false, false, false };
+    private float[] _timeSaved = new float[3];
     private void ProfilesDataSet()
     {
         for (int i = 0; i<= 2; i++)
@@ -32,6 +35,8 @@ public class MainMenu : MonoBehaviour
                 TimeInfo[i].text = ReturnTime(profileData[2]);
                 TimeInfo[i+3].text = ReturnTime(profileData[2]);
                 SaveExists[i] = true;
+                // Debug.Log(profileData[2].GetType());
+                _timeSaved[i] = profileData[2];
             }
             else
             {
@@ -59,19 +64,26 @@ public class MainMenu : MonoBehaviour
     }
     public string ReturnTime(float playTime)
     {
-        // int hours = Mathf.FloorToInt(playTime / 3600);
         int minutes = Mathf.FloorToInt(playTime % 60 / 60);
         int seconds = Mathf.FloorToInt(playTime - 60 * minutes);
 
-        // return string.Format("{0}h {1}m", hours, minutes);
         return string.Format("{0}m {1}s", minutes, seconds);
     }
 
+    public void SetDefault()
+    {
+        foreach (VolumeSliderScript vss in volumeSliderScripts)
+        {
+            vss.SetDefaults();
+        }
+    }
     public void StartGame(int SaveID)
     {
         SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.04f);
+        // Debug.Log("|||||||||||||||||||||||| " + _timeSaved[SaveID]);
         PlayerDataSave.Instance.saveID = SaveID;
         gameManager.LoadGame(SaveID);
+        PlayerDataSave.Instance.totalPlayTime = _timeSaved[SaveID];
         SceneManager.LoadScene("GameScene");
     }
 

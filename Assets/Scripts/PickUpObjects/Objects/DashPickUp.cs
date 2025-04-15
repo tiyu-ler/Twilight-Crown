@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 public class DashPickUp : PickUpObject
 {
+    public DoorScript doorScript;
     protected override void CollectItem()
     {
         PlayerDataSave.Instance.HasDash = true;
@@ -48,6 +49,7 @@ public class DashPickUp : PickUpObject
         gameManager.SaveGame(PlayerDataSave.Instance.saveID);
         markerTextPopUp.DisableMarkUp();
         gameManager.UpdateObjectsBySaveInfo();
+        doorScript.DoorInteractor(false, true);
         Destroy(gameObject);
     }
 }

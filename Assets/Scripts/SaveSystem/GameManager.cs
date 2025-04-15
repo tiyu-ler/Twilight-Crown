@@ -79,6 +79,9 @@ public class GameManager : MonoBehaviour
     
     public void SaveGame(int currentSaveID)
     {
+        float oldplayTime = PlayerDataSave.Instance.totalPlayTime;
+        Debug.Log(playTime);
+        Debug.Log(oldplayTime);
         dataSave.saveID = currentSaveID;
         PlayerDataSavePackage saveObject = new PlayerDataSavePackage
         {
@@ -96,7 +99,7 @@ public class GameManager : MonoBehaviour
             secretZoneOpened = dataSave.secretZoneOpened,
             catBossKilled = dataSave.catBossKilled,
             
-            totalPlayTime = playTime + dataSave.totalPlayTime
+            totalPlayTime = playTime + oldplayTime
         };
 
         SaveSystem.Save(currentSaveID, saveObject);

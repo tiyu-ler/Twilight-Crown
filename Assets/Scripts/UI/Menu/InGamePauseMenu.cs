@@ -6,10 +6,12 @@ public class InGamePauseMenu : MonoBehaviour
     public GameObject pauseMenuUI;
     public GameObject MenuUi;
     public GameObject settingsMenuUI;
+    public bool IsAbleToPause;
     private bool _isPaused = false;
     private GameManager _gameManager;
     void Start()
     {
+        IsAbleToPause = true;
         pauseMenuUI.SetActive(false);
         MenuUi.SetActive(false);
         settingsMenuUI.SetActive(false);
@@ -20,7 +22,7 @@ public class InGamePauseMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && IsAbleToPause)
         {
             if (_isPaused)
                 ResumeGame();

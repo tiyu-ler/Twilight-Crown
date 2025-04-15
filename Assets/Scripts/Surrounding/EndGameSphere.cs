@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.Universal;
 public class EndGameSphere : MonoBehaviour
 {
     private bool _canBePressed = false;
@@ -10,22 +12,28 @@ public class EndGameSphere : MonoBehaviour
     public GameObject BigCat;
     public Material maskMaterial;
     public GameObject SmallCat;
+    public GameObject MaskGameobject;
     public Transform FollowObject;
     public Transform MiddlePosition, SmallCatPosition;
     public GameObject Light, LightAdditional;
     public List<SpriteRenderer> Tiles = new List<SpriteRenderer>();
     public CinemachineVirtualCamera DynamicCamera;
-    // public CanvasGroup Credits;
+    public CanvasGroup Credits;
+    public CanvasGroup CreditsText;
     public float targetRadius = 0.09f;
-    public Sprite MeowSprite;
-    // public GameObject CreditsText;
     private Animator _bigCatAnimator, _smallCatAnimator, SphereAnimator;
     private bool _retunBackToMainMenu;
     private GameObject _player;
     public Color DefaultColor;
+    private InGamePauseMenu inGamePauseMenu;
     public MarkerTextPopUp DestroyText;
     void Start()
     {
+        Credits.alpha = 0;
+        Credits.gameObject.SetActive(false);
+        CreditsText.alpha = 1;
+        MaskGameobject.SetActive(false);
+        inGamePauseMenu = FindAnyObjectByType<InGamePauseMenu>();
         maskMaterial.SetFloat("_Radius", 0.4f);
         SphereAnimator = GetComponent<Animator>();
         _bigCatAnimator = BigCat.GetComponent<Animator>();
@@ -68,6 +76,9 @@ public class EndGameSphere : MonoBehaviour
                     DestroyText.DisableMarkUp();
                     MiddlePosition.transform.position = (SmallCat.transform.position + _player.transform.position)/2;
                     MiddlePosition.transform.position = new Vector2(MiddlePosition.transform.position.x, 91.74f);
+                    inGamePauseMenu.ResumeGame();
+                    inGamePauseMenu.IsAbleToPause = false;
+                    _player.GetComponent<PlayerMovement>().FlipCharacter(true, 0);
                     StopAllCoroutines();
                     StartCoroutine(SphereInteraction());            
                 }
@@ -111,18 +122,41 @@ public class EndGameSphere : MonoBehaviour
         transform.localPosition = endState;
     }
 
-    private void HideLigth()
+    private IEnumerator HideLigth()
     {
+        float duration = 1f;
+        float time = 0f;
+
+        Light2D lightMain = Light.GetComponent<Light2D>();
+        Light2D lightAdditional = LightAdditional.GetComponent<Light2D>();
+
+        float startIntensityMain = lightMain.intensity;
+        float startIntensityAdditional = lightAdditional.intensity;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            lightMain.intensity = Mathf.Lerp(startIntensityMain, 0, t);
+            lightAdditional.intensity = Mathf.Lerp(startIntensityAdditional, 0, t);
+
+            yield return null;
+        }
+
         Destroy(Light);
         Destroy(LightAdditional);
+
         foreach (SpriteRenderer sr in Tiles)
         {
             sr.color = DefaultColor;
         }
     }
 
+
     private IEnumerator SphereInteraction()
     {
+        MaskGameobject.SetActive(true);
         FollowObject.transform.position = _player.transform.position; 
         DynamicCamera.Follow = FollowObject;
         BigCat.SetActive(true);
@@ -134,11 +168,12 @@ public class EndGameSphere : MonoBehaviour
         BigCat.GetComponent<Animator>().Play("Idle");
         
         // SphereAnimator.Play("SphereDestruction");
-        // SoundManager.Instance.PlaySound(SoundManager.SoundID.SphereDestructSoundGlass, worldPos: transform.position, volumeUpdate: 0.03f);
-        // SoundManager.Instance.PlaySound(SoundManager.SoundID.SphereDestructSoundSouls, worldPos: transform.position, volumeUpdate: 0.03f); 
-        // HideLight в определенный момент анимации
-        HideLigth();
-        yield return new WaitForSeconds(1.5f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.SphereDestructSoundGlass, worldPos: transform.position, volumeUpdate: 0.03f);
+        yield return new WaitForSeconds(0.1f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.SphereDestructSoundSouls, worldPos: transform.position, volumeUpdate: 0.03f); 
+        
+        StartCoroutine(HideLigth());
+        yield return new WaitForSeconds(1.2f);
 
         BigCat.GetComponent<Animator>().Play("Hide");
         SoundManager.Instance.PlaySound(SoundManager.SoundID.CatbossHide, worldPos: transform.position, volumeUpdate: 0.03f);
@@ -155,23 +190,26 @@ public class EndGameSphere : MonoBehaviour
 
         yield return StartCoroutine(FollowObjectMover(SmallCatPosition));
         yield return new WaitForSeconds(0.1f);
-        yield return StartCoroutine(ZoomCamera(DynamicCamera, 1.5f, 1f));
+        StartCoroutine(ZoomCamera(DynamicCamera, 1.5f, 1f));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(LerpMaskRadius(maskMaterial,0.12f, 2f));
 
-        yield return StartCoroutine(LerpMaskRadius(maskMaterial,0.12f, 3f));
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.Meow, worldPos: transform.position, volumeUpdate: 0.03f); 
 
-        // SoundManager.Instance.PlaySound(SoundManager.SoundID.Meow, worldPos: transform.position, volumeUpdate: 0.03f); 
-
-        SmallCat.GetComponent<Animator>().StopPlayback();
-        SmallCat.GetComponent<SpriteRenderer>().sprite = MeowSprite;
-        yield return new WaitForSeconds(0.2f);
-        SmallCat.GetComponent<Animator>().StartPlayback();
+        SmallCat.GetComponent<Animator>().Play("SmallCatMeow");
+        yield return new WaitForSeconds(0.3f);
+        SmallCat.GetComponent<Animator>().Play("SmallCatStand");
         yield return new WaitForSeconds(0.5f);
 
-        yield return StartCoroutine(LerpMaskRadius(maskMaterial, 0, 1.2f));
-
-        // титры
-
-        yield return null;
+        Credits.gameObject.SetActive(true);
+        yield return StartCoroutine(LerpMaskRadius(maskMaterial, 0, 0.8f));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(CanvasGroupLerp(Credits, 1f));
+        yield return new WaitForSeconds(1.6f);
+        
+        yield return StartCoroutine(CanvasGroupLerp(CreditsText, 0f));
+        yield return new WaitForSeconds(0.3f);
+        SceneManager.LoadScene("MainMenu");
     }
 
     private IEnumerator SmallCatLerpRight()
@@ -214,6 +252,24 @@ public class EndGameSphere : MonoBehaviour
 
         cam.m_Lens.OrthographicSize = targetSize;
     }
+
+    private IEnumerator CanvasGroupLerp(CanvasGroup canvasGroup, float endAlpha)
+    {
+        float duration = 1f;
+        float startAlpha = canvasGroup.alpha;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, t);
+            yield return null;
+        }
+
+        canvasGroup.alpha = endAlpha; // Ensure it ends exactly at target
+    }
+
 
     private IEnumerator LerpMaskRadius(Material mat, float targetRadius, float duration)
     {
