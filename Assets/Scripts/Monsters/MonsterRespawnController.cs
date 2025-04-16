@@ -5,10 +5,11 @@ using UnityEngine;
 public class MonsterRespawnController : MonoBehaviour
 {
     private List<RhinoMonster> rhinoMonsters;
-    // private List<GoblinMonster> goblinMonsters = new List<GoblinMonster>();
+    private List<GoblinMonster> goblinMonsters;
     void Start()
     {
         rhinoMonsters = new List<RhinoMonster>(FindObjectsOfType<RhinoMonster>());
+        goblinMonsters = new List<GoblinMonster>(FindObjectsOfType<GoblinMonster>());
     }
 
     void OnTriggerEnter2D(Collider2D collision)
@@ -20,6 +21,13 @@ public class MonsterRespawnController : MonoBehaviour
                 if (rhinoMonster.IsDead)
                 {
                     rhinoMonster.RessurectMonster();
+                }
+            }
+            foreach (GoblinMonster goblinMonster in goblinMonsters)
+            {
+                if (goblinMonster.IsDead)
+                {
+                    goblinMonster.RessurectMonster();
                 }
             }
         }

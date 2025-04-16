@@ -33,7 +33,6 @@ public class MainMenu : MonoBehaviour
                 TimeInfo[i].text = ReturnTime(profileData[2]);
                 TimeInfo[i+3].text = ReturnTime(profileData[2]);
                 SaveExists[i] = true;
-                // Debug.Log(profileData[2].GetType());
                 _timeSaved[i] = profileData[2];
             }
             else
@@ -62,8 +61,8 @@ public class MainMenu : MonoBehaviour
     }
     public string ReturnTime(float playTime)
     {
-        int minutes = Mathf.FloorToInt(playTime % 60 / 60);
-        int seconds = Mathf.FloorToInt(playTime - 60 * minutes);
+        int minutes = Mathf.FloorToInt(playTime / 60);
+        int seconds = Mathf.FloorToInt(playTime % 60);
 
         return string.Format("{0}m {1}s", minutes, seconds);
     }
@@ -78,7 +77,6 @@ public class MainMenu : MonoBehaviour
     public void StartGame(int SaveID)
     {
         SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.04f);
-        // Debug.Log("|||||||||||||||||||||||| " + _timeSaved[SaveID]);
         PlayerDataSave.Instance.saveID = SaveID;
         gameManager.LoadGame(SaveID);
         PlayerDataSave.Instance.totalPlayTime = _timeSaved[SaveID];
@@ -98,6 +96,8 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
         MainMenuTransform = MainMenuGroup.transform;
         SettingsMenuTransform = SettingsMenuGroup.transform;
         SavesMenuTransform = SavesMenuGroup.transform;

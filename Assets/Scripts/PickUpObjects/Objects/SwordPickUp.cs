@@ -42,9 +42,9 @@ public class SwordPickUp : PickUpObject
     {
         if (pickupAnimationName != "")
         {
-            yield return new WaitForSeconds(GetAnimationLength()*0.2f);
+            yield return new WaitForSeconds(GetAnimationLength()*0.5f);
             SoundManager.Instance.PlaySound(SoundManager.SoundID.SwordPickUp, worldPos: transform.position, volumeUpdate: 0.4f);
-            yield return new WaitForSeconds(GetAnimationLength()*0.8f);
+            yield return new WaitForSeconds(GetAnimationLength()*0.5f);
             LowerBody.SetActive(true);
             UpperBody.SetActive(true);
 

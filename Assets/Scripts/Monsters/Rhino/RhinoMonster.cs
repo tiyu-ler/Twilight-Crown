@@ -68,6 +68,7 @@ public class RhinoMonster : MonsterScript
         GetComponent<CapsuleCollider2D>().enabled = true;
         _currentHealth = MaxHealth;
         _animator.SetBool("IsMoving", true);
+        StopRolling();
     }
 
     protected override void CheckForPlayer() 
@@ -208,7 +209,7 @@ public class RhinoMonster : MonsterScript
 
         if (_rollTimer <= 0 || wallAhead || cliffAhead)
         {
-             additionalAdioSource.pitch = 0.5f;
+            additionalAdioSource.pitch = 0.5f;
             additionalAdioSource.volume = AmbientVolume * RhinoHitWallVolume;
             audioSource.PlayOneShot(HitWallClip);
             StopRolling();

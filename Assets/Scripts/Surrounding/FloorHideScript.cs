@@ -20,15 +20,7 @@ public class FloorHideScript : MonoBehaviour
 
         if (SideWays)
         {
-            if (entryDirection.x > 0) 
-            {
-                SetOpacity(0f);
-                if (!_sphereFlyActivated) 
-                {
-                    _sphereFlyActivated = true;
-                    endGameSphere.StartCoroutine(endGameSphere.SphereFly());
-                }
-            }
+            if (entryDirection.x > 0) SetOpacity(0f);
             else SetOpacity(255f);
         }
         else StartCoroutine(FadeInChildren(1f));
