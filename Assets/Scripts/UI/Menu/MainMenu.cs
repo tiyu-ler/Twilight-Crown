@@ -5,8 +5,8 @@ using TMPro;
 using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
-    public CanvasGroup MainMenuGroup, SettingsMenuGroup, SavesMenuGroup;
-    private Transform MainMenuTransform, SettingsMenuTransform, SavesMenuTransform;
+    public CanvasGroup MainMenuGroup, SettingsMenuGroup, SavesMenuGroup, ControlsMenuGroup;
+    private Transform MainMenuTransform, SettingsMenuTransform, SavesMenuTransform, ControlsMenuTransform;
     public float fadeDuration = 0.05f;
     public List<TextMeshProUGUI> LocationInfo = new List<TextMeshProUGUI>();
     public List<TextMeshProUGUI> MoneyInfo = new List<TextMeshProUGUI>();
@@ -52,10 +52,10 @@ public class MainMenu : MonoBehaviour
         string currentLocation = "Error";
         switch(obeliskID)
         {
-            case 0: currentLocation = "Spawn Location"; break;
-            case 1: currentLocation = "First Location"; break;
-            case 2: currentLocation = "Second Location"; break;
-            case 3: currentLocation = "Third Location"; break;
+            case 0: currentLocation = "Forgotten Grotto"; break;
+            case 1: currentLocation = "Hero's Tomb"; break;
+            case 2: currentLocation = "Rhino's Nest"; break;
+            case 3: currentLocation = "Great Library"; break;
         }
         return currentLocation;
     }
@@ -101,8 +101,10 @@ public class MainMenu : MonoBehaviour
         MainMenuTransform = MainMenuGroup.transform;
         SettingsMenuTransform = SettingsMenuGroup.transform;
         SavesMenuTransform = SavesMenuGroup.transform;
+        ControlsMenuTransform = ControlsMenuGroup.transform;
         SetCanvas(MainMenuGroup, MainMenuTransform, 1, true);
         SetCanvas(SettingsMenuGroup, SettingsMenuTransform, 0, false);
+        SetCanvas(ControlsMenuGroup, ControlsMenuTransform, 0, false);
         SetCanvas(SavesMenuGroup, SavesMenuTransform, 0, false);
         ProfilesDataSet();
     }
@@ -110,21 +112,28 @@ public class MainMenu : MonoBehaviour
     {
         // SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.05f);
         StopAllCoroutines();
-        StartCoroutine(SwitchCanvas(MainMenuGroup, MainMenuTransform, SettingsMenuGroup, SettingsMenuTransform, SavesMenuGroup, SavesMenuTransform));
+        StartCoroutine(SwitchCanvas(MainMenuGroup, MainMenuTransform, SettingsMenuGroup, SettingsMenuTransform, SavesMenuGroup, SavesMenuTransform, ControlsMenuGroup, ControlsMenuTransform));
     }
 
     public void SettingsMenuActive()
     {
         // SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.05f);
         StopAllCoroutines();
-        StartCoroutine(SwitchCanvas(SettingsMenuGroup, SettingsMenuTransform, MainMenuGroup, MainMenuTransform, SavesMenuGroup, SavesMenuTransform));
+        StartCoroutine(SwitchCanvas(SettingsMenuGroup, SettingsMenuTransform, MainMenuGroup, MainMenuTransform, SavesMenuGroup, SavesMenuTransform, ControlsMenuGroup, ControlsMenuTransform));
     }
 
     public void SaveMenuActive()
     {
         // SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.05f);
         StopAllCoroutines();
-        StartCoroutine(SwitchCanvas(SavesMenuGroup, SavesMenuTransform, MainMenuGroup, MainMenuTransform, SettingsMenuGroup, SettingsMenuTransform));
+        StartCoroutine(SwitchCanvas(SavesMenuGroup, SavesMenuTransform, MainMenuGroup, MainMenuTransform, SettingsMenuGroup, SettingsMenuTransform, ControlsMenuGroup, ControlsMenuTransform));
+    }
+
+    public void ControlsMenuActive()
+    {
+        // SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.05f);
+        StopAllCoroutines();
+        StartCoroutine(SwitchCanvas(ControlsMenuGroup, ControlsMenuTransform, SavesMenuGroup, SavesMenuTransform, MainMenuGroup, MainMenuTransform, SettingsMenuGroup, SettingsMenuTransform));
     }
 
     public void ExitGame()
@@ -133,12 +142,13 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
     
-    private IEnumerator SwitchCanvas(CanvasGroup toEnable, Transform toEnableTransform, CanvasGroup toDisable1, Transform toDisable1Transform, CanvasGroup toDisable2, Transform toDisable2Transform)
+    private IEnumerator SwitchCanvas(CanvasGroup toEnable, Transform toEnableTransform, CanvasGroup toDisable1, Transform toDisable1Transform, CanvasGroup toDisable2, Transform toDisable2Transform, CanvasGroup toDisable3, Transform toDisable3Transform)
     {
         SoundManager.Instance.PlaySound(SoundManager.SoundID.UiButtonConfirm, volumeUpdate: 0.04f);
 
         yield return StartCoroutine(FadeAndScaleCanvas(toDisable1, toDisable1Transform, 0, false));
         yield return StartCoroutine(FadeAndScaleCanvas(toDisable2, toDisable2Transform, 0, false));
+        yield return StartCoroutine(FadeAndScaleCanvas(toDisable3, toDisable3Transform, 0, false));
         yield return StartCoroutine(FadeAndScaleCanvas(toEnable, toEnableTransform, 1, true));
     }
 

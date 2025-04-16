@@ -6,6 +6,7 @@ public class InGamePauseMenu : MonoBehaviour
     public GameObject pauseMenuUI;
     public GameObject MenuUi;
     public GameObject settingsMenuUI;
+    public GameObject controlsMenuUI;
     public bool IsAbleToPause;
     private bool _isPaused = false;
     private GameManager _gameManager;
@@ -15,6 +16,7 @@ public class InGamePauseMenu : MonoBehaviour
         pauseMenuUI.SetActive(false);
         MenuUi.SetActive(false);
         settingsMenuUI.SetActive(false);
+        controlsMenuUI.SetActive(false);
         _gameManager = FindObjectOfType<GameManager>();
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -63,11 +65,20 @@ public class InGamePauseMenu : MonoBehaviour
     public void OpenSettingsMenu()
     {
         MenuUi.SetActive(false);
+        controlsMenuUI.SetActive(false);
         settingsMenuUI.SetActive(true);
+        
     }
     public void CloseSettingsMenu()
     {
         MenuUi.SetActive(true);
+        controlsMenuUI.SetActive(false);
         settingsMenuUI.SetActive(false);
+    }
+    public void OpenControlsMenu()
+    {
+        controlsMenuUI.SetActive(true);
+        settingsMenuUI.SetActive(false);
+        MenuUi.SetActive(false);
     }
 }

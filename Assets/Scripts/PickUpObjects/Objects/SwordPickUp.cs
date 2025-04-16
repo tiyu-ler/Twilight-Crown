@@ -45,6 +45,7 @@ public class SwordPickUp : PickUpObject
             yield return new WaitForSeconds(GetAnimationLength()*0.5f);
             SoundManager.Instance.PlaySound(SoundManager.SoundID.SwordPickUp, worldPos: transform.position, volumeUpdate: 0.4f);
             yield return new WaitForSeconds(GetAnimationLength()*0.5f);
+            animator.enabled = false;
             LowerBody.SetActive(true);
             UpperBody.SetActive(true);
 
@@ -54,28 +55,13 @@ public class SwordPickUp : PickUpObject
             LowerBody.GetComponent<Animator>().Play("L_Idle");
         }
         Player.transform.position = EndPosition;
-        // float elapsedTime = 0f;
-        // float LerpTime = 0.5f;
-        // while (elapsedTime < LerpTime)
-        // {
-        //     elapsedTime += Time.deltaTime;
 
-        //     BlackBorderTop.transform.localPosition = new Vector3(0, Mathf.Lerp(440, 640, elapsedTime/LerpTime), 0);
-        //     BlackBorderBottom.transform.localPosition = new Vector3(0, Mathf.Lerp(-440, -640, elapsedTime/LerpTime), 0);
-            
-        //     yield return null;
-        // }
-        // cameraManager.CutsceneCamera(false);
         playerAttack.enabled = true;
         playerMovement.FlipCharacter(true, 1);
         playerMovement.CanMove = true;
         playerMovement.StopSound = false;
-        // BlackBorderTop.SetActive(false);
-        // BlackBorderBottom.SetActive(false);
-        // Debug.Log(FindAnyObjectByType<CameraFollowObject>().transform.rotation.y != Player.transform.rotation.y);
         if (FindAnyObjectByType<CameraFollowObject>().transform.rotation.y != Player.transform.rotation.y)
         {
-            Debug.Log("CALLTURN");
             playerMovement.IsFacingRight = !playerMovement.IsFacingRight;
             FindAnyObjectByType<CameraFollowObject>().CallTurn();
         }

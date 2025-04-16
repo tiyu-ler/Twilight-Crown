@@ -4,6 +4,7 @@ using UnityEngine;
 public class ClimbPickUp : PickUpObject
 {
     public Sprite EmptyBag;
+    public GameObject Light;
     public Vector2 AnimationEndLocation;
     protected override void CollectItem()
     {
@@ -43,7 +44,7 @@ public class ClimbPickUp : PickUpObject
             UpperBody.GetComponent<Animator>().Play("U_Idle");
             LowerBody.GetComponent<Animator>().Play("L_Idle");
         }
-
+        Destroy(Light);
         playerAttack.enabled = true;
         // Debug.Log("Player rotation " + Player.transform.rotation.y);
         playerMovement.FlipCharacter(true, 1);

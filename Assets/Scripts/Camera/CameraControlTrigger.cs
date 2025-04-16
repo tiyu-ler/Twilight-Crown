@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Cinemachine;
 using UnityEditor;
+using UnityEngine.Rendering.Universal;
 public class CameraControlTrigger : MonoBehaviour
 {
     public CustomInspectorObjects customInspectorObjects;
@@ -37,7 +38,9 @@ public class CameraControlTrigger : MonoBehaviour
     {
         float duration = 0.8f;
         float time = 0f;
-
+        Light2D[] light  = parent.GetComponentsInChildren<Light2D>();
+        Destroy(light[0]);
+        Destroy(light[1]);
         SpriteRenderer[] spriteRenderers = parent.GetComponentsInChildren<SpriteRenderer>();
         float[] initialAlphas = new float[spriteRenderers.Length];
         

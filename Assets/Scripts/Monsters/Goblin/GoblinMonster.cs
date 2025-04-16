@@ -146,9 +146,6 @@ public class GoblinMonster : MonsterScript
             yield return null;
         }
         transform.localPosition = endHeight;
-
-        yield return new WaitForSeconds(1);
-        RessurectMonster();
     }
     private void OnTriggerStay2D(Collider2D collision)
     {

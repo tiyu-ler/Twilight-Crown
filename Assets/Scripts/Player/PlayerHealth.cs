@@ -158,6 +158,7 @@ public class PlayerHealth : MonoBehaviour
         PlayerAnimator.Play("None");
         UpperBody.SetActive(true);
         LowerBody.SetActive(true);
+        playerMovement.UpperBodyAnimator.Play("U_Idle");
         Time.timeScale = 1f;
         VerticalCollider.enabled = true;
         HorizontalCollider.enabled = false;

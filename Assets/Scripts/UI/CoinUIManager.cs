@@ -7,9 +7,10 @@ public class CoinUIManager : MonoBehaviour
     public TextMeshProUGUI MoneyText;
     public CanvasGroup Coins;
     private Coroutine hideCoroutine;
-
+    public bool IsBuying;
     private void Awake()
     {
+        IsBuying = false;
         if (MoneyText) MoneyText.text = PlayerDataSave.Instance.Money.ToString();
     }
     public void UpdateCoinsUI(int money)
@@ -17,7 +18,7 @@ public class CoinUIManager : MonoBehaviour
         MoneyText.text = money.ToString();
         StartCoroutine(FadeCanvasGroup(Coins, 0.08f, 1f));
 
-        if (hideCoroutine == null)
+        if (hideCoroutine == null && !IsBuying)
             hideCoroutine = StartCoroutine(HideAfterDelay());
     }
 

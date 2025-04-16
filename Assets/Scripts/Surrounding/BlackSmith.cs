@@ -148,7 +148,7 @@ public class BlacksmithInteraction : MonoBehaviour
         foreach (char c in text)
         {
             dialogText.text += c;
-            yield return new WaitForSeconds(0.06f);
+            yield return new WaitForSeconds(0.035f);
         }
         isTyping = false;
     }
@@ -156,6 +156,8 @@ public class BlacksmithInteraction : MonoBehaviour
     private void ShowUpgradeOptions()
     {
         DisablePlayer();
+        coinUIManager.IsBuying = true;
+        coinUIManager.UpdateCoinsUI(PlayerDataSave.Instance.Money);
         _currentLevel = PlayerDataSave.Instance.SwordLevel;
         Debug.Log(_currentLevel);
         costText.text = $"Upgrade sword for {upgradeCosts[_currentLevel]}  ?";
@@ -179,8 +181,8 @@ public class BlacksmithInteraction : MonoBehaviour
             PlayerDataSave.Instance.Money -= cost;
             PlayerDataSave.Instance.SwordLevel++;
             
-            coinUIManager.UpdateCoinsUI(PlayerDataSave.Instance.Money);
-
+            coinUIManager.IsBuying = false;
+            coinUIManager.UpdateCoinsUI(PlayerDataSave.Instance.Money);  
             HitboxAttackCheck[] hitboxes = FindObjectsOfType<HitboxAttackCheck>();
             foreach (var hitbox in hitboxes)
             {
@@ -201,6 +203,8 @@ public class BlacksmithInteraction : MonoBehaviour
     // 🎯 Assign this to the No Button in Inspector
     public void OnNoClicked()
     {
+        coinUIManager.IsBuying = false;
+        coinUIManager.UpdateCoinsUI(PlayerDataSave.Instance.Money);  
         StartCoroutine(StartDialog(dialogEnd, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk3, SoundManager.SoundID.BlacksmithTalk4}, endAfterDialog: true));
     }
 
@@ -219,14 +223,12 @@ public class BlacksmithInteraction : MonoBehaviour
 
     private void DisablePlayer()
     {
-        // disable Player
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
 
     private void EnablePlayer()
     {
-        // disable Player
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -244,10 +246,6 @@ public class BlacksmithInteraction : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             inTrigger = false;
-            // if (!dialogActive)
-            // {
-            //     markerTextPopUp.DisableMarkUp();
-            // }
         }
     }
 }

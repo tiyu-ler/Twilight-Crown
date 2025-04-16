@@ -11,7 +11,7 @@ public class HitboxAttackCheck : MonoBehaviour
     }
     public void UpdateDamage()
     {
-        Damage = 0.4f + 0.6f * (PlayerDataSave.Instance.SwordLevel+1); // 1, 1.6, 2.2
+        Damage = 1f + 0.25f * (PlayerDataSave.Instance.SwordLevel+1); // 1, 1.25, 1.5
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

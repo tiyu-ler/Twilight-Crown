@@ -92,9 +92,8 @@ public class EndGameSphere : MonoBehaviour
         }
     }
 
-    private IEnumerator HideLigth()
+    private IEnumerator HideLigth(float duration)
     {
-        float duration = 1f;
         float time = 0f;
 
         Light2D lightMain = Light.GetComponent<Light2D>();
@@ -108,19 +107,19 @@ public class EndGameSphere : MonoBehaviour
             time += Time.deltaTime;
             float t = time / duration;
 
-            lightMain.intensity = Mathf.Lerp(startIntensityMain, 0, t);
-            lightAdditional.intensity = Mathf.Lerp(startIntensityAdditional, 0, t);
+            lightMain.intensity = Mathf.Lerp(startIntensityMain, 0f, t);
+            lightAdditional.intensity = Mathf.Lerp(startIntensityAdditional, 0.1f, t);
 
             yield return null;
         }
 
         Destroy(Light);
-        Destroy(LightAdditional);
+        // Destroy(LightAdditional);
 
-        foreach (SpriteRenderer sr in Tiles)
-        {
-            sr.color = DefaultColor;
-        }
+        // foreach (SpriteRenderer sr in Tiles)
+        // {
+        //     sr.color = DefaultColor;
+        // }
     }
 
 
@@ -138,15 +137,15 @@ public class EndGameSphere : MonoBehaviour
         BigCat.GetComponent<Animator>().Play("Idle");
         
         SphereAnimator.Play("SphereBreakAnimation");
+        StartCoroutine(HideLigth(GetAnimationLength("SphereBreakAnimation", SphereAnimator)));
         yield return new WaitForSeconds(GetAnimationLength("SphereBreakAnimation", SphereAnimator)*0.05f);
         SoundManager.Instance.PlaySound(SoundManager.SoundID.SphereDestructSoundGlass, worldPos: transform.position, volumeUpdate: 0.1f);
         SoundManager.Instance.PlaySound(SoundManager.SoundID.SphereDestructSoundSouls, worldPos: transform.position, volumeUpdate: 0.2f); 
         yield return new WaitForSeconds(GetAnimationLength("SphereBreakAnimation", SphereAnimator)*0.75f);
         SoundManager.Instance.PlaySound(SoundManager.SoundID.Invoke, worldPos: transform.position, volumeUpdate: 0.4f); 
-        yield return new WaitForSeconds(GetAnimationLength("SphereBreakAnimation", SphereAnimator)*0.2f);
+        
         SphereAnimator.Play("SphereBroken");
-        StartCoroutine(HideLigth());
-        yield return new WaitForSeconds(1.2f);
+        
 
         BigCat.GetComponent<Animator>().Play("Hide");
         SoundManager.Instance.PlaySound(SoundManager.SoundID.CatbossHide, worldPos: transform.position, volumeUpdate: 0.03f);
@@ -155,6 +154,9 @@ public class EndGameSphere : MonoBehaviour
         SmallCat.SetActive(true);
         yield return new WaitForSeconds(GetAnimationLength("Hide", _bigCatAnimator)*0.2f);
         Destroy(BigCat);
+
+        // StartCoroutine(HideLigth());
+        yield return new WaitForSeconds(1f);
 
         SmallCat.GetComponent<Animator>().Play("SmallCatWalk");
         yield return StartCoroutine(SmallCatLerpRight());
@@ -167,7 +169,7 @@ public class EndGameSphere : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(LerpMaskRadius(maskMaterial,0.12f, 2f));
 
-        SoundManager.Instance.PlaySound(SoundManager.SoundID.Meow, worldPos: transform.position, volumeUpdate: 0.1f); 
+        SoundManager.Instance.PlaySound(SoundManager.SoundID.Meow, worldPos: transform.position, volumeUpdate: 0.32f); 
 
         SmallCat.GetComponent<Animator>().Play("SmallCatMeow");
         yield return new WaitForSeconds(0.3f);

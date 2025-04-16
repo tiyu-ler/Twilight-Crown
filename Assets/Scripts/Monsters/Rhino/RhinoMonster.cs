@@ -51,7 +51,8 @@ public class RhinoMonster : MonsterScript
         _markedToDie = false;
         IsDead = false;
         _isRolling = false;
-        _isChasing = false;
+        _isMoving = true;
+        _isRollingAnimationFinished = true;
         transform.localPosition = _startPosition;
         audioSource.enabled = true;
         additionalAdioSource.enabled = true;
@@ -67,8 +68,10 @@ public class RhinoMonster : MonsterScript
         GetComponent<Collider2D>().enabled = true;
         GetComponent<CapsuleCollider2D>().enabled = true;
         _currentHealth = MaxHealth;
+        _animator.SetBool("ForcedRun", true);
         _animator.SetBool("IsMoving", true);
-        StopRolling();
+        _animator.SetBool("CanMove", true);
+        _animator.SetBool("ForcedRun", false);
     }
 
     protected override void CheckForPlayer() 
