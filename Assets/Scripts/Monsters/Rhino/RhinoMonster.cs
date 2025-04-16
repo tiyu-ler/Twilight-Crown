@@ -72,6 +72,7 @@ public class RhinoMonster : MonsterScript
         _animator.SetBool("IsMoving", true);
         _animator.SetBool("CanMove", true);
         _animator.SetBool("ForcedRun", false);
+        StartRolling();
     }
 
     protected override void CheckForPlayer() 
@@ -93,6 +94,7 @@ public class RhinoMonster : MonsterScript
         HitWallClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoHitWall);
         DamageClip = SoundManager.Instance.GetClipFromLibrary(SoundManager.SoundID.RhinoGetDamage);
         _startPosition = transform.localPosition;
+        _startPosition.y += 0.18f;
         _startColor = _renderer.color;
     }
     public void UpdateVolume(float ambient, float sfx)

@@ -8,10 +8,10 @@ public class CoinUIManager : MonoBehaviour
     public CanvasGroup Coins;
     private Coroutine hideCoroutine;
     public bool IsBuying;
-    private void Awake()
+    void Start()
     {
         IsBuying = false;
-        if (MoneyText) MoneyText.text = PlayerDataSave.Instance.Money.ToString();
+        UpdateCoinsUI(PlayerDataSave.Instance.Money);
     }
     public void UpdateCoinsUI(int money)
     {

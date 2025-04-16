@@ -25,6 +25,7 @@ public class EndGameSphere : MonoBehaviour
     private GameObject _player;
     public Color DefaultColor;
     private InGamePauseMenu inGamePauseMenu;
+    private PlayerAttack playerAttack;
     public MarkerTextPopUp DestroyText;
     void Start()
     {
@@ -41,6 +42,7 @@ public class EndGameSphere : MonoBehaviour
         BigCat.SetActive(false);
         SmallCat.SetActive(false);
         playerMovement = FindObjectOfType<PlayerMovement>();
+        playerAttack = FindObjectOfType<PlayerAttack>();
     }
     private void OnTriggerEnter2D(Collider2D collider)
     {
@@ -114,17 +116,12 @@ public class EndGameSphere : MonoBehaviour
         }
 
         Destroy(Light);
-        // Destroy(LightAdditional);
-
-        // foreach (SpriteRenderer sr in Tiles)
-        // {
-        //     sr.color = DefaultColor;
-        // }
     }
 
 
     private IEnumerator SphereInteraction()
     {
+        playerAttack.enabled = false;
         MaskGameobject.SetActive(true);
         FollowObject.transform.position = _player.transform.position; 
         DynamicCamera.Follow = FollowObject;

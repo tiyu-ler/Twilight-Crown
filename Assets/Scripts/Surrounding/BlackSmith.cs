@@ -20,6 +20,7 @@ public class BlacksmithInteraction : MonoBehaviour
     private PlayerAttack playerAttack;
     private PlayerMovement playerMovement;
     private CoinUIManager coinUIManager;
+    private bool _playerHasSword;
     private string[] dialogNoMoneyAtAll = new string[]
     { 
         "Sorry, you do not have enough." // BlacksmithTalk1
@@ -68,30 +69,45 @@ public class BlacksmithInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (inTrigger && !dialogActive && Input.GetKeyDown(KeyCode.W))
+        if (inTrigger && !dialogActive && Input.GetKeyDown(KeyCode.W) && playerMovement.IsGrounded())
         {
-            playerMovement.StopSound = true;
-            playerMovement.CanMove = false;
-            playerMovement.audioSource.Pause();
-            playerMovement.HorizontalInput = 0;
-            playerMovement.RigidBody.velocity = Vector2.zero;
-            playerAttack.enabled = false;
-            int level = PlayerDataSave.Instance.SwordLevel;
-
-            if (level == 0)
+            _playerHasSword = PlayerDataSave.Instance.HasSword;
+            if (!_playerHasSword)
             {
-                StartCoroutine(StartDialog(dialogFirstEncounter, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk5, 
-                    SoundManager.SoundID.BlacksmithTalk6, SoundManager.SoundID.BlacksmithTalk7 }));
-            }
-            else if (level == 1)
-            {
-                StartCoroutine(StartDialog(dialogAfterFirstUpgrade, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk6, 
-                    SoundManager.SoundID.BlacksmithTalk7, SoundManager.SoundID.BlacksmithTalk2 }));
+                playerMovement.StopSound = true;
+                playerMovement.CanMove = false;
+                playerMovement.audioSource.Pause();
+                playerMovement.HorizontalInput = 0;
+                playerMovement.RigidBody.velocity = Vector2.zero;
+                playerAttack.enabled = false;
+                StartCoroutine(StartDialog(dialogEnd, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk3, 
+                     SoundManager.SoundID.BlacksmithTalk4 }, endAfterDialog: true));
             }
             else
             {
-                StartCoroutine(StartDialog(dialogAfterFinalUpgrade, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk1, 
-                SoundManager.SoundID.BlacksmithTalk4, SoundManager.SoundID.BlacksmithTalk3 }, endAfterDialog: true));
+                playerMovement.StopSound = true;
+                playerMovement.CanMove = false;
+                playerMovement.audioSource.Pause();
+                playerMovement.HorizontalInput = 0;
+                playerMovement.RigidBody.velocity = Vector2.zero;
+                playerAttack.enabled = false;
+                int level = PlayerDataSave.Instance.SwordLevel;
+
+                if (level == 0)
+                {
+                    StartCoroutine(StartDialog(dialogFirstEncounter, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk5, 
+                        SoundManager.SoundID.BlacksmithTalk6, SoundManager.SoundID.BlacksmithTalk7 }));
+                }
+                else if (level == 1)
+                {
+                    StartCoroutine(StartDialog(dialogAfterFirstUpgrade, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk6, 
+                        SoundManager.SoundID.BlacksmithTalk7, SoundManager.SoundID.BlacksmithTalk2 }));
+                }
+                else
+                {
+                    StartCoroutine(StartDialog(dialogAfterFinalUpgrade, new SoundManager.SoundID[] { SoundManager.SoundID.BlacksmithTalk1, 
+                    SoundManager.SoundID.BlacksmithTalk4, SoundManager.SoundID.BlacksmithTalk3 }, endAfterDialog: true));
+                }
             }
         }
         // else if (dialogActive && Input.anyKeyDown && isTyping)
@@ -107,7 +123,13 @@ public class BlacksmithInteraction : MonoBehaviour
         playerAttack.enabled = false;
         playerMovement.CanMove = false;
         playerMovement.HorizontalInput = 0;
-
+        playerMovement.UpperBodyAnimator.SetBool("HasSword", _playerHasSword);
+        playerMovement.UpperBodyAnimator.SetFloat("RunSpeed", 0);
+        playerMovement.UpperBodyAnimator.SetBool("IsGrounded", true);
+        playerMovement.LowerBodyAnimator.SetFloat("RunSpeed", 0);
+        if (_playerHasSword) playerMovement.UpperBodyAnimator.Play("U_Idle");
+        else playerMovement.UpperBodyAnimator.Play("U_Idle_NS");
+        playerMovement.LowerBodyAnimator.Play("U_Idle");
         dialogActive = true;
         markerTextPopUp.DisableMarkUp();
 
